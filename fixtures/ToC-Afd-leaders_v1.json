@@ -1,0 +1,295 @@
+{
+  "color": "#2F2D2E",
+  "title": "Theory of Change: Preventing AfD Harm via Activism + NARM Therapy",
+  "sections": [
+    {
+      "title": "Inputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "input-narm",
+              "text": "Therapists skilled in NeuroAffective Relational Model who can hold a non-shaming container for people with heavy projection patterns.",
+              "color": "#E3F2FD",
+              "title": "NARM-trained practitioners willing to work with far-right figures",
+              "width": 192,
+              "yPosition": 401,
+              "connections": [
+                {
+                  "evidence": "NARM practitioner network exists but few are politically willing",
+                  "targetId": "output-support",
+                  "confidence": 50,
+                  "assumptions": "Enough practitioners exist and are willing to engage ethically fraught clients"
+                }
+              ]
+            },
+            {
+              "id": "input-activists",
+              "text": "People able to deliberately trigger a projecting figure AND stay in relationship to offer a bridge afterwards (your Aldi-conversation pattern).",
+              "color": "#E3F2FD",
+              "title": "Activists trained in 'confront + support' method",
+              "width": 192,
+              "yPosition": 53.22377422274276,
+              "connections": [
+                {
+                  "evidence": "Rare skill combo; most activists only do confrontation",
+                  "targetId": "output-confront",
+                  "confidence": 45,
+                  "assumptions": "The skill is teachable; activists willing to also offer support"
+                }
+              ]
+            },
+            {
+              "id": "input-funding",
+              "text": "Resources to run small-scale experiments (e.g. ecstatic dance test case) before scaling to political targets.",
+              "color": "#E3F2FD",
+              "title": "Small-scale test pilots e.g. ecstatic dance scene)",
+              "width": 192,
+              "yPosition": 696,
+              "connections": [
+                {
+                  "evidence": "Meta-crisis / dialogue funders exist",
+                  "targetId": "output-pilot",
+                  "confidence": 60,
+                  "assumptions": "Funders see value in testing mechanism on non-political cases first"
+                }
+              ]
+            },
+            {
+              "id": "input-access",
+              "text": "People trusted by AfD-adjacent networks who can broker contact (Mehr Demokratie / Braver Angels DE have shown this is possible).",
+              "color": "#E3F2FD",
+              "title": "Intermediary access brokers",
+              "width": 192,
+              "yPosition": 222.15219402150768,
+              "connections": [
+                {
+                  "evidence": "Access brokers are the single hardest input to secure for AfD leader engagement",
+                  "targetId": "output-confront",
+                  "confidence": 50,
+                  "assumptions": "Brokers remain willing to broker contact for a confrontational purpose; AfD figures don't blanket-refuse once brokered"
+                },
+                {
+                  "evidence": "Same brokers can likely facilitate the follow-on therapeutic offer",
+                  "targetId": "output-support",
+                  "confidence": 50,
+                  "assumptions": "The same relational channel used for confrontation can be used to deliver the support offer; leaders don't refuse support purely because activists accessed them"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "output-confront",
+              "text": "Direct, personal challenge that destabilises the leader's defensive structure — not public shaming, but intimate confrontation that lands.",
+              "color": "#FFF3E0",
+              "title": "Triggering personal confrontations with AfD leaders",
+              "width": 192,
+              "yPosition": 100,
+              "connections": [
+                {
+                  "evidence": "Triggering is easy; the question is whether it opens or closes the leader",
+                  "targetId": "outcome-pressure",
+                  "confidence": 60,
+                  "assumptions": "Confrontation is intimate/relational (not public shaming, which entrenches); leader can't easily discharge discomfort by attacking/dismissing the activist"
+                }
+              ]
+            },
+            {
+              "id": "output-support",
+              "text": "Immediate NARM-informed holding of the triggered material — the 'offer' half of the Aldi-pattern.",
+              "color": "#FFF3E0",
+              "title": "Therapeutic support offered post-trigger",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "NARM attunement is a replicable clinical skill",
+                  "targetId": "outcome-heard",
+                  "confidence": 55,
+                  "assumptions": "NARM-style attunement is possible across political divides without therapist's political reactions leaking; leader perceives the attunement as genuine care rather than strategic manipulation"
+                },
+                {
+                  "evidence": "Trust-building usually requires repeated contact; harder with high-defence populations",
+                  "targetId": "outcome-trust",
+                  "confidence": 40,
+                  "assumptions": "Trust can build in limited contact (not years of therapy); no early shame-rupture breaks the container; leader has some capacity for internal observation"
+                }
+              ]
+            },
+            {
+              "id": "output-pilot",
+              "text": "Low-stakes test cases where projecting actors harm a community but face no incentives to change — proving ground for the mechanism.",
+              "color": "#FFF3E0",
+              "title": "Preliminary evidence for critical assumptions",
+              "width": 192,
+              "yPosition": 696,
+              "connections": [
+                {
+                  "evidence": "No prior evidence yet — this IS the experiment; transfer across populations is the key uncertainty",
+                  "targetId": "outcome-pressure",
+                  "confidence": 35,
+                  "assumptions": "Methods calibrated on non-political cases (ecstatic dance / Aldi-type) actually transfer to political actors"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outcomes",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "outcome-heard",
+              "text": "The therapeutic contact lands as genuine attunement — leaders experience being met in their anger/fear without judgement or political push-back.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders feel heard, validated, and seen in their emotions",
+              "width": 192,
+              "yPosition": 100,
+              "connections": [
+                {
+                  "evidence": "NARM clinical outcomes support attunement → defence softening; untested with political actors",
+                  "targetId": "outcome-metabolize",
+                  "confidence": 35,
+                  "assumptions": "Feeling heard is a necessary precondition for defensive structures to soften; validation doesn't accidentally reinforce the projection itself"
+                }
+              ]
+            },
+            {
+              "id": "outcome-trust",
+              "text": "After one or more contained experiences, leaders develop a felt sense that engaging their rage/fear/shame won't destroy them or expose them socially.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders build trust that difficult emotions can be felt safely",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "Trust-building in therapeutic alliance is well-documented; speed with resistant populations is slower",
+                  "targetId": "outcome-metabolize",
+                  "confidence": 40,
+                  "assumptions": "Trust in the container generalises to willingness to meet very old pain; leader's attachment system is accessible (not fully foreclosed)"
+                }
+              ]
+            },
+            {
+              "id": "outcome-pressure",
+              "text": "Confrontation generates a motivational charge: the status quo feels less tolerable than engaging the therapeutic offer.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders feel sufficient discomfort/pressure to engage with their emotional material",
+              "width": 192,
+              "yPosition": 500,
+              "connections": [
+                {
+                  "evidence": "Motivational interviewing shows discomfort → engagement at modest rates; backfire common with hardened identities",
+                  "targetId": "outcome-metabolize",
+                  "confidence": 30,
+                  "assumptions": "Discomfort motivates deeper engagement rather than retreat into harder defences; pressure doesn't overwhelm the container's holding capacity"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "outcome-metabolize",
+              "text": "The core NARM move: rage/distrust/betrayal felt toward Greens, media, refugees is recognised as material from early relational wounding, and the emotion completes rather than discharges onto the projected target.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders locate anger/fear in psychological parents and metabolise the projection",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "Clinical NARM shows metabolisation is possible; political translation is the untested leap",
+                  "targetId": "outcome-soften",
+                  "confidence": 35,
+                  "assumptions": "Psychological insight actually translates to political-identity change; leader's social/economic position doesn't force maintaining the stance regardless of inner shift; metabolisation is durable enough to withstand party pressure to re-radicalise"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "outcome-soften",
+              "text": "Visible, public shift: fewer scapegoating statements, moderation of anti-migrant rhetoric, abstentions or no-votes on harmful policies.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders soften their public positioning on harmful policies",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "Party machines typically eject deviants rather than follow them; some historical cases of partial moderation exist",
+                  "targetId": "goal-policy",
+                  "confidence": 20,
+                  "assumptions": "Enough leaders shift simultaneously to move party line, OR softening influences discourse even without full capture; softening is public and credible, not just private shift"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Goal",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "goal-policy",
+              "text": "Concrete legislative / rhetorical outcomes: fewer anti-migrant policies passed, less dehumanising discourse in parliament.",
+              "color": "#FCE4EC",
+              "title": "Harmful AfD policies based on scapegoating prevented or softened",
+              "width": 192,
+              "yPosition": 401,
+              "connections": [
+                {
+                  "evidence": "Policy → wellbeing link well-established for migrant populations",
+                  "targetId": "impact-wellbeing",
+                  "confidence": 70,
+                  "assumptions": "Policy change actually translates to lived experience change"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Impact",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "impact-wellbeing",
+              "text": "Reduced suffering for refugees/minorities who would otherwise face scapegoating-based harm; also reduced suffering for people previously trapped in projection patterns.",
+              "color": "#F3E5F5",
+              "title": "Wellbeing improved for targeted groups AND formerly-projecting individuals",
+              "width": 192,
+              "yPosition": 401,
+              "connections": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textSize": 1,
+  "curvature": 0.5,
+  "columnPadding": 48,
+  "sectionPadding": 48,
+  "_metadata": {
+    "exportedAt": "2026-10-17T21:31:30.231Z"
+  }
+}

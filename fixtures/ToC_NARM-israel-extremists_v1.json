@@ -1,0 +1,259 @@
+{
+  "color": "#2F2D2E",
+  "title": "Theory of Change: NARM therapy with consenting skeptics to soften violence-supporting extremism in the Israel/Palestine conflict",
+  "sections": [
+    {
+      "title": "Inputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "input-therapists",
+              "text": "Hebrew- and Arabic-speaking NARM practitioners trained to work with politically-triggered material; ideally paired teams (Israeli + Palestinian therapist pool).",
+              "color": "#E3F2FD",
+              "title": "NARM-trained therapists with cultural/linguistic fit",
+              "width": 192,
+              "yPosition": 328.57690679660834,
+              "connections": [
+                {
+                  "evidence": "If NARM-trained practitioners exist and are briefed on political-trigger protocol, delivery is operationally straightforward.",
+                  "targetId": "output-therapy",
+                  "confidence": 85,
+                  "assumptions": "Enough practitioners with both NARM training and cultural/linguistic competency can be recruited."
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "input-access",
+              "text": "Recruitment pipeline for Israelis and Palestinians who (a) score high on violence-supporting attitudes, (b) consent to a research study offering free/discounted therapy on their trigger topics, and (c) do NOT need to believe therapy will work. Via online screening, community gatekeepers, or paid study participation.",
+              "color": "#E3F2FD",
+              "title": "Access to consenting skeptical participants",
+              "width": 192,
+              "yPosition": 176.70838277250425,
+              "connections": [
+                {
+                  "evidence": "Recruiting consenting-but-skeptical extremists is the central operational bottleneck of this ToC. Life After Hate's experience shows reach is possible but slow.",
+                  "targetId": "output-therapy",
+                  "confidence": 55,
+                  "assumptions": "A non-trivial fraction of violence-supporting individuals will consent to therapy for research/paid reasons."
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "input-research",
+              "text": "Credentialed clinical/political psychology researcher as first author; IRB approval; validated pre/post instruments for trigger-reactivity, policy-support scales, and ideally behavioral indicators.",
+              "color": "#E3F2FD",
+              "title": "Academic research partner",
+              "width": 192,
+              "yPosition": 539.3770181180673,
+              "connections": [
+                {
+                  "evidence": "Psychotherapy research is methodologically cheaper than lab-based work; online sessions + digital surveys are feasible.",
+                  "targetId": "output-study",
+                  "confidence": 75,
+                  "assumptions": "A credentialed researcher will take on a politically sensitive, methodologically novel study."
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "output-therapy",
+              "text": "Consenting participants (self-selected skeptics scoring high on violence-support) receive a protocolized NARM intervention (6–10 sessions) focused on their trigger reactions to the other side. No requirement that they believe it will work.",
+              "color": "#E3F2FD",
+              "title": "NARM therapists deliver 6+ sessions on trigger-topics",
+              "width": 192,
+              "yPosition": 216.5481731948592,
+              "connections": [
+                {
+                  "evidence": "NARM has only perceived-effectiveness survey data (Gruber et al., N=76 providers), no RCT on political applications. BUT: trauma-informed work with former extremists (e.g., EMDR 4.5-year case series) and Canetti et al.'s Holocaust→political-cognition studies strongly support the underlying mechanism.",
+                  "targetId": "outcome-projections-metabolized",
+                  "confidence": 35,
+                  "assumptions": "A1: NARM reduces trigger-reactivity on politically-charged (not just developmental) material. A4: 6–10 sessions is sufficient dose. A5: Trauma is central (not peripheral) driver of this person's extremism."
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "output-study",
+              "text": "Validated measures of (a) trigger reaction strength, (b) 1–10 support for extreme/violent policy measures, (c) ideally behavioral indicators (group membership, online engagement, longitudinal action tracking).",
+              "color": "#E3F2FD",
+              "title": "Published pre/post study on trigger-reactivity & policy support",
+              "width": 192,
+              "yPosition": 538.9473772797569,
+              "connections": [
+                {
+                  "evidence": "Published evidence builds the field, enables replication/scaling, and attracts research capacity — but only indirectly affects any individual's position.",
+                  "targetId": "outcome-soften-position",
+                  "confidence": 20,
+                  "assumptions": "Positive results replicate; the field (funders, policymakers, practitioners) acts on new evidence."
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outcomes",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "outcome-projections-metabolized",
+              "text": "The core mechanism this ToC tests: participants locate their survival-level anger/fear not primarily in the present-day 'other' (Palestinians / Israelis) but in the intergenerational/developmental source (Holocaust trauma, Nakba trauma, violent childhood, etc.), completing the emotion and reducing the projection's charge.",
+              "color": "#E3F2FD",
+              "title": "Extremists metabolize underlying anger/fear/grief & recognize their projections",
+              "width": 256,
+              "yPosition": 65.92027183767064,
+              "connections": [
+                {
+                  "evidence": "Mechanistically plausible — if the trauma-urgency is decoupled from the political trigger, the extreme stance loses one major driver. But internal shift must survive social pressure to maintain in-group identity.",
+                  "targetId": "outcome-soften-position",
+                  "confidence": 35,
+                  "assumptions": "Reduced projection translates to reduced political extremism rather than being compartmentalized; participants aren't socially punished into reverting."
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "outcome-exit-community",
+              "text": "Parallel prerequisite. Deradicalization research consistently finds that disengagement produces psychological distress (PTSD, guilt, shame) and social labeling as 'former extremist' — without an alternative identity + community + narrative coherence, individuals revert. Modeled on Life After Hate / EXIT Sweden plus narrative-coherence findings from trauma-informed exit work.",
+              "color": "#FFF3E0",
+              "title": "[COM-B: Social opportunity] Alternative identity & narrative coherence from exit community",
+              "width": 256,
+              "yPosition": 217.65048728135665,
+              "connections": [
+                {
+                  "evidence": "Longitudinal narrative data on former extremists shows identity transformation (not ideological conversion in isolation) is central to sustained disengagement. Emotional regulation, narrative coherence, epistemic trust, and moral agency are the capacities that distinguish stable from reverting cases.",
+                  "targetId": "outcome-soften-position",
+                  "confidence": 55,
+                  "assumptions": "Such alternative communities exist or can be built on both Israeli and Palestinian sides; participants have access to them."
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "outcome-humanizing-contact",
+              "text": "Parallel prerequisite — REPLACES generic 'humanizing contact.' Paradoxical thinking = exposure to amplified/exaggerated/absurd messages still congruent with held beliefs (Hameiri, Bar-Tal, Halperin paradigm). Much stronger evidence base for the Israeli-Palestinian context specifically than contact-based approaches, and works even during active violence.",
+              "color": "#FFF3E0",
+              "title": "[COM-B: Reflective motivation] Paradoxical thinking / counter-attitudinal messaging exposure",
+              "width": 256,
+              "yPosition": 371.5080341430247,
+              "connections": [
+                {
+                  "evidence": "Hameiri et al. (PNAS 2016): paradoxical thinking intervention moderated hawkish Israeli attitudes even in the midst of ongoing violence in one of the most intractable conflicts. Contrast: Parent Circle Peace Education Program (Braun-Lewensohn 2015) had differential/subgroup-dependent effects — not a clean positive for generic contact.",
+                  "targetId": "outcome-soften-position",
+                  "confidence": 55,
+                  "assumptions": "Paradoxical messages can be constructed for both Israeli and Palestinian audiences; delivery context (media, social) permits exposure; effect generalizes from attitudes to policy support."
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "outcome-material-security",
+              "text": "Parallel prerequisite. If acute threat/violence is continuously reactivating trauma, no therapy can metabolize what's being continuously re-wounded. Canetti et al. studies showed Holocaust exposure (chronic + contextually activated) is directly associated with more extreme political attitudes among Israeli Jews — the mirror holds for Palestinian ongoing trauma exposure.",
+              "color": "#FFF3E0",
+              "title": "[COM-B: Physical opportunity] De-escalation of acute violence enables psychological processing",
+              "width": 256,
+              "yPosition": 539.8561936726749,
+              "connections": [
+                {
+                  "evidence": "Canetti, Hirschberger et al. (Political Psychology 2017): nationally representative survey showed Holocaust survivors and their descendants had more extreme political cognitions; experimental activation of Holocaust-related priming increased extremism. Implies ongoing trauma exposure is a hard ceiling on psychological intervention efficacy.",
+                  "targetId": "outcome-soften-position",
+                  "confidence": 40,
+                  "assumptions": "Some window of de-escalation exists during the intervention; this is largely outside the project's control and may be a hard structural ceiling."
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "outcome-soften-position",
+              "text": "Measurable: reduction in 1–10 policy-support scores for violent/eradicationist measures; exit from or reduced engagement with extremist groups; behavioral indicators (online activity, group membership, participation in violent actions).",
+              "color": "#E3F2FD",
+              "title": "Individual extremists soften their public position & disengage from violence-advocacy",
+              "width": 192,
+              "yPosition": 322.4959021037756,
+              "connections": [
+                {
+                  "evidence": "Scaling individual-level change to population-level support shift is a massive leap and depends heavily on political entrepreneurs, media environment, and structural conditions.",
+                  "targetId": "goal-reduce-support-violence",
+                  "confidence": 20,
+                  "assumptions": "Intervention can scale beyond pilot N; softened individuals influence their networks rather than being marginalized."
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Goal",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "goal-reduce-support-violence",
+              "text": "Population-level reduction in Israeli and Palestinian support for policies/actions aimed at eradicating the other side — measured by polling, voting patterns, participation in violent actions, recruitment into violent groups.",
+              "color": "#E3F2FD",
+              "title": "Extremists on both sides reduce support for and participation in violent eradication of the other population",
+              "width": 192,
+              "yPosition": 329.4519334604309,
+              "connections": [
+                {
+                  "evidence": "Reducing popular support for eradicationist policies plausibly reduces lethal harm counterfactually, but structural violence has many non-psychological drivers (geopolitics, military dynamics, economic interests).",
+                  "targetId": "impact-reduced-harm",
+                  "confidence": 50,
+                  "assumptions": "Political leadership is responsive to shifts in popular support; no exogenous escalation (regional war, etc.) overwhelms the signal."
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Impact",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "impact-reduced-harm",
+              "text": "Intrinsically valuable: fewer deaths, injuries, and traumatic events for both Israeli and Palestinian civilians; reduced long-term psychological harm and intergenerational trauma transmission.",
+              "color": "#E3F2FD",
+              "title": "Reduced lethal harm and dehumanization between Israelis and Palestinians",
+              "width": 192,
+              "yPosition": 317.79875646597696,
+              "connections": [],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textSize": 1,
+  "curvature": 0.5,
+  "columnPadding": 48,
+  "sectionPadding": 48,
+  "_metadata": {
+    "exportedAt": "2026-10-18T00:47:29.581Z"
+  }
+}

@@ -1,0 +1,56 @@
+/* Legend */
+.toc-legend {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid #e2ded6;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 12px;
+  box-shadow: 0 8px 24px rgba(47, 45, 46, 0.08);
+  min-width: 220px;
+}
+
+.toc-legend--collapsed {
+  min-width: 0;
+}
+
+.toc-legend__toggle {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b6966;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  cursor: pointer;
+}
+
+.toc-legend ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.toc-legend li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toc-legend__swatch {
+  width: 40px;
+  height: 12px;
+  flex: none;
+}

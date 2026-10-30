@@ -1,0 +1,141 @@
+/* Connection Details panel: block lists, footnote, focus rings. */
+
+.toc-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toc-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  border-left: 2px solid #e2ded6;
+  padding-left: 10px;
+  transition: border-color 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-block--read {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #2f2d2e;
+  white-space: pre-wrap;
+}
+
+/* A div, not a button: it does not get a button's border-box sizing by default. */
+.toc-end__card--static {
+  box-sizing: border-box;
+  cursor: default;
+}
+
+.toc-end__card--static:hover {
+  border-color: #e2ded6;
+}
+
+.toc-slider:disabled {
+  pointer-events: none;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.toc-block:focus-within {
+  border-left-color: #2563eb;
+}
+
+.toc-block textarea {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  border: 0;
+  background: none;
+  padding: 2px 0;
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #2f2d2e;
+  overflow: hidden;
+}
+
+.toc-block textarea:focus {
+  outline: none;
+}
+
+.toc-block textarea::placeholder {
+  color: #a8a39b;
+}
+
+.toc-block__remove {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: none;
+  border-radius: 6px;
+  color: #6b6966;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-block:hover .toc-block__remove,
+.toc-block:focus-within .toc-block__remove,
+.toc-block__remove:focus-visible {
+  opacity: 1;
+}
+
+.toc-block__remove:hover {
+  background: #eeebe4;
+  color: #2f2d2e;
+}
+
+.toc-add {
+  align-self: flex-start;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6966;
+  cursor: pointer;
+}
+
+.toc-add:hover {
+  background: #eeebe4;
+  color: #2f2d2e;
+}
+
+.toc-add--empty {
+  align-self: stretch;
+  height: 36px;
+  border: 1px dashed #b9b4ab;
+  border-radius: 8px;
+}
+
+.toc-add--empty:hover {
+  border-color: #2f2d2e;
+  background: none;
+}
+
+.toc-footnote {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid #e2ded6;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #6b6966;
+}
+
+.toc-linkbtn:focus-visible,
+.toc-switch:focus-visible,
+.toc-add:focus-visible,
+.toc-block__remove:focus-visible,
+.toc-end__card:focus-visible,
+.toc-button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}

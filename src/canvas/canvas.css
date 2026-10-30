@@ -1,0 +1,317 @@
+/* Canvas visual system, per the design detail recorded on the canvas-render slice
+   (work_note "canvas-visual-system"). */
+
+.toc-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  color: #2f2d2e;
+  background: #f7f5f0;
+}
+
+.toc-topbar {
+  flex: none;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  background: #fff;
+  border-bottom: 1px solid #e2ded6;
+}
+
+.toc-topbar__brand {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.toc-topbar__divider {
+  width: 1px;
+  height: 24px;
+  background: #e2ded6;
+}
+
+.toc-topbar__title {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 520px;
+}
+
+.toc-topbar__pill {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background-color: #eeebe4;
+  color: #6b6966;
+  white-space: nowrap;
+}
+
+.toc-topbar__pill--select {
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b6966' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 7px center;
+}
+
+.toc-topbar__pill--select:hover {
+  background-color: #e4e0d8;
+}
+
+.toc-topbar__pill--select:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.toc-topbar__counts {
+  margin-left: auto;
+  font-size: 12px;
+  color: #6b6966;
+  white-space: nowrap;
+}
+
+.toc-topbar__warning {
+  color: #8a3a10;
+  font-weight: 600;
+}
+
+.toc-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Section header node */
+.toc-section-header {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: #2f2d2e;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toc-section-header__count {
+  font-weight: 500;
+  opacity: 0.6;
+  letter-spacing: 0;
+  text-transform: none;
+  flex: none;
+}
+
+/* Card node */
+.toc-card {
+  position: relative;
+  border-radius: 10px;
+  border: 1px solid #e2ded6;
+  box-shadow: 0 1px 2px rgba(47, 45, 46, 0.06);
+  padding: 10px 12px 10px 14px;
+  transition:
+    box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--toc-card-chip, #999);
+}
+
+.toc-card__title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.toc-card__text {
+  margin-top: 4px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: #6b6966;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toc-card__badge {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6966;
+  border: 1px dashed #b9b4ab;
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+.toc-card--selected,
+.toc-endpoint .toc-card {
+  border-color: #2563eb;
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.22),
+    0 6px 18px rgba(47, 45, 46, 0.12);
+}
+
+/* Connection handles: 10px dots on the card's left (target) and right (source) edge, hidden
+   until the card is hovered on a fine pointer or is an endpoint of the selected edge; while a
+   drag is in progress every target handle shows so the user can see where a drop lands. */
+.toc-card__handle.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 1.5px solid #2563eb;
+  box-shadow: 0 1px 3px rgba(47, 45, 46, 0.25);
+  opacity: 0;
+  transform: translate(0, -50%) scale(0.6);
+  transition:
+    opacity 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    background 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-card__handle.react-flow__handle-left {
+  left: -6px;
+}
+
+.toc-card__handle.react-flow__handle-right {
+  right: -6px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toc-card:hover .toc-card__handle.react-flow__handle {
+    opacity: 1;
+    transform: translate(0, -50%) scale(1);
+  }
+}
+
+.toc-card--selected .toc-card__handle.react-flow__handle,
+.toc-endpoint .toc-card__handle.react-flow__handle,
+.toc-stage--connecting .toc-card__handle.react-flow__handle-left,
+.toc-card__handle.react-flow__handle.connectingfrom {
+  opacity: 1;
+  transform: translate(0, -50%) scale(1);
+}
+
+.toc-card__handle.react-flow__handle.connectingfrom,
+.toc-card__handle.react-flow__handle.connectingto.valid {
+  background: #2563eb;
+}
+
+.toc-card__handle.react-flow__handle.connectingto.valid {
+  transform: translate(0, -50%) scale(1.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-card__handle.react-flow__handle {
+    transition: none;
+  }
+}
+
+/* The loop anchors: present only so a backward loop can leave the left edge and enter the
+   right edge; never shown, never connectable. */
+.toc-card__loop-handle.react-flow__handle {
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+}
+
+.toc-loop-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.toc-topbar__draft {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #fff8e6;
+  color: #8a6a10;
+}
+
+.toc-topbar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid #cfcac0;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.toc-topbar__btn:hover {
+  background: #f1eee7;
+}
+
+.toc-topbar__btn:active {
+  transform: scale(0.97);
+}
+
+/* The one filled button in the bar: Share, or Make your own copy on a view link. */
+.toc-topbar__btn--primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.toc-topbar__btn--primary:hover {
+  background: #1d4ed8;
+}
+
+.toc-topbar__btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}

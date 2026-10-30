@@ -1,0 +1,435 @@
+{
+  "color": "#2F2D2E",
+  "title": "Theory of Change: Preventing Sexual Harm in Ecstatic Dance Scenes via Activism + NARM Therapy",
+  "sections": [
+    {
+      "title": "Inputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "input-narm-ed",
+              "text": "Therapists skilled in the NeuroAffective Relational Model who can hold a non-shaming container for men whose unprocessed sexual urgency drives boundary-violating behavior.",
+              "color": "#E3F2FD",
+              "title": "NARM-trained practitioners offering (reduced?) sessions",
+              "width": 192,
+              "yPosition": 289.27862861294795,
+              "connections": [
+                {
+                  "evidence": "NARM Training Institute (est. 2010 by Dr. Laurence Heller) has ~500+ certified practitioners globally; Heller & LaPierre (2012) 'Healing Developmental Trauma'. Clinical social work literature supports use with developmental-trauma populations. Willingness to work with men who have harmed is less fraught than with far-right political figures (clinical rather than ideological framing).",
+                  "targetId": "output-support-ed",
+                  "confidence": 55,
+                  "assumptions": "Enough NARM practitioners exist in Berlin AND will take on clients whose material includes sexual harm perpetration; practitioners can hold the dual accountability (to client AND to the community harmed)"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "input-activists-ed",
+              "text": "Dancers, DJs, organizers able to deliberately name/challenge a predatory pattern AND stay in relationship to offer a bridge afterwards (the Aldi-conversation pattern applied to a shared scene).",
+              "color": "#E3F2FD",
+              "title": "Community members trained in 'confront + support' method",
+              "width": 192,
+              "yPosition": 84.89493287382679,
+              "connections": [
+                {
+                  "evidence": "Rare skill combo, but easier here than with KKK/AfD: community members already share identity with the target man (same scene, same values language). Daryl Davis / Christian Picciolini / Life After Hate pattern shows confront+support is teachable. Nonviolent Communication (Rosenberg) training shows empathic confrontation is a learnable protocol.",
+                  "targetId": "output-confront-ed",
+                  "confidence": 55,
+                  "assumptions": "Enough community members willing to accept the emotional cost of staying in relationship with a man they've just confronted; the activist and target share enough scene/identity to make the confrontation land as 'from inside', not 'from outside'"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "input-measurement-ed",
+              "text": "Baseline + follow-up data collection: (a) community-level — anonymous felt-safety survey of regular dancers, incident reports via trained safety team, drop-out tracking; (b) individual-level (for consenting men only) — self-report urgency/craving scale, independent-rater coding of session audio for genuine attunement, 6- and 12-month behavioral follow-up via scene reports.",
+              "color": "#E3F2FD",
+              "title": "Measurement & evaluation (pre/post, community-level + individual)",
+              "width": 192,
+              "yPosition": 500,
+              "connections": [
+                {
+                  "evidence": "Pre/post community-safety measurement is tractable in a defined community (unlike for a national party). Instruments exist: ARC3 campus climate survey adapted for subcultural scene; AAQ-II for psychological flexibility; CPSS for compulsive sexual behavior. Independent-rater coding of audio is standard in therapy process research.",
+                  "targetId": "outcome-soften-ed",
+                  "confidence": 70,
+                  "assumptions": "Community will participate in surveys at adequate rates; measurement itself doesn't produce reporting fatigue or demand characteristics that distort results; survivors centrally involved in instrument design"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "output-confront-ed",
+              "text": "Named, relational challenge from inside the scene — not public call-out, not quiet avoidance, but intimate confrontation that specifies the harmful pattern and asks the man to meet it. Delivered by someone with scene standing.",
+              "color": "#FFF3E0",
+              "title": "Direct personal confrontations with men whose behavior harms the community",
+              "width": 192,
+              "yPosition": 100,
+              "connections": [
+                {
+                  "evidence": "Scene-internal confrontation preserves more autonomy than public shaming (Motivational Interviewing: 'rolling with resistance' outperforms adversarial confrontation; Reactance Theory predicts backfire from external attack). Davis/Picciolini curiosity-based model works; CoSA (Circles of Support and Accountability) model shows accountability+support can reduce sexual recidivism up to ~70%.",
+                  "targetId": "outcome-pressure-ed",
+                  "confidence": 55,
+                  "assumptions": "Confrontation stays relational and specific (not globally identity-attacking); autonomy preserved per MI; the man perceives the confronter as a legitimate scene insider, not an outside judge"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "output-support-ed",
+              "text": "Immediate NARM-informed holding of the triggered material (shame, grief, sexual longing, rage at being 'caught') — the 'offer' half of the Aldi pattern, delivered within days of the confrontation while the opening is still live.",
+              "color": "#FFF3E0",
+              "title": "Therapeutic support offered post-trigger",
+              "width": 192,
+              "yPosition": 311.8248036876066,
+              "connections": [
+                {
+                  "evidence": "NARM attunement to shame and sexual material is a core clinical competency (Heller & LaPierre 2012). Easier here than cross-ideological work: therapist and client share no political divide, only a client-level pattern.",
+                  "targetId": "outcome-heard-ed",
+                  "confidence": 60,
+                  "assumptions": "NARM-style attunement can hold both compassion for the man AND non-collusion with the harm; practitioner has done own work on sexuality/boundary material"
+                },
+                {
+                  "evidence": "Working alliance research (Bordin 1979; Horvath meta-analyses) shows trust can form in 1-3 sessions. Compulsive sexual behavior literature shows mindfulness-based relapse-prevention programs produce medium effect sizes on compulsivity — suggesting the material IS workable in short-to-medium therapeutic contact.",
+                  "targetId": "outcome-trust-ed",
+                  "confidence": 50,
+                  "assumptions": "Trust can build fast enough for the opening to not close; no early shame-rupture breaks the container; man has basic capacity for internal observation"
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outcomes",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "outcome-heard-ed",
+              "text": "Therapeutic contact lands as genuine attunement — the man experiences being met in the unmet longing / loneliness / early relational hunger that drives his sexual urgency, without the therapist colluding with the harmful behavior.",
+              "color": "#E8F5E9",
+              "title": "Target men feel heard in their underlying sexual longing / loneliness (not in the harm)",
+              "width": 192,
+              "yPosition": 269.3886268797995,
+              "connections": [
+                {
+                  "evidence": "NARM clinical outcomes support attunement → defence softening (Heller & LaPierre 2012). Converging mechanisms: IFS (Schwartz), Polyvagal theory (Porges) support co-regulation → integration. Evidence base is clinical/case-study, not RCT.",
+                  "targetId": "outcome-metabolize-ed",
+                  "confidence": 45,
+                  "assumptions": "Feeling heard in the underlying longing is a necessary precondition for the projection to soften; attunement to the longing doesn't accidentally validate the harmful enactment"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "outcome-trust-ed",
+              "text": "After one or more contained experiences, the man develops a felt sense that sitting with his urgency, loneliness, shame won't destroy him or expose him socially in the scene.",
+              "color": "#E8F5E9",
+              "title": "Men build trust that sexual/relational material can be felt safely",
+              "width": 192,
+              "yPosition": 440.5511228802261,
+              "connections": [
+                {
+                  "evidence": "Therapeutic alliance literature on trust-building. CoSA outcomes show that sustained safe-container contact over 12+ months produces measurable behavioral change in populations of men who have caused sexual harm — direct evidence that trust-based containers work on this exact behavior.",
+                  "targetId": "outcome-metabolize-ed",
+                  "confidence": 50,
+                  "assumptions": "Trust in the container generalises to willingness to meet very old sexual/relational pain; dosage is sufficient (CoSA runs 12+ months — short pilots may underperform)"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "outcome-pressure-ed",
+              "text": "The confrontation generates a motivational charge: continuing the current pattern feels more costly (socially, relationally, in self-image) than engaging the therapeutic offer.",
+              "color": "#E8F5E9",
+              "title": "Target men feel enough discomfort to engage with the therapeutic offer",
+              "width": 192,
+              "yPosition": 71.92218663342577,
+              "connections": [
+                {
+                  "evidence": "MI shows discomfort → engagement at modest rates. Compulsive sexual behavior literature suggests high relapse without external motivational structure. Scene-internal confrontation (vs. anonymous call-out) is more likely to produce engagement rather than retreat into harder defence or scene-switching.",
+                  "targetId": "outcome-metabolize-ed",
+                  "confidence": 40,
+                  "assumptions": "Discomfort motivates deeper engagement rather than scene-switching to another ED community; pressure doesn't overwhelm the container; the man has somewhere to receive the support quickly enough"
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "outcome-metabolize-ed",
+              "text": "The core NARM move: the drive to pursue / override / 'take' sexual contact is recognised as material from early relational wounding (unmet attachment needs, parental misattunement around desire/body/boundaries), and the underlying emotion (grief, longing, rage, shame) completes rather than discharges onto scene participants.",
+              "color": "#E8F5E9",
+              "title": "Men locate sexual urgency in developmental trauma and metabolise the projection",
+              "width": 272,
+              "yPosition": 226.7233578418302,
+              "connections": [
+                {
+                  "evidence": "Developmental-trauma → sexual-boundary-violation link is documented in clinical and research literature. Mechanism is more established clinically than for political de-radicalisation — sexual behavior is more plastic to therapeutic work than hardened political identity. Still: insight → behavior change is never automatic.",
+                  "targetId": "outcome-soften-ed",
+                  "confidence": 40,
+                  "assumptions": "Psychological insight translates to behavioral change in actual scene contexts (not only in therapy room); metabolisation durable enough to withstand next trigger context; dosage of therapy is adequate (likely 10+ sessions, not few-shot)"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "prereq-skills-ed",
+              "text": "COM-B: Psychological Capability. Metabolising projection ≠ knowing what respectful approach looks like. The man needs concrete skills: reading non-verbal cues, asking cleanly, tolerating a 'no', repairing after misreads. Developmental trauma specifically impairs these skills. NOT addressed by this ToC — needs companion skills work (consent workshops, somatic practice, repair training).",
+              "color": "#FFF9C4",
+              "title": "⚠️ Prereq: Consent & relational-repair skills (Psychological Capability)",
+              "width": 272,
+              "yPosition": 356.59376166542233,
+              "connections": [
+                {
+                  "evidence": "Research on early trauma suggests it hinders the development of skills needed to navigate adult sexual interactions. Consent-skill curricula exist (Betty Martin's Wheel of Consent, somatic consent trainings in Berlin ED scene). Base rate of success for skill-training interventions is moderate-to-good.",
+                  "targetId": "outcome-soften-ed",
+                  "confidence": 55,
+                  "assumptions": "Skills training is accessible/affordable in the Berlin scene; man actually attends alongside therapy rather than treating one as a substitute for the other"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "prereq-norms-ed",
+              "text": "COM-B: Social Opportunity + Reflective Motivation. The 'missing stair' problem: currently the scene works around predatory men rather than addressing them, so predation is cost-free. Needs visible structures: trained safety team, clear reporting path, public norms, survivor-centered consequences for repeat harm. NOT addressed by this ToC — needs parallel community-safety organising.",
+              "color": "#FFF9C4",
+              "title": "⚠️ Prereq: Credible community accountability structure (Social Opportunity)",
+              "width": 272,
+              "yPosition": 79.17043015411689,
+              "connections": [
+                {
+                  "evidence": "CoSA (Circles of Support and Accountability) outcome studies suggest substantial reduction in sexual recidivism (often cited up to ~70%) when community volunteers hold accountability+support. Bystander intervention evidence (NSVRC) strongest for norm-shift. 'Missing stair' / whisper-network literature documents precisely this bottleneck as the dominant failure mode in subcultural communities.",
+                  "targetId": "outcome-soften-ed",
+                  "confidence": 60,
+                  "assumptions": "Community can actually sustain accountability structure (volunteer burnout is high); accountability doesn't collapse into pure punishment that destroys the therapeutic opening; survivors centrally involved in design"
+                }
+              ],
+              "connectionIds": []
+            },
+            {
+              "id": "prereq-belonging-ed",
+              "text": "COM-B: Social Opportunity. Narrower scope than the AfD exit-ramp: most ED men don't need a whole new life, but men whose scene participation has been *primarily* a sexual-access strategy need some other way to be a wanted man in the room. Role options: co-facilitation, service team, male-friendship circles, teaching, musicianship. Only critical for the subset where predation IS the identity. NOT addressed by this ToC.",
+              "color": "#FFF9C4",
+              "title": "⚠️ Prereq (narrower): Non-predatory male identity available in the scene",
+              "width": 272,
+              "yPosition": 495.27983515091717,
+              "connections": [
+                {
+                  "evidence": "Direct analog to EXIT-Deutschland 'landing pad' logic, but weaker for ED scene because most men have other identities to fall back on. CoSA literature identifies pro-social reintegration as active ingredient for sex-offender recidivism reduction, though mostly for men whose entire post-prison identity was at stake.",
+                  "targetId": "outcome-soften-ed",
+                  "confidence": 50,
+                  "assumptions": "For the subset of men where this matters, non-predatory male roles exist in the scene and carry real social status; for the majority of men, other prereqs do the work instead"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "outcome-soften-ed",
+              "text": "Observable behavioral shift in-scene: fewer unwanted touches, cleaner approach/withdrawal patterns, voluntary stepping back from situations the man used to exploit, visible accountability behavior (checking in, repair after misreads, declining opportunities).",
+              "color": "#E8F5E9",
+              "title": "Reduced occurrence of predatory behavior in dance spaces",
+              "width": 192,
+              "yPosition": 251.4777973682807,
+              "connections": [
+                {
+                  "evidence": "Individual-level behavior change in a specific physical community has a shorter causal chain to collective outcome than legislative/party-level change. CoSA evidence shows measurable recidivism reduction at individual level translates to measurable community-level reduction in sexual harm.",
+                  "targetId": "goal-reduce-ed",
+                  "confidence": 60,
+                  "assumptions": "Enough men soften for the community-level signal to show above baseline noise; new predatory entrants to the scene don't replace the softened ones faster than treatment works"
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Goal",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "goal-reduce-ed",
+              "text": "Concrete community-level outcomes: fewer reports of unwanted touching/overtures at events, lower rate of survivors quitting the scene, measurable improvement in reported felt-safety (especially among women/femmes/newcomers), scene no longer organised around 'avoiding X and Y'.",
+              "color": "#FCE4EC",
+              "title": "Predatory and boundary-violating sexual behavior in Berlin ecstatic dance scene reduced",
+              "width": 192,
+              "yPosition": 245.82544361934725,
+              "connections": [
+                {
+                  "evidence": "Direct behavioral change in a shared physical community has a short causal chain to lived experience of community members. Research on community safety → wellbeing is well-established (reduction in interpersonal harm maps directly to improved mental/physical health outcomes for affected populations).",
+                  "targetId": "impact-wellbeing-ed",
+                  "confidence": 80,
+                  "assumptions": "Reduction in reported harm reflects actual reduction (not just reporting fatigue); affected members stay in / return to the scene to benefit from the change"
+                }
+              ],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Impact",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "impact-wellbeing-ed",
+              "text": "Reduced suffering for women/femmes/newcomers who would otherwise face predatory contact or self-exclude from the scene. Reduced suffering for men previously driven by unprocessed urgency into shame-ridden harmful behavior. Scene reclaims its stated purpose (embodied freedom in safety) rather than being quietly structured around a missing-stair workaround.",
+              "color": "#F3E5F5",
+              "title": "Wellbeing improved for ED community members AND formerly-predatory men",
+              "width": 192,
+              "yPosition": 244.407208231122,
+              "connections": [],
+              "connectionIds": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Critical Assumptions",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "ca-1-ed",
+              "text": "Covers: output-confront → outcome-pressure (55%).\n\n⚠️ CHALLENGE: MI (Miller & Rollnick) found confrontation historically counterproductive; Reactance Theory (Brehm 1966) predicts backfire.\n🟢 COUNTER: Daryl Davis's curiosity-based model + CoSA + Picciolini all show accountability+support can open high-defence men. Scene-internal delivery (vs. anonymous call-out) further reduces reactance.\n\n🔬 INDICATOR: % of confronted men who engage therapeutic offer within 2 weeks.\n🚦 PIVOT: <30% engagement → the confrontation modality is wrong (too shaming, wrong confronter, wrong setting). Redesign before scaling.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA1: Confront+support opens rather than entrenches",
+              "width": 288,
+              "yPosition": 53.12640426493137,
+              "connections": []
+            },
+            {
+              "id": "ca-2-ed",
+              "text": "Covers: output-support → outcome-heard (60%) + output-support → outcome-trust (50%).\n\n⚠️ CHALLENGE: Clinical evidence base is case-study, not RCT. Practitioner has to hold compassion for the man AND non-collusion with the harm simultaneously — unusual dual stance.\n🟢 FOUNDATION: Heller & LaPierre (2012); Rogerian unconditional-positive-regard tradition; NARM already used clinically with developmental-trauma men whose material includes boundary violations.\n\n🔬 INDICATOR: Independent-rater coding of session audio (attunement scale) + client felt-sense self-report.\n🚦 PIVOT: Consistent 'manipulative' or 'colluding' rater codes → different practitioner profile, heavier supervision, or add somatic-only modality.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA2: NARM attunement works for men who have perpetrated sexual harm",
+              "width": 288,
+              "yPosition": 171.81626193322867,
+              "connections": []
+            },
+            {
+              "id": "ca-3-ed",
+              "text": "Covers: outcome-metabolize → outcome-soften (40%). The core mechanism bet.\n\n⚠️ MAJOR CHALLENGE: Insight ≠ behavior change is well-documented across therapy research. For sexual compulsivity specifically, mindfulness-based relapse prevention shows only medium effect sizes — behavior change is harder than internal shift. No published RCT showing NARM alone shifts sexual-boundary-violating behavior.\n\n🟢 WHY MAYBE: Sexual behavior is more plastic than hardened political identity. The 3 yellow prereqs (skills, community norms, alt-belonging) can carry the metabolise→soften arrow where therapy alone can't.\n\n🔬 INDICATOR: Pre/post behavioral measures — scene incident reports naming the man + independent observation at events, at 3, 6, 12 months.\n🚦 PIVOT: No behavioral change at 6 months despite reported internal shift → the yellow prereqs are doing all the work; therapy alone is insufficient; redesign to center community accountability as primary mechanism with therapy as support.",
+              "color": "#FFCDD2",
+              "title": "⚠️🔴 CA3: Psychological insight translates to behavior change in the scene [BIGGEST BET]",
+              "width": 288,
+              "yPosition": 319.84443188248395,
+              "connections": []
+            },
+            {
+              "id": "ca-4-ed",
+              "text": "Covers: prereq-norms → outcome-soften (60%). The one prereq you probably can't skip.\n\n⚠️ CHALLENGE: Volunteer burnout is the dominant failure mode in community-safety work. Risk of collapse into pure punishment (destroys therapeutic opening) OR pure forgiveness (destroys deterrent). Survivors must be centred without being overburdened. Scene politics can fracture the structure.\n\n🟢 FOUNDATION: CoSA model shows this IS sustainable when adequately resourced + structured. Berlin ED scene has existing adjacent infrastructure (consent trainings, awareness teams at some events).\n\n🔬 INDICATOR: Structure still functioning + survivor-trusted at 12 months.\n🚦 PIVOT: Structure collapses → confront+support loses its external backing and reverts to private therapy with no behavioral consequence.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA4: Community can sustain a credible accountability structure",
+              "width": 288,
+              "yPosition": 469.4386738144349,
+              "connections": []
+            },
+            {
+              "id": "ca-5-ed",
+              "text": "Covers: outcome-soften → goal-reduce (60%).\n\n⚠️ CHALLENGE: If new predatory men enter the Berlin ED scene faster than treatment works, individual-level success doesn't move the community-level goal. This is a well-known problem in community interventions where the setting itself attracts the behavior pattern (ED spaces may be particularly vulnerable due to intimacy, altered states, physical proximity, perceived permissiveness).\n\n🔬 INDICATOR: New-entrant tracking — do new regulars entering the scene exhibit the same patterns at the same rate as the baseline cohort? Compare year-over-year.\n🚦 PIVOT: Replacement rate ≥ treatment rate → shift strategy toward entry-point interventions (first-timer orientation, event-level norms broadcasting) in addition to individual work.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA5: Replacement rate doesn't outpace treatment rate",
+              "width": 288,
+              "yPosition": 595.7731172650774,
+              "connections": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Testing Plan",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "test-phase1-ed",
+              "text": "All five cheap tests run serially within 4–6 weeks. Each has a pre-committed threshold producing a hard go/no-go — thresholds set BEFORE running the test so results can't be rationalised.\n\nORDER: T1 → T2 → T3 → T4 → T5\n(T1 first because most likely to falsify the whole ToC; T5 last because it also serves as the pilot baseline measurement)\n\n🚦 GATE: Must pass ≥4 of 5 thresholds to proceed to Phase 2 (actual Berlin pilot, ~€5–15k).\n\n⚠️ If T1 fails → STOP and redesign core mechanism before running T2–T5.",
+              "color": "#B2EBF2",
+              "title": "🧪 Phase 1 — Cheap tests (serial, ~4–6 weeks, ~€500–1,500 total)",
+              "width": 272,
+              "yPosition": 60,
+              "connections": []
+            },
+            {
+              "id": "test-1-ed",
+              "text": "CHEAP (2–3 wks, ~€0): Deep-code CoSA outcome studies + published cases of men in ED/kink/wellness scenes who went through accountability processes. Code mechanism: therapy/inner-work vs. community structure vs. relationships vs. consequence.\n🚦 PASS: ≥40% of behavior-change cases had therapy/inner-work as identifiable active ingredient\n🚦 FAIL: Community structure dominates → core ToC mechanism is wrong; redesign to center community accountability with NARM as support\n\nMEDIUM (3–6 mo): Secondary analysis of CoSA data separating 'high therapy dose' vs 'low therapy dose' sub-cohorts, if accessible.\n\n⚠️ MOST LIKELY TO FALSIFY WHOLE TOC — RUN THIS FIRST.",
+              "color": "#B2EBF2",
+              "title": "🧪 T1 — Insight → behavior change (CA3) [FALSIFICATION TEST — DO FIRST]",
+              "width": 272,
+              "yPosition": 215,
+              "connections": []
+            },
+            {
+              "id": "test-2-ed",
+              "text": "CHEAP (2–3 wks, ~€200 as thank-you honoraria): 5–8 semi-structured interviews with Berlin/DACH-based NARM practitioners re: experience holding clients whose material includes boundary violations / sexual harm.\n🚦 PASS: ≥3 practitioners report sustained genuine attunement without collusion; name specific techniques\n🚦 FAIL: All practitioners say the dual stance is impossible → add co-therapy structure OR shift to somatic-only modality (SE, Somatic Resourcing)\n\nMEDIUM (1–3 mo, €3–8k): Role-play sessions with NARM practitioners + trained actors as composite ED-scene men. 3–5 sessions, independently rated for attunement + non-collusion.\n🚦 PASS: ≥60% rated 'genuinely attuned AND non-colluding'",
+              "color": "#B2EBF2",
+              "title": "🧪 T2 — NARM attunement for this population (CA2)",
+              "width": 272,
+              "yPosition": 370,
+              "connections": []
+            },
+            {
+              "id": "test-3-ed",
+              "text": "CHEAP (3–4 wks, ~€0): Stakeholder mapping — interview 6–10 Berlin ED organizers, awareness-team leads from Berlin kink scene (where this infrastructure already exists and functions), survivors who've attempted accountability processes.\n🚦 PASS: ≥2 viable organizer coalitions willing to host + ≥1 functioning model documented in adjacent scene (kink awareness teams, Transformative Justice collectives)\n🚦 FAIL: No sustainable host → build parallel infra first (long) OR shrink scope to single-event pilots\n\nMEDIUM (3–6 mo, €2–5k): Co-design workshop with willing organizers + survivors + 1–2 TJ practitioners to specify structure; measure structure survival at 3 months post-launch.",
+              "color": "#B2EBF2",
+              "title": "🧪 T3 — Community can sustain accountability structure (CA4)",
+              "width": 272,
+              "yPosition": 525,
+              "connections": []
+            },
+            {
+              "id": "test-4-ed",
+              "text": "CHEAP (2–3 wks, ~€0): Case-study review — Davis, Life After Hate, CoSA, documented ED-scene callouts/callings-in from Transformative Justice literature. N≥20 cases, code for confront+support pattern + openness vs. defensive-escalation outcome.\n🚦 PASS: ≥40% of cases show opening from confront+support\n🚦 FAIL: Backfire dominates → confrontation modality is wrong; redesign to invitation-first (e.g. Mia Mingus 'leaving evidence' model)\n\nMEDIUM (2–3 mo, €5–15k): Small Berlin pilot — N=5–10 structured confront+support attempts, measure therapeutic-offer engagement within 2 weeks.\n🚦 PASS: ≥30% engagement",
+              "color": "#B2EBF2",
+              "title": "🧪 T4 — Confront+support opens rather than entrenches (CA1)",
+              "width": 272,
+              "yPosition": 680,
+              "connections": []
+            },
+            {
+              "id": "test-5-ed",
+              "text": "CHEAP (4 wks, ~€300–500): Baseline measurement in 2–3 Berlin ED communities — anonymous felt-safety survey of regulars (ARC3 adapted) + 'newcomer within last 6 months' tracking + informal mapping of named problem patterns by awareness teams.\n🚦 PASS: Baseline replacement rate measurable AND <50% of named problem patterns are from <6-month regulars (= not primarily a new-entrant problem)\n🚦 FAIL: Replacement rate dominates → shift strategy to entry-point interventions (first-timer orientation, event-level norms broadcasting) rather than individual-level treatment\n\n✅ BONUS: This test doubles as the pilot's pre-measurement — no wasted effort.",
+              "color": "#B2EBF2",
+              "title": "🧪 T5 — Replacement rate baseline (CA5) [also = pilot baseline]",
+              "width": 272,
+              "yPosition": 835,
+              "connections": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textSize": 1,
+  "curvature": 0.5,
+  "columnPadding": 48,
+  "sectionPadding": 48,
+  "_metadata": {
+    "exportedAt": "2026-10-18T00:39:01.324Z"
+  }
+}

@@ -1,0 +1,460 @@
+{
+  "color": "#2F2D2E",
+  "title": "Theory of Change: Preventing AfD Harm via Activism + NARM Therapy",
+  "sections": [
+    {
+      "title": "Inputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "input-narm",
+              "text": "Therapists skilled in NeuroAffective Relational Model who can hold a non-shaming container for people with heavy projection patterns.",
+              "color": "#E3F2FD",
+              "title": "NARM-trained practitioners willing to work with far-right figures",
+              "width": 192,
+              "yPosition": 401,
+              "connections": [
+                {
+                  "evidence": "NARM Training Institute (est. 2010 by Dr. Laurence Heller) has ~500+ certified practitioners globally; foundational text Heller & LaPierre (2012) 'Healing Developmental Trauma'. Political willingness untested — Solomonov & Barber (2018) found measurable countertransference in therapists treating ideologically-opposed clients.",
+                  "targetId": "output-support",
+                  "confidence": 45,
+                  "assumptions": "Enough practitioners exist AND are willing to engage ethically fraught clients; practitioners can bracket own political reactions sufficiently"
+                }
+              ]
+            },
+            {
+              "id": "input-activists",
+              "text": "People able to deliberately trigger a projecting figure AND stay in relationship to offer a bridge afterwards (your Aldi-conversation pattern).",
+              "color": "#E3F2FD",
+              "title": "Activists trained in 'confront + support' method",
+              "width": 192,
+              "yPosition": 53.22377422274276,
+              "connections": [
+                {
+                  "evidence": "Rare skill combo. Living proof-of-concept: Daryl Davis befriended ~200 KKK members leading to robe-handovers (presence-as-confrontation + genuine curiosity); Christian Picciolini's Life After Hate uses challenge+support model. Nonviolent Communication (Rosenberg) training shows empathic confrontation is teachable.",
+                  "targetId": "output-confront",
+                  "confidence": 45,
+                  "assumptions": "The Davis/Picciolini pattern generalises to a trainable protocol rather than being personality-dependent; activists willing to offer support after confrontation"
+                }
+              ]
+            },
+            {
+              "id": "input-funding",
+              "text": "Resources to run small-scale experiments (e.g. ecstatic dance test case) before scaling to political targets.",
+              "color": "#E3F2FD",
+              "title": "Small-scale test pilots e.g. ecstatic dance scene)",
+              "width": 192,
+              "yPosition": 698,
+              "connections": [
+                {
+                  "evidence": "Meta-crisis / dialogue funders exist",
+                  "targetId": "output-pilot",
+                  "confidence": 60,
+                  "assumptions": "Funders see value in testing mechanism on non-political cases first"
+                }
+              ]
+            },
+            {
+              "id": "input-access",
+              "text": "People trusted by AfD-adjacent networks who can broker contact (Mehr Demokratie / Braver Angels DE have shown this is possible).",
+              "color": "#E3F2FD",
+              "title": "Intermediary access brokers",
+              "width": 192,
+              "yPosition": 222.15219402150768,
+              "connections": [
+                {
+                  "evidence": "Candidate broker routes in DE: Mehr Demokratie / Braver Angels DE (voter-level piloted), Miteinander e.V. / David Begrich (Sachsen-Anhalt expertise), academic brokers Hajo Funke and Oliver Decker (Leipzig). No confirmed broker route to federal AfD leaders yet.",
+                  "targetId": "output-confront",
+                  "confidence": 50,
+                  "assumptions": "Brokers remain willing to broker contact for a confrontational purpose; AfD figures don't blanket-refuse once brokered"
+                },
+                {
+                  "evidence": "Same broker channels (Mehr Demokratie, Miteinander, academics) can likely facilitate the follow-on therapeutic offer; sequencing confrontation → support within one relational channel is novel",
+                  "targetId": "output-support",
+                  "confidence": 50,
+                  "assumptions": "The same relational channel used for confrontation can be used to deliver the support offer; leaders don't refuse support purely because activists accessed them"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outputs",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "output-confront",
+              "text": "Direct, personal challenge that destabilises the leader's defensive structure — not public shaming, but intimate confrontation that lands.",
+              "color": "#FFF3E0",
+              "title": "Triggering personal confrontations with AfD leaders",
+              "width": 192,
+              "yPosition": 100,
+              "connections": [
+                {
+                  "evidence": "Triggering is easy; opening vs. closing is the real question. ⚠️ Motivational Interviewing research (Miller & Rollnick 1983+) found confrontation historically counterproductive; 'rolling with resistance' outperforms. Reactance theory (Brehm 1966) predicts confrontation triggers reactance. COUNTER: Davis's curiosity-based confrontation works, but hard to scale.",
+                  "targetId": "outcome-pressure",
+                  "confidence": 55,
+                  "assumptions": "Confrontation must be relational/curious (not adversarial); leader perceives autonomy as preserved (MI research); boomerang/reactance effect is managed"
+                }
+              ]
+            },
+            {
+              "id": "output-support",
+              "text": "Immediate NARM-informed holding of the triggered material — the 'offer' half of the Aldi-pattern.",
+              "color": "#FFF3E0",
+              "title": "Therapeutic support offered post-trigger",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "NARM attunement is a replicable clinical skill (Heller & LaPierre 2012). Rogerian unconditional positive regard across difficult content is clinically documented. ⚠️ Solomonov & Barber (2018) found measurable political countertransference in therapists — attunement across ideological lines is harder than within-group.",
+                  "targetId": "outcome-heard",
+                  "confidence": 55,
+                  "assumptions": "NARM-style attunement is possible across political divides; practitioner has done sufficient own work on political reactivity; leader perceives attunement as genuine rather than strategic manipulation"
+                },
+                {
+                  "evidence": "Working alliance research (Bordin 1979; Horvath meta-analyses) shows trust can form in 1-3 sessions. High-defence populations typically need longer. Attachment literature on 'earned secure' (Mikulincer & Shaver) suggests slower timeline for deep structural change.",
+                  "targetId": "outcome-trust",
+                  "confidence": 40,
+                  "assumptions": "Trust can build in limited contact (not years of therapy); no early shame-rupture breaks the container; leader has some capacity for internal observation"
+                }
+              ]
+            },
+            {
+              "id": "output-pilot",
+              "text": "Low-stakes test cases where projecting actors harm a community but face no incentives to change — proving ground for the mechanism.",
+              "color": "#FFF3E0",
+              "title": "Preliminary evidence for critical assumptions",
+              "width": 192,
+              "yPosition": 698,
+              "connections": [
+                {
+                  "evidence": "No prior evidence yet — this IS the experiment; transfer across populations is the key uncertainty",
+                  "targetId": "outcome-pressure",
+                  "confidence": 35,
+                  "assumptions": "Methods calibrated on non-political cases (ecstatic dance / Aldi-type) actually transfer to political actors"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Outcomes",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "outcome-heard",
+              "text": "The therapeutic contact lands as genuine attunement — leaders experience being met in their anger/fear without judgement or political push-back.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders feel heard, validated, and seen in their emotions",
+              "width": 192,
+              "yPosition": 100,
+              "connections": [
+                {
+                  "evidence": "NARM clinical outcomes support attunement → defence softening (Heller & LaPierre 2012). Converging mechanisms: Internal Family Systems (Schwartz) and Polyvagal theory (Porges) support co-regulation → integration pathway. Evidence base is largely clinical/case-study, not RCT.",
+                  "targetId": "outcome-metabolize",
+                  "confidence": 35,
+                  "assumptions": "Feeling heard is a necessary precondition for defensive structures to soften; validation doesn't accidentally reinforce the projection itself"
+                }
+              ]
+            },
+            {
+              "id": "outcome-trust",
+              "text": "After one or more contained experiences, leaders develop a felt sense that engaging their rage/fear/shame won't destroy them or expose them socially.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders build trust that difficult emotions can be felt safely",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "Trust-building in therapeutic alliance is well-documented; speed with resistant populations is slower",
+                  "targetId": "outcome-metabolize",
+                  "confidence": 40,
+                  "assumptions": "Trust in the container generalises to willingness to meet very old pain; leader's attachment system is accessible (not fully foreclosed)"
+                }
+              ]
+            },
+            {
+              "id": "outcome-pressure",
+              "text": "Confrontation generates a motivational charge: the status quo feels less tolerable than engaging the therapeutic offer.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders feel sufficient discomfort/pressure to engage with their emotional material",
+              "width": 192,
+              "yPosition": 500,
+              "connections": [
+                {
+                  "evidence": "Motivational interviewing shows discomfort → engagement at modest rates; backfire common with hardened identities",
+                  "targetId": "outcome-metabolize",
+                  "confidence": 30,
+                  "assumptions": "Discomfort motivates deeper engagement rather than retreat into harder defences; pressure doesn't overwhelm the container's holding capacity"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "outcome-metabolize",
+              "text": "The core NARM move: rage/distrust/betrayal felt toward Greens, media, refugees is recognised as material from early relational wounding, and the emotion completes rather than discharges onto the projected target.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders locate anger/fear in psychological parents and metabolise the projection",
+              "width": 192,
+              "yPosition": 100,
+              "connections": [
+                {
+                  "evidence": "⚠️ CRITICAL: Every documented far-right elite exit — Megan Phelps-Roper (Westboro Baptist), Derek Black (white nationalism; Saslow 2018 'Rising Out of Hatred'), Christian Picciolini, Frank Meeink — had RELATIONSHIPS as primary driver, not therapy. Phelps-Roper = Twitter dialogue with Jewish/LGBTQ users; Black = Shabbat dinners at New College; Picciolini = unexpected customer interactions. No documented therapy-driven elite exit case. (This is why T1 is the falsification test.)",
+                  "targetId": "outcome-soften",
+                  "confidence": 25,
+                  "assumptions": "Psychological insight CAN translate to political-identity change WITHOUT a relational replacement for the ideological community (unproven — biggest bet in this ToC); leader's social/economic position doesn't force maintaining stance; metabolisation durable enough to withstand party pressure; inner-work mechanism is causally sufficient without the relationship-based mechanism that has historically worked"
+                }
+              ]
+            },
+            {
+              "id": "prereq-exit",
+              "text": "COM-B: Social Opportunity + Psychological Capability. Even a fully metabolised leader needs somewhere to go socially, economically, and identity-wise. EXIT-Deutschland model shows alternative community is the critical bottleneck for far-right exits — without a landing pad, inner shift doesn't translate to visible behaviour change. NOT addressed by this ToC.",
+              "color": "#FFF9C4",
+              "title": "⚠️ Prereq: Alternative belonging / exit ramp exists for softening leaders",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "EXIT-Deutschland programme landscape dominates German deradicalisation (64% of all initiatives) — exists precisely because alt-community/identity support is the bottleneck",
+                  "targetId": "outcome-soften",
+                  "confidence": 25,
+                  "assumptions": "Some form of landing pad is reachable for AfD leaders (unclear — most exit programs target street-level, not elite figures); without it this entire chain stalls at outcome-metabolise"
+                }
+              ]
+            },
+            {
+              "id": "prereq-party-env",
+              "text": "COM-B: Social Opportunity. Populist parties moderate when they take governmental responsibility (junior coalition / minority support), not in pure opposition. AfD is currently treated as untouchable → party machinery structurally punishes any individual softening. NOT addressed by this ToC — may be the single biggest external bottleneck.",
+              "color": "#FFF9C4",
+              "title": "⚠️ Prereq: Permissive party environment (inclusion-moderation)",
+              "width": 192,
+              "yPosition": 500,
+              "connections": [
+                {
+                  "evidence": "Inclusion-moderation thesis: RRPPs moderate as junior coalition members or minority-gov supporters (Swiss Political Science Review); cabinet parties substantially less uncivil (OR 0.62, populist gap wider)",
+                  "targetId": "outcome-soften",
+                  "confidence": 15,
+                  "assumptions": "AfD remains in pure opposition for the foreseeable future → party dynamics will punish softening leaders rather than follow them"
+                }
+              ]
+            },
+            {
+              "id": "prereq-incentives",
+              "text": "COM-B: Reflective Motivation. A softening leader currently faces: primary challenges from hardliners, loss of base donors, loss of media attention, loss of in-party status. Without changing the incentive structure, 'I felt it but I can't afford to show it' is the likely outcome. NOT addressed by this ToC.",
+              "color": "#FFF9C4",
+              "title": "⚠️ Prereq: Career/reputational incentives aligned with softening",
+              "width": 192,
+              "yPosition": 698,
+              "connections": [
+                {
+                  "evidence": "Elite incivility research: cabinet parties less uncivil (OR = 0.62), populism × opposition interaction OR = 1.61 (95% CI 1.26–2.06) — strong structural incentive effects on elite behaviour",
+                  "targetId": "outcome-soften",
+                  "confidence": 20,
+                  "assumptions": "Individual career incentives dominate over felt psychological shift when they conflict; no counterfactual incentive shifts (donor pressure, moderate-base signals, primary-direction challenges) emerge independently"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "outcome-soften",
+              "text": "Visible, public shift: fewer scapegoating statements, moderation of anti-migrant rhetoric, abstentions or no-votes on harmful policies.",
+              "color": "#E8F5E9",
+              "title": "AfD leaders soften their public positioning on harmful policies",
+              "width": 192,
+              "yPosition": 300,
+              "connections": [
+                {
+                  "evidence": "Party machines typically eject deviants. AfD-specific: internal moderates Jörg Meuthen and Frauke Petry were pushed out; party moved rightward over time (Schwarzbözl & Fatke 2016). Historical right-wing moderation cases (ÖVP, Fini's AN split from MSI, Vlaams Belang rebranding) show it's possible but required years + critical mass + external shock, not individual conversions.",
+                  "targetId": "goal-policy",
+                  "confidence": 20,
+                  "assumptions": "Either critical mass of leaders shift simultaneously (unlikely without broader movement) OR individual softening influences discourse without full capture OR softening leaders exit and start/join competing formations"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Goal",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "goal-policy",
+              "text": "Concrete legislative / rhetorical outcomes: fewer anti-migrant policies passed, less dehumanising discourse in parliament.",
+              "color": "#FCE4EC",
+              "title": "Harmful AfD policies based on scapegoating prevented or softened",
+              "width": 192,
+              "yPosition": 401,
+              "connections": [
+                {
+                  "evidence": "Policy → wellbeing link well-established for migrant populations (WHO migrant health research; Pew refugee integration studies). Harsh immigration policies have measurable mental and physical health effects on affected populations.",
+                  "targetId": "impact-wellbeing",
+                  "confidence": 70,
+                  "assumptions": "Policy change actually translates to lived experience change for affected populations"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Impact",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "impact-wellbeing",
+              "text": "Reduced suffering for refugees/minorities who would otherwise face scapegoating-based harm; also reduced suffering for people previously trapped in projection patterns.",
+              "color": "#F3E5F5",
+              "title": "Wellbeing improved for targeted groups AND formerly-projecting individuals",
+              "width": 192,
+              "yPosition": 401,
+              "connections": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Critical Assumptions",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "ca-1",
+              "text": "Covers: output-confront → outcome-pressure (55%) + outcome-pressure → outcome-metabolize (30%). The whole chain stakes everything on confrontation producing openness, not backfire.\n\n⚠️ CHALLENGE EVIDENCE: Motivational Interviewing (Miller & Rollnick) found confrontation historically counterproductive; 'rolling with resistance' outperforms. Reactance theory (Brehm 1966) predicts backfire.\n🟢 COUNTER-EVIDENCE: Daryl Davis's curiosity-based model worked for ~200 KKK exits.\n\n🔬 INDICATOR: % of pilot subjects who engage support offer within X days post-confrontation.\n🚦 PIVOT: <30% engagement → mechanism fails; need different confrontation modality.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA1: Confront-support combo opens rather than entrenches",
+              "width": 192,
+              "yPosition": 100,
+              "connections": []
+            },
+            {
+              "id": "ca-2",
+              "text": "Covers: output-support → outcome-heard (55%) + output-support → outcome-trust (40%). Can a therapist be genuinely present with a far-right figure? Does the leader perceive it as real or strategic?\n\n⚠️ CHALLENGE: Solomonov & Barber (2018) found measurable political countertransference in therapists treating ideologically-opposed clients. Cross-divide attunement is harder than within-group.\n🟢 FOUNDATION: Heller & LaPierre (2012) 'Healing Developmental Trauma'; Rogerian tradition supports unconditional positive regard as trainable.\n\n🔬 INDICATOR: Independent-rater coding of session audio + leader self-report 'felt-sense' scale.\n🚦 PIVOT: Consistent 'manipulative' coding or therapist countertransference → different practitioner profile or heavy supervision.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA2: NARM attunement works across the political divide",
+              "width": 192,
+              "yPosition": 300,
+              "connections": []
+            },
+            {
+              "id": "ca-3",
+              "text": "Covers: outcome-metabolize → outcome-soften (25%, downgraded). The single biggest internal leap.\n\n⚠️ MAJOR CHALLENGE EVIDENCE: Every documented far-right elite exit — Megan Phelps-Roper (Westboro), Derek Black (Saslow 2018 'Rising Out of Hatred'), Christian Picciolini, Frank Meeink — had RELATIONSHIPS as the primary driver, not therapy. Phelps-Roper via Twitter dialogue; Black via Shabbat dinners at New College; Picciolini via customer interactions. NO documented case of therapy-driven elite exit.\n\nThis means our ToC is betting on a mechanism that hasn't been shown to work alone, when a different mechanism (relationships) has been shown to work.\n\n🔬 INDICATOR: Pre/post rhetoric & voting records at 6, 12 mo post-metabolisation + qualitative interviews on what shifted.\n🚦 PIVOT: No shift at 12mo OR relationships keep showing up as the active ingredient → redesign ToC around relationships, not therapy.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA3: Psychological insight translates to political-identity shift [BIGGEST BET IN THE TOC]",
+              "width": 192,
+              "yPosition": 500,
+              "connections": []
+            },
+            {
+              "id": "ca-4",
+              "text": "Covers: input-access → output-confront (50%) + input-access → output-support (50%).\n\nCandidate broker routes in Germany:\n• Mehr Demokratie / Braver Angels DE (voter-level piloted)\n• Miteinander e.V. / David Begrich (Sachsen-Anhalt expertise)\n• Academic brokers: Hajo Funke, Oliver Decker (Leipzig)\n• No confirmed route to federal AfD leaders yet\n\n🔬 INDICATOR: Number of AfD figures (federal / state / local) willing to engage ≥1 deep contact per 6 months of broker effort.\n🚦 PIVOT: <2 senior figures per 6mo → narrow to mid-level cadres or state-level actors (feeds Narrow strategy already chosen).",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA4: Access to AfD leaders is reachable and sustainable",
+              "width": 192,
+              "yPosition": 698,
+              "connections": []
+            },
+            {
+              "id": "ca-5",
+              "text": "Covers: output-pilot → outcome-pressure (35%). The whole phased plan (pilot → narrow) assumes ecstatic-dance findings teach you something real about AfD leaders. The psychology may be too different.\n\n🔬 INDICATOR: Side-by-side mechanism audit comparing pilot outcomes to first political-leader attempts — same emotional dynamics, same opening/closing patterns?\n\n🚦 PIVOT: Mechanism breaks at political-scale → treat pilot as method-refinement only, not predictive evidence for the political ToC.",
+              "color": "#FFCDD2",
+              "title": "⚠️ CA5: Mechanism transfers from pilots to political actors",
+              "width": 192,
+              "yPosition": 900,
+              "connections": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Testing Plan",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "test-phase1",
+              "text": "All five cheap tests run in parallel within month 1. Each has a pre-committed threshold producing go/no-go.\n\nORDER: T1 → T2 → T3 → T4 → T5\n(T1 first because most likely to falsify the whole ToC; T5 last because it's the only one that costs money)\n\n🚦 GATE: Must pass ≥4 of 5 thresholds to proceed to Phase 2.",
+              "color": "#B2EBF2",
+              "title": "🧪 Phase 1 — Cheap tests (parallel, ~1 month, ~€500 total)",
+              "width": 192,
+              "yPosition": 100,
+              "connections": []
+            },
+            {
+              "id": "test-1",
+              "text": "CHEAP (2-3 wks, ~€0): Deep case review — Megan Phelps-Roper (Westboro), Derek Black, Christian Picciolini, Life After Hate alumni. Code mechanism: inner work vs. relationships vs. community vs. intellectual argument.\n🚦 PASS: Inner-work mechanism identifiable in ≥50% of exits\n🚦 FAIL: If relationships/community dominate → core ToC mechanism is wrong; redesign to centre relationships instead\n\nMEDIUM: 6-12 mo qualitative follow-up with any pilot subjects who metabolise.\n\n⚠️ MOST LIKELY TO FALSIFY WHOLE TOC — RUN THIS FIRST.",
+              "color": "#B2EBF2",
+              "title": "🧪 T1 — Insight → political shift (CA3) [FALSIFICATION TEST — DO FIRST]",
+              "width": 192,
+              "yPosition": 300,
+              "connections": []
+            },
+            {
+              "id": "test-2",
+              "text": "CHEAP (2 wks, ~€0): Theoretical structural comparison — map projection pattern + defence style + incentive context of ecstatic-dance predators vs AfD leaders. Expert panel review (3 reviewers).\n🚦 PASS: Core projection mechanism judged structurally comparable by ≥2 of 3 experts\n\nMEDIUM (6-12 mo, ~€0 marginal — rides on T3/T4 mediums): Side-by-side mechanism audit comparing ecstatic-dance pilot results to first political-leader attempts.\n🚦 PASS: Same emotional dynamics (opening/closing patterns) observed in both\n\nEXPENSIVE: Full pilot + full political attempts.",
+              "color": "#B2EBF2",
+              "title": "🧪 T2 — Pilot → political transfer (CA5)",
+              "width": 192,
+              "yPosition": 500,
+              "connections": []
+            },
+            {
+              "id": "test-3",
+              "text": "CHEAP (3-4 wks, ~€0): Stakeholder mapping — interview Mehr Demokratie, EXIT-Deutschland, Hajo Funke / David Begrich-type researchers re: who has AfD access and what works.\n🚦 PASS: ≥3 viable broker routes identified\n\nMEDIUM (3-6 mo, €2-5k): Direct broker-mediated outreach to 10-15 figures across seniority tiers; measure response + sustained-engagement rates.\n🚦 PASS: ≥20% response rate at any seniority tier\n\nEXPENSIVE: Full broker program.",
+              "color": "#B2EBF2",
+              "title": "🧪 T3 — Access reachable (CA4)",
+              "width": 192,
+              "yPosition": 698,
+              "connections": []
+            },
+            {
+              "id": "test-4",
+              "text": "CHEAP (2 wks, ~€0): Case-study review of Daryl Davis, Life After Hate, EXIT-DE alumni, Picciolini. Code N≥20 cases for confront+support pattern & openness outcome.\n🚦 PASS: ≥40% of cases show openness from confront+support\n\nMEDIUM (2-3 mo, €5-15k): Ecstatic-dance pilot — N=5-10 attempts, measure support-offer engagement within 2 wks.\n🚦 PASS: ≥30% engagement\n\nEXPENSIVE: Structured attempts with mid-level AfD cadres.",
+              "color": "#B2EBF2",
+              "title": "🧪 T4 — Confront+support opens (CA1)",
+              "width": 192,
+              "yPosition": 900,
+              "connections": []
+            },
+            {
+              "id": "test-5",
+              "text": "CHEAP (3-4 wks, ~€500): Semi-structured interviews with 5-8 NARM practitioners re: hardest/most ideologically-opposed clients.\n🚦 PASS: ≥3 practitioners report sustained genuine attunement with ideologically opposed clients\n\nMEDIUM (1-3 mo, €3-8k): Role-play sessions with NARM practitioners + trained actors as hardened AfD figures. 3-5 sessions, independently rated for attunement quality.\n🚦 PASS: ≥60% of sessions rated 'genuinely attuned'\n\nEXPENSIVE: Real sessions with real leaders.",
+              "color": "#B2EBF2",
+              "title": "🧪 T5 — NARM across divide (CA2) [only test that costs money]",
+              "width": 192,
+              "yPosition": 1100,
+              "connections": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textSize": 1,
+  "curvature": 0.5,
+  "columnPadding": 48,
+  "sectionPadding": 48,
+  "_metadata": {
+    "exportedAt": "2026-10-17T22:02:26.169Z"
+  }
+}

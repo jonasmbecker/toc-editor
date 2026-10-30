@@ -1,0 +1,235 @@
+/* Connection Details panel: confidence, direction and field chrome. */
+
+.toc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e2ded6;
+}
+
+.toc-field__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.toc-field__hint {
+  font-size: 11px;
+  color: #6b6966;
+  opacity: 0.85;
+  text-align: right;
+}
+
+.toc-field__hint--left {
+  text-align: left;
+}
+
+.toc-field__note {
+  margin: 0;
+  font-size: 12px;
+  color: #6b6966;
+}
+
+.toc-field__value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2f2d2e;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #eeebe4;
+}
+
+.toc-field--unrated .toc-field__value {
+  color: #6b6966;
+  font-weight: 500;
+}
+
+.toc-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  --toc-fill: 50%;
+}
+
+.toc-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #2f2d2e 0 var(--toc-fill), #e2ded6 var(--toc-fill) 100%);
+}
+
+.toc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid #2f2d2e;
+  box-shadow: 0 1px 3px rgba(47, 45, 46, 0.25);
+}
+
+.toc-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: #e2ded6;
+}
+
+.toc-slider::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: #2f2d2e;
+}
+
+.toc-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1.5px solid #2f2d2e;
+  box-shadow: 0 1px 3px rgba(47, 45, 46, 0.25);
+}
+
+.toc-slider:focus-visible {
+  outline: none;
+}
+
+.toc-slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.toc-field--unrated .toc-slider::-webkit-slider-runnable-track {
+  background: #e2ded6;
+}
+
+.toc-field--unrated .toc-slider::-webkit-slider-thumb {
+  border: 1.5px dashed #b9b4ab;
+  background: #faf8f4;
+}
+
+.toc-field--unrated .toc-slider::-moz-range-progress {
+  background: #e2ded6;
+}
+
+.toc-field--unrated .toc-slider::-moz-range-thumb {
+  border: 1.5px dashed #b9b4ab;
+  background: #faf8f4;
+}
+
+.toc-band {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #2f2d2e;
+}
+
+.toc-band .toc-swatch-line {
+  margin-top: 4px;
+}
+
+.toc-linkbtn {
+  align-self: flex-start;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b6966;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.toc-linkbtn:hover {
+  color: #2f2d2e;
+}
+
+/* "Between": first card, direction control, second card. DOM order is first, second, control
+   (Tab reaches both cards first); `order` puts the control visually in the middle. */
+.toc-between {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toc-between__first {
+  order: 1;
+}
+
+.toc-between__middle {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.toc-between__second {
+  order: 3;
+}
+
+.toc-direction {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toc-segmented {
+  display: flex;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #e2ded6;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.toc-segmented__option {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b6966;
+  cursor: pointer;
+  transition:
+    background 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    color 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-segmented__option:hover {
+  background: #eeebe4;
+  color: #2f2d2e;
+}
+
+.toc-segmented__option.is-selected {
+  background: #2f2d2e;
+  color: #fff;
+}
+
+.toc-segmented__option:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.toc-direction__sentence {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #2f2d2e;
+}
