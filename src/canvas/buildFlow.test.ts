@@ -136,3 +136,34 @@ describe('buildFlow: edge marker colour follows edgeAppearance', () => {
     expect(edges[0].markerEnd).toMatchObject({ color: '#C2410C' })
   })
 })
+
+describe('buildFlow: stepped edges stagger their vertical runs', () => {
+  const doc = loadFixture('theory-of-metacrisis-status-quo_v1.json')
+  const { nodes, edges } = buildFlow(doc)
+  const xOf = new Map(nodes.map((n) => [n.id, n.position.x]))
+  const stepped = edges.filter((e) => e.data?.stepX !== undefined)
+
+  it('gives every forward flow edge a run strictly between its two columns', () => {
+    expect(stepped.length).toBeGreaterThan(0)
+    for (const edge of stepped) {
+      expect(edge.data!.stepX!).toBeGreaterThan(xOf.get(edge.source)!)
+      expect(edge.data!.stepX!).toBeLessThan(xOf.get(edge.target)!)
+    }
+  })
+
+  it('shares a run within one fan-out and separates different sources into one column', () => {
+    const runs = new Map<string, Set<number>>()
+    for (const edge of stepped) {
+      const key = `${edge.source}|${xOf.get(edge.target)}`
+      runs.set(key, (runs.get(key) ?? new Set()).add(edge.data!.stepX!))
+    }
+    for (const xs of runs.values()) expect(xs.size).toBe(1)
+    const byColumn = new Map<number, Map<string, number>>()
+    for (const edge of stepped) {
+      const col = byColumn.get(xOf.get(edge.target)!) ?? new Map()
+      col.set(edge.source, edge.data!.stepX!)
+      byColumn.set(xOf.get(edge.target)!, col)
+    }
+    for (const col of byColumn.values()) expect(new Set(col.values()).size).toBe(col.size)
+  })
+})
