@@ -77,21 +77,22 @@
 /* Connection handles: 16px dots on the card's left (target) and right (source) edge, hidden
    until the card is hovered on a fine pointer or is an endpoint of the selected edge; while a
    drag is in progress every target handle shows so the user can see where a drop lands. */
+/* The handle element itself never changes size or transform: React Flow anchors an edge to the
+   handle's measured box (scaled position, unscaled size), so scaling it would move the line.
+   Every visible change happens on the pseudo-elements instead. */
 .toc-card__handle.react-flow__handle {
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border: 2px solid #2563eb;
-  box-shadow: 0 1px 3px rgba(47, 45, 46, 0.25);
+  --toc-handle-scale: 0.6;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: 0;
   cursor: crosshair;
   /* Fixed distance from the top (CARD_ANCHOR_Y in anchors.ts), not the vertical centre. */
   top: 22px;
   opacity: 0;
-  transform: translate(0, -50%) scale(calc(0.6 * var(--toc-handle-boost, 1)));
-  transition:
-    opacity 120ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
-    background 120ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translate(0, -50%);
+  transition: opacity 120ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .toc-card__handle.react-flow__handle-left {
@@ -102,37 +103,46 @@
   right: -9px;
 }
 
-/* A 32px invisible hit area around the 16px dot, so a drag starts on the first try. Every handle
-   scale is multiplied by --toc-handle-boost (set by ZoomMarker), which grows the handle up to
-   1.6x when zoomed out so it stays a real target at fit-to-screen. */
+/* A 32px invisible hit area around the dot, so a drag starts on the first try. It and the dot
+   are multiplied by --toc-handle-boost (set by ZoomMarker), which grows them up to 1.6x when
+   zoomed out so the handle stays a real target at fit-to-screen. */
 .toc-card__handle.react-flow__handle::before {
   content: '';
   position: absolute;
-  inset: -8px;
+  inset: -6px;
+  transform: scale(var(--toc-handle-boost, 1));
 }
 
-/* 'Drag to connect' cue: a chevron inside the source (right) handle. */
-.toc-card__handle.react-flow__handle-right::after {
+/* The visible dot, scaled per state through --toc-handle-scale. */
+.toc-card__handle.react-flow__handle::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  border-top: 2px solid #2563eb;
-  border-right: 2px solid #2563eb;
-  transform: translate(-65%, -50%) rotate(45deg);
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: #fff no-repeat center / 10px 10px;
+  border: 2px solid #2563eb;
+  box-shadow: 0 1px 3px rgba(47, 45, 46, 0.25);
+  transform: scale(calc(var(--toc-handle-scale) * var(--toc-handle-boost, 1)));
+  transition:
+    transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 120ms cubic-bezier(0.23, 1, 0.32, 1);
   pointer-events: none;
 }
 
+/* 'Drag to connect' cue: a chevron inside the source (right) dot. */
+.toc-card__handle.react-flow__handle-right::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.5 2 6.5 5 3.5 8' fill='none' stroke='%232563eb' stroke-width='2'/%3E%3C/svg%3E");
+}
+
 .toc-card__handle.react-flow__handle-right.connectingfrom::after {
-  border-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.5 2 6.5 5 3.5 8' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E");
 }
 
 @media (hover: hover) and (pointer: fine) {
   .toc-card:hover .toc-card__handle.react-flow__handle {
+    --toc-handle-scale: 1;
     opacity: 1;
-    transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
   }
 }
 
@@ -140,21 +150,22 @@
 .toc-endpoint .toc-card__handle.react-flow__handle,
 .toc-stage--connecting .toc-card__handle.react-flow__handle-left,
 .toc-card__handle.react-flow__handle.connectingfrom {
+  --toc-handle-scale: 1;
   opacity: 1;
-  transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
 }
 
-.toc-card__handle.react-flow__handle.connectingfrom,
-.toc-card__handle.react-flow__handle.connectingto.valid {
-  background: #2563eb;
+.toc-card__handle.react-flow__handle.connectingfrom::after,
+.toc-card__handle.react-flow__handle.connectingto.valid::after {
+  background-color: #2563eb;
 }
 
 .toc-card__handle.react-flow__handle.connectingto.valid {
-  transform: translate(0, -50%) scale(calc(1.4 * var(--toc-handle-boost, 1)));
+  --toc-handle-scale: 1.4;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .toc-card__handle.react-flow__handle {
+  .toc-card__handle.react-flow__handle,
+  .toc-card__handle.react-flow__handle::after {
     transition: none;
   }
 }
@@ -169,4 +180,10 @@
   opacity: 0;
   pointer-events: none;
   border: 0;
+}
+
+/* Level with the ordinary handles (CARD_ANCHOR_Y), so a loop's angle never follows the height. */
+.toc-card__loop-handle.react-flow__handle-left,
+.toc-card__loop-handle.react-flow__handle-right {
+  top: 22px;
 }

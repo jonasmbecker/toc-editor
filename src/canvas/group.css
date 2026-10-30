@@ -45,7 +45,9 @@
 }
 
 /* Level with the group title (GROUP_ANCHOR_Y in anchors.ts). */
-.toc-group .toc-card__handle.react-flow__handle {
+.toc-group .toc-card__handle.react-flow__handle,
+.toc-group .toc-card__loop-handle.react-flow__handle-left,
+.toc-group .toc-card__loop-handle.react-flow__handle-right {
   top: 18px;
 }
 
@@ -53,20 +55,20 @@
    connection is being dragged. */
 @media (hover: hover) and (pointer: fine) {
   .toc-group:hover .toc-card__handle.react-flow__handle {
+    --toc-handle-scale: 1;
     opacity: 1;
-    transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
   }
 }
 
 .toc-group--selected .toc-card__handle.react-flow__handle,
 .toc-endpoint .toc-group .toc-card__handle.react-flow__handle {
+  --toc-handle-scale: 1;
   opacity: 1;
-  transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
 }
 
 .toc-stage--connecting .toc-group .toc-card__handle.react-flow__handle-left {
+  --toc-handle-scale: 1;
   opacity: 1;
-  transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
 }
 
 /* Zoomed out: only the title. */
