@@ -20,6 +20,8 @@ import { GroupNode } from './GroupNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { LoopEdge } from './LoopEdge'
 import { Legend } from './Legend'
+import { TidyButton } from './TidyButton'
+import { SnapGuide } from './SnapGuide'
 import { CanvasTopBar } from './CanvasTopBar'
 import { NodePanel } from '../panels/NodePanel'
 import { NodeReadPanel } from '../panels/NodeReadPanel'
@@ -131,7 +133,9 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           onNodesChange={flow.onNodesChange}
           onEdgesChange={flow.onEdgesChange}
           onSelectionChange={flow.onSelectionChange}
+          onNodeDragStart={flow.onNodeDragStart}
           onNodeDragStop={flow.onNodeDragStop}
+          onInit={flow.onInit}
           onConnect={connect.onConnect}
           onConnectStart={connect.onConnectStart}
           onConnectEnd={connect.onConnectEnd}
@@ -153,6 +157,8 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           <Controls showInteractive={false} />
           <MiniMap pannable zoomable nodeColor={minimapColor} />
           <ZoomMarker />
+          {isReadOnly ? null : <TidyButton />}
+          <SnapGuide guide={flow.guide} />
         </ReactFlow>
         <Legend />
         <SelectionPanels />

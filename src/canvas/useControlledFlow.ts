@@ -8,6 +8,8 @@ import {
 import type { ToCDocument } from '../model/schema'
 import { useToCStore } from '../state/store'
 import { moveNodeToColumn, moveNodeVertically } from '../state/nodes'
+import { findNodeLocation } from '../state/tree'
+import { useStraightSnap } from './useStraightSnap'
 import { resolveDropTarget, snapYPosition } from './dragSnap'
 import { HEADER_CLEARANCE } from '../layout/columns'
 import type { FlowGraph } from './buildFlow'
@@ -34,6 +36,7 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
   const selectConnection = useToCStore((state) => state.selectConnection)
   const transform = useToCStore((state) => state.transform)
 
+  const snap = useStraightSnap(graph)
   const [nodes, setNodes, onNodesChange] = useNodesState<FlowNode>(graph.nodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState<ConnectionEdgeType>(graph.edges)
 
@@ -81,7 +84,17 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
       if (node.type !== 'card') return
       const centerX = node.position.x + (node.width ?? 0) / 2
       const target = resolveDropTarget(doc, centerX)
-      const yPosition = snapYPosition(node.position.y - HEADER_CLEARANCE)
+      const location = findNodeLocation(doc, node.id)
+      const kept = snap.finish(node.id)
+      const staysPut =
+        location?.sectionIndex === target.sectionIndex &&
+        location.columnIndex === target.columnIndex
+      // A drop that held a straight-link snap keeps its exact height (rounding to the grid would
+      // bend the line again), unless the card was carried to another column.
+      const yPosition =
+        kept !== null && staysPut
+          ? Math.max(0, kept - HEADER_CLEARANCE)
+          : snapYPosition(node.position.y - HEADER_CLEARANCE)
       transform(`move ${node.id}`, (document) => {
         const moved = moveNodeToColumn(document, node.id, target.sectionIndex, target.columnIndex)
         return moveNodeVertically(moved, node.id, yPosition)
@@ -92,18 +105,18 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
       // back explicitly.
       if (useToCStore.getState().document === doc) resync()
     },
-    [doc, transform, resync],
+    [doc, transform, resync, snap],
   )
 
   // Card heights arrive after the first render; re-fit group containers whenever they do.
   const onNodesChangeFitted: typeof onNodesChange = useCallback(
     (changes) => {
-      onNodesChange(changes)
+      onNodesChange(snap.applyTo(changes))
       if (changes.some((change) => change.type === 'dimensions')) {
         setNodes((current) => fitGroupHeights(current))
       }
     },
-    [onNodesChange, setNodes],
+    [onNodesChange, setNodes, snap],
   )
 
   return {
@@ -112,6 +125,9 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     onNodesChange: onNodesChangeFitted,
     onEdgesChange,
     onSelectionChange,
+    onNodeDragStart: snap.onNodeDragStart,
     onNodeDragStop,
+    onInit: snap.onInit,
+    guide: snap.guide,
   }
 }

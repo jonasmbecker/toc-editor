@@ -1,0 +1,117 @@
+import { describe, expect, it } from 'vitest'
+import { alignDocument, DEFAULT_CARD_HEIGHT, TIDY_GAP } from './align'
+import { GROUP_HEAD } from '../canvas/groupFlow'
+import { GROUP_KIND, type Connection, type DocumentNode, type ToCDocument } from '../model/schema'
+import { allNodes, nodeAt } from '../state/tree'
+import { makeDocument, makeNode } from '../test/fixtures'
+import { statusQuoMetacrisis } from '../templates'
+
+const link = (targetId: string): Connection => ({ targetId, assumptions: '', evidence: '' })
+
+function yOf(doc: ToCDocument, id: string): number {
+  return nodeAt(doc, id)!.yPosition
+}
+
+function overlaps(doc: ToCDocument): string[] {
+  const found: string[] = []
+  for (const section of doc.sections) {
+    for (const column of section.columns) {
+      const cards = column.nodes.filter((n) => n.kind !== GROUP_KIND && !n.groupId)
+      const sorted = [...cards].sort((a, b) => a.yPosition - b.yPosition)
+      for (let i = 1; i < sorted.length; i++) {
+        if (sorted[i].yPosition < sorted[i - 1].yPosition + DEFAULT_CARD_HEIGHT) {
+          found.push(`${sorted[i - 1].id}/${sorted[i].id}`)
+        }
+      }
+    }
+  }
+  return found
+}
+
+describe('alignDocument', () => {
+  it('puts a single in/out pair level', () => {
+    const doc = makeDocument(
+      [makeNode('a', [link('b')], { yPosition: 400 })],
+      [makeNode('b', [], { yPosition: 0 })],
+    )
+    const out = alignDocument(doc)
+    expect(yOf(out, 'a')).toBe(yOf(out, 'b'))
+  })
+
+  it('levels a fan-out target with its mean source position, without overlap', () => {
+    const doc = makeDocument(
+      [makeNode('src', [link('t1'), link('t2'), link('t3')], { yPosition: 0 })],
+      [
+        makeNode('t1', [], { yPosition: 0 }),
+        makeNode('t2', [], { yPosition: 10 }),
+        makeNode('t3', [], { yPosition: 20 }),
+      ],
+    )
+    const out = alignDocument(doc)
+    expect(overlaps(out)).toEqual([])
+    const ys = ['t1', 't2', 't3'].map((id) => yOf(out, id))
+    expect(ys[1] - ys[0]).toBeGreaterThanOrEqual(DEFAULT_CARD_HEIGHT + TIDY_GAP - 8)
+    // The source sits near the middle of its targets.
+    expect(Math.abs(yOf(out, 'src') - ys[1])).toBeLessThanOrEqual(8)
+  })
+
+  it('orders a column by where its neighbours are', () => {
+    const doc = makeDocument(
+      [
+        makeNode('top', [link('x')], { yPosition: 0 }),
+        makeNode('bottom', [link('y')], { yPosition: 200 }),
+      ],
+      [makeNode('x', [], { yPosition: 400 }), makeNode('y', [], { yPosition: 0 })],
+    )
+    const out = alignDocument(doc)
+    expect(yOf(out, 'y')).toBeLessThan(yOf(out, 'x'))
+    expect(yOf(out, 'bottom')).toBeLessThan(yOf(out, 'top'))
+  })
+
+  it('is deterministic and returns the input itself when nothing needs to move', () => {
+    const doc = statusQuoMetacrisis()
+    expect(alignDocument(doc)).toEqual(alignDocument(doc))
+    const level = makeDocument([makeNode('a')])
+    expect(alignDocument(level)).toBe(level)
+  })
+
+  it('lifts the diagram so its highest card sits at 0 and no yPosition is negative', () => {
+    const doc = makeDocument([makeNode('a', [], { yPosition: 300 })])
+    expect(yOf(alignDocument(doc), 'a')).toBe(0)
+  })
+
+  it('keeps a group together, its cards in order, and levels a card of it with its neighbour', () => {
+    const group: DocumentNode = makeNode('g', [], { yPosition: 100 })
+    group.kind = GROUP_KIND
+    const m1 = { ...makeNode('m1', [], { yPosition: 100 }), groupId: 'g' }
+    const m2 = { ...makeNode('m2', [link('t')], { yPosition: 220 }), groupId: 'g' }
+    const doc = makeDocument([group, m1, m2], [makeNode('t', [], { yPosition: 0 })])
+    const out = alignDocument(doc)
+    expect(yOf(out, 'm1')).toBeLessThan(yOf(out, 'm2'))
+    expect(yOf(out, 'g')).toBe(yOf(out, 'm1'))
+    expect(Math.abs(yOf(out, 'm2') - yOf(out, 't'))).toBeLessThanOrEqual(DEFAULT_CARD_HEIGHT / 2)
+    expect(yOf(out, 'm1')).toBeGreaterThanOrEqual(GROUP_HEAD)
+  })
+
+  it('uses measured heights to centre cards of different heights', () => {
+    const doc = makeDocument(
+      [makeNode('a', [link('b')], { yPosition: 300 })],
+      [makeNode('b', [], { yPosition: 0 })],
+    )
+    const out = alignDocument(doc, {
+      heights: new Map([
+        ['a', 160],
+        ['b', 80],
+      ]),
+    })
+    // Centres match (a is 160 tall, b is 80 tall), within the 8px grid.
+    expect(Math.abs(yOf(out, 'a') + 80 - (yOf(out, 'b') + 40))).toBeLessThanOrEqual(8)
+  })
+
+  it('does not move connections within a column and never loses a card', () => {
+    const doc = statusQuoMetacrisis()
+    const out = alignDocument(doc)
+    expect(allNodes(out).map((n) => n.id)).toEqual(allNodes(doc).map((n) => n.id))
+    expect(allNodes(out).every((n) => n.yPosition >= 0)).toBe(true)
+  })
+})
