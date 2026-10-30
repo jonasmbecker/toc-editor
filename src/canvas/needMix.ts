@@ -13,8 +13,9 @@ import type { ToCDocument } from '../model/schema'
  * group's mix.
  */
 
-/** Okabe-Ito colours, chosen to stay apart for the common kinds of colour blindness. */
-export const NEED_PALETTE = ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#F0E442'] as const
+/** Chosen to look good on the warm canvas, not for colour-blind safety (Jonas's call): calm blue,
+ * amber, sage green, amethyst and rose, in the order of Brown's needs. */
+export const NEED_PALETTE = ['#3B6FB6', '#E8A33D', '#3FA37A', '#8E5CB5', '#E5567B'] as const
 
 /** Share of each need in a card, by need index; shares sum to 1. */
 export type NeedMix = number[]
