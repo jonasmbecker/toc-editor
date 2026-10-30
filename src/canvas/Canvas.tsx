@@ -152,7 +152,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           // group's container over its own cards.
           elevateNodesOnSelect={false}
           fitView
-          fitViewOptions={{ padding: 0.1 }}
+          fitViewOptions={{ padding: 0.03 }}
           minZoom={0.1}
           maxZoom={2.5}
         >

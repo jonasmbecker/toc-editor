@@ -707,7 +707,7 @@
               "title": "Great power war / violence / genocide",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 90,
+              "yPosition": 120,
               "provenance": "verbatim",
               "connections": []
             },
@@ -717,7 +717,7 @@
               "title": "Extinction risk tech",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 180,
+              "yPosition": 230,
               "provenance": "verbatim",
               "connections": []
             },
@@ -727,7 +727,7 @@
               "title": "Climate breakdown",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 270,
+              "yPosition": 315,
               "provenance": "verbatim",
               "connections": []
             },
@@ -737,7 +737,7 @@
               "title": "Meaning crisis",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 360,
+              "yPosition": 400,
               "provenance": "verbatim",
               "connections": []
             },
@@ -747,7 +747,7 @@
               "title": "Pollution",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 450,
+              "yPosition": 459,
               "provenance": "verbatim",
               "connections": []
             },
@@ -757,7 +757,7 @@
               "title": "Resource & hydrocarbon depletion",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 540,
+              "yPosition": 518,
               "provenance": "verbatim",
               "connections": []
             },
@@ -767,7 +767,7 @@
               "title": "Ecocide",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 630,
+              "yPosition": 628,
               "provenance": "verbatim",
               "connections": []
             },
@@ -777,7 +777,7 @@
               "title": "Sexual assault",
               "color": "#FCE4EC",
               "width": 220,
-              "yPosition": 720,
+              "yPosition": 687,
               "provenance": "verbatim",
               "connections": []
             }

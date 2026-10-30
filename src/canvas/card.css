@@ -24,10 +24,11 @@
 }
 
 .toc-card__title {
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.22;
   overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .toc-card__text {
