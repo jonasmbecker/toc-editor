@@ -77,41 +77,33 @@
   border-color: #2f2d2e;
 }
 
-/* Need colour look switch, beside the minimap toggle's corner. */
+/* Need colours on/off switch, above the minimap toggle. */
 .toc-need-switch {
   position: absolute;
   right: 16px;
   bottom: 64px;
   z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid #e2ded6;
   border-radius: 999px;
-  padding: 4px 6px 4px 12px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  padding: 6px 14px;
   color: #6b6966;
-}
-
-.toc-need-switch button {
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 600;
-  border: 0;
-  border-radius: 999px;
-  padding: 4px 10px;
-  background: transparent;
-  color: #2f2d2e;
   cursor: pointer;
 }
 
-.toc-need-switch button[aria-pressed='true'] {
-  background: #2f2d2e;
-  color: #fff;
+.toc-need-switch[aria-pressed='true'] {
+  color: #2f2d2e;
+  border-color: #2f2d2e;
+}
+
+.toc-legend__need {
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  border-radius: 2px;
+  margin: 0 10px 0 18px;
+  vertical-align: middle;
 }

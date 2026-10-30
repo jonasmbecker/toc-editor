@@ -61,6 +61,15 @@ describe('computeNeedMixes', () => {
     expect(mixes.get('d1')).toEqual([0.5, 0.5])
   })
 
+  it('weights each arrow by its confidence', () => {
+    const d = doc()
+    d.sections[1].columns[0].nodes[1].connections[0].confidence = 90 // s2 -> d1 (need 2)
+    d.sections[1].columns[0].nodes[0].connections[0].confidence = 10 // s1 -> d1 (need 1)
+    const mix = computeNeedMixes(d).mixes.get('d1')!
+    expect(mix[1]).toBeCloseTo(0.9)
+    expect(mix[0]).toBeCloseTo(0.1)
+  })
+
   it('leaves a card without a parent need uncoloured and ignores backward arrows', () => {
     const { mixes } = computeNeedMixes(doc())
     expect(mixes.has('s4')).toBe(false)

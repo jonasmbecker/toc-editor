@@ -20,7 +20,8 @@ import { GroupNode } from './GroupNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { LoopEdge } from './LoopEdge'
 import { Legend } from './Legend'
-import { NeedLookSwitch } from './needLook'
+import { NeedColoursSwitch } from './needLook'
+import { computeNeedMixes } from './needMix'
 import { tidyLayout } from './tidyLayout'
 import { SnapGuide } from './SnapGuide'
 import { CanvasTopBar } from './CanvasTopBar'
@@ -116,6 +117,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
   const doc = useToCStore((state) => state.document)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
   const graph = useMemo(() => buildFlow(doc), [doc])
+  const needs = useMemo(() => computeNeedMixes(doc).needs, [doc])
   const flow = useControlledFlow(doc, graph)
   const connect = useConnectFlow()
   const [showMinimap, setShowMinimap] = useState(false)
@@ -168,8 +170,8 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           <ZoomMarker />
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
-        <Legend />
-        <NeedLookSwitch />
+        <Legend needs={needs} />
+        <NeedColoursSwitch />
         <button
           type="button"
           className="toc-minimap-toggle"

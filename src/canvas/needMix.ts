@@ -6,7 +6,7 @@ import type { ToCDocument } from '../model/schema'
  * The needs are the cards of the first column of the first section (Daniel Brown's five). A
  * card in the next column of that section is the same need seen through NARM, so it takes the
  * seed of the card level with it. Every card further right gets a mix: the average of the mixes
- * of the cards with an arrow into it, so a card fed by two strategies that stem from different
+ * of the cards with an arrow into it, weighted by each arrow's confidence, so a card fed by two strategies that stem from different
  * needs shows both. Only forward arrows (into a later column, or down the same column) are followed, which keeps the
  * trace free of cycles, so feedback loops never change a colour.
  */
@@ -32,7 +32,13 @@ interface Placed {
   section: number
   column: number
   groupId?: string
-  targets: string[]
+  targets: { id: string; weight: number }[]
+}
+
+/** How strongly an arrow carries its source's needs: its confidence, with a floor so a
+ * 0% arrow still shows a trace, and unrated arrows counting as medium. */
+function arrowWeight(confidence: number | undefined): number {
+  return Math.max(confidence ?? 50, 5) / 100
 }
 
 function placeNodes(doc: ToCDocument): Placed[] {
@@ -48,7 +54,10 @@ function placeNodes(doc: ToCDocument): Placed[] {
           section: s,
           column: c,
           groupId: node.groupId,
-          targets: node.connections.map((connection) => connection.targetId),
+          targets: node.connections.map((connection) => ({
+            id: connection.targetId,
+            weight: arrowWeight(connection.confidence),
+          })),
         }),
       ),
     ),
@@ -68,10 +77,12 @@ function unit(index: number, size: number): NeedMix {
   return Array.from({ length: size }, (_, i) => (i === index ? 1 : 0))
 }
 
-function average(mixes: NeedMix[], size: number): NeedMix {
-  const sum = new Array<number>(size).fill(0)
-  for (const mix of mixes) mix.forEach((share, i) => (sum[i] += share / mixes.length))
-  return sum
+function weightedAverage(parents: { mix: NeedMix; weight: number }[], size: number): NeedMix {
+  const total = parents.reduce((sum, parent) => sum + parent.weight, 0)
+  const result = new Array<number>(size).fill(0)
+  for (const { mix, weight } of parents)
+    mix.forEach((share, i) => (result[i] += (share * weight) / total))
+  return result
 }
 
 export function computeNeedMixes(doc: ToCDocument): NeedMixResult {
@@ -94,22 +105,23 @@ export function computeNeedMixes(doc: ToCDocument): NeedMixResult {
   }
 
   const byId = new Map(placed.map((p) => [p.id, p]))
-  const incoming = new Map<string, string[]>()
+  const incoming = new Map<string, { id: string; weight: number }[]>()
   for (const source of placed) {
-    for (const targetId of source.targets) {
+    for (const { id: targetId, weight } of source.targets) {
       const target = byId.get(targetId)
       if (!target || !isForward(source, target)) continue
-      incoming.set(targetId, [...(incoming.get(targetId) ?? []), source.id])
+      incoming.set(targetId, [...(incoming.get(targetId) ?? []), { id: source.id, weight }])
     }
   }
 
   const ordered = [...placed].sort((a, b) => a.rank - b.rank || a.yPosition - b.yPosition)
   for (const node of ordered) {
     if (mixes.has(node.id)) continue
-    const parents = (incoming.get(node.id) ?? [])
-      .map((id) => mixes.get(id))
-      .filter((mix): mix is NeedMix => !!mix)
-    if (parents.length > 0) mixes.set(node.id, average(parents, needs.length))
+    const parents = (incoming.get(node.id) ?? []).flatMap(({ id, weight }) => {
+      const mix = mixes.get(id)
+      return mix ? [{ mix, weight }] : []
+    })
+    if (parents.length > 0) mixes.set(node.id, weightedAverage(parents, needs.length))
   }
   // A card in a group with no arrow of its own takes the group's mix.
   for (const node of ordered) {

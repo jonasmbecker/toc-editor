@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { CONFIDENCE_BANDS, edgeAppearance, type ConfidenceBand } from './config'
 import { EdgeSwatch } from '../panels/EdgeSwatch'
+import type { NeedMixResult } from './needMix'
+import { useNeedColours } from './needLook'
 import './legend.css'
 
 const CONFIDENCE_BAND_ORDER: ConfidenceBand[] = ['high', 'medium', 'low']
@@ -29,8 +31,9 @@ const ROWS = [
   },
 ]
 
-export function Legend() {
+export function Legend({ needs }: { needs: NeedMixResult['needs'] }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
+  const needColours = useNeedColours()
 
   return (
     <div className={`toc-legend${isCollapsed ? ' toc-legend--collapsed' : ''}`}>
@@ -51,6 +54,14 @@ export function Legend() {
               {row.label}
             </li>
           ))}
+          {needColours
+            ? needs.map((need) => (
+                <li key={need.id}>
+                  <span className="toc-legend__need" style={{ background: need.color }} />
+                  {need.title}
+                </li>
+              ))
+            : null}
         </ul>
       )}
     </div>

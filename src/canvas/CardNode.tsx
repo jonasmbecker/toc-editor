@@ -1,7 +1,7 @@
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react'
 import type { NodeProvenance } from '../model/schema'
 import { nodeColorStyle } from './config'
-import { needLookStyle, NeedBar, useNeedLook, type NeedSegment } from './needLook'
+import { needStripeStyle, useNeedColours, type NeedSegment } from './needLook'
 import './card.css'
 
 export interface CardNodeData extends Record<string, unknown> {
@@ -81,11 +81,11 @@ function ProvenanceBadge() {
 }
 
 export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
-  const look = useNeedLook()
+  const needColours = useNeedColours()
   return (
     <div
       className={`toc-card${selected ? ' toc-card--selected' : ''}`}
-      style={{ ...nodeColorStyle(data.color), ...needLookStyle(data.needMix, look) }}
+      style={{ ...nodeColorStyle(data.color), ...needStripeStyle(data.needMix, needColours) }}
     >
       <Handle
         type="target"
@@ -100,7 +100,6 @@ export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
         className="toc-card__loop-handle"
         isConnectable={false}
       />
-      <NeedBar segments={data.needMix} look={look} />
       <div className="toc-card__title">{data.title}</div>
       {data.text ? <div className="toc-card__text">{data.text}</div> : null}
       {data.provenance === 'interpreted' ? <ProvenanceBadge /> : null}
