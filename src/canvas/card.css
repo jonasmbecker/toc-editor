@@ -84,6 +84,8 @@
   border: 2px solid #2563eb;
   box-shadow: 0 1px 3px rgba(47, 45, 46, 0.25);
   cursor: crosshair;
+  /* Fixed distance from the top (CARD_ANCHOR_Y in anchors.ts), not the vertical centre. */
+  top: 22px;
   opacity: 0;
   transform: translate(0, -50%) scale(calc(0.6 * var(--toc-handle-boost, 1)));
   transition:

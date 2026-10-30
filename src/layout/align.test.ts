@@ -96,7 +96,7 @@ describe('alignDocument', () => {
     expect(yOf(out, 'm1')).toBeGreaterThanOrEqual(GROUP_HEAD)
   })
 
-  it('uses measured heights to centre cards of different heights', () => {
+  it('lines cards of different heights up on the same top, not the same centre', () => {
     const doc = makeDocument(
       [makeNode('a', [link('b')], { yPosition: 300 })],
       [makeNode('b', [], { yPosition: 0 })],
@@ -107,8 +107,8 @@ describe('alignDocument', () => {
         ['b', 80],
       ]),
     })
-    // Centres match (a is 160 tall, b is 80 tall), within the 8px grid.
-    expect(Math.abs(yOf(out, 'a') + 80 - (yOf(out, 'b') + 40))).toBeLessThanOrEqual(8)
+    // Anchors are a fixed distance from the top (a is 160 tall, b is 80 tall), so the tops match.
+    expect(yOf(out, 'a')).toBe(yOf(out, 'b'))
   })
 
   it('round-trips a tidied template through both exports and undoes in one step', () => {

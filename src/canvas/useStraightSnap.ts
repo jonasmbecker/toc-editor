@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { NodeChange, OnNodeDrag } from '@xyflow/react'
+import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from './anchors'
 import type { FlowGraph } from './buildFlow'
 import type { SnapGuideLine } from './SnapGuide'
 import { findStraightSnap, sharesColumn, SNAP_DISTANCE_PX, type SnapAnchor } from './straightSnap'
@@ -50,11 +51,10 @@ function anchorsFor(flow: SnapFlow, graph: FlowGraph, id: string, own: Extent): 
   for (const edge of graph.edges) {
     const otherId = edge.source === id ? edge.target : edge.target === id ? edge.source : null
     const other = otherId ? flow.getNode(otherId) : undefined
-    const height = other?.measured?.height ?? other?.height
-    if (!other || !height) continue
+    if (!other) continue
     const width = other.measured?.width ?? other.width ?? 0
     const anchor = {
-      centerY: other.position.y + height / 2,
+      centerY: other.position.y + (other.type === 'group' ? GROUP_ANCHOR_Y : CARD_ANCHOR_Y),
       left: other.position.x,
       right: other.position.x + width,
     }
@@ -109,7 +109,7 @@ export function useStraightSnap(graph: FlowGraph) {
       }
       const anchors = anchorsFor(instance, graph, change.id, own.current)
       const threshold = SNAP_DISTANCE_PX / instance.getZoom()
-      const hit = findStraightSnap(change.position.y, height, anchors, threshold)
+      const hit = findStraightSnap(change.position.y, anchors, threshold)
       snapped.current = hit ? { id: change.id, top: hit.top } : null
       setGuide(hit ? guideLine(hit.anchor, own.current) : null)
       return hit ? ({ ...change, position: { x: change.position.x, y: hit.top } } as T) : change

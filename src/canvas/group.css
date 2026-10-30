@@ -44,6 +44,11 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22);
 }
 
+/* Level with the group title (GROUP_ANCHOR_Y in anchors.ts). */
+.toc-group .toc-card__handle.react-flow__handle {
+  top: 18px;
+}
+
 /* Same handle behaviour as a card: shown on hover, when selected, as an endpoint, or while a
    connection is being dragged. */
 @media (hover: hover) and (pointer: fine) {

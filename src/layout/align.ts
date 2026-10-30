@@ -1,4 +1,5 @@
 import type { DocumentNode, ToCDocument } from '../model/schema'
+import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from '../canvas/anchors'
 import { GROUP_HEAD, GROUP_PAD } from '../canvas/groupFlow'
 import { isGroupNode } from '../state/groups'
 import { mapAllNodes } from '../state/tree'
@@ -36,7 +37,7 @@ interface Unit {
   top: number
   height: number
   slots: Slot[]
-  /** Centre height of each node that connections can attach to, relative to the unit's top. */
+  /** Connection anchor height of each node that connections can attach to, relative to the unit's top. */
   anchors: Map<string, number>
 }
 
@@ -53,7 +54,7 @@ function cardUnit(node: DocumentNode, heights: AlignOptions['heights']): Unit {
     top: node.yPosition,
     height,
     slots: [{ id: node.id, top: 0 }],
-    anchors: new Map([[node.id, height / 2]]),
+    anchors: new Map([[node.id, CARD_ANCHOR_Y]]),
   }
 }
 
@@ -64,11 +65,11 @@ function groupUnit(group: DocumentNode, members: DocumentNode[], opts: AlignOpti
   for (const member of members) {
     const height = opts.heights?.get(member.id) ?? DEFAULT_CARD_HEIGHT
     slots.push({ id: member.id, top: cursor })
-    anchors.set(member.id, cursor + height / 2)
+    anchors.set(member.id, cursor + CARD_ANCHOR_Y)
     cursor += height + MEMBER_GAP
   }
   const height = cursor - MEMBER_GAP + GROUP_PAD
-  anchors.set(group.id, height / 2)
+  anchors.set(group.id, GROUP_ANCHOR_Y)
   return { id: group.id, top: members[0].yPosition - GROUP_HEAD, height, slots, anchors }
 }
 
@@ -169,8 +170,7 @@ function resolveOrder(ordered: Unit[], desired: Map<Unit, number>, gap: number):
 
 function placeColumn(units: Unit[], links: Map<Unit, Link[]>, gap: number): void {
   const desired = new Map(units.map((unit) => [unit, desiredTop(unit, links.get(unit))]))
-  const centre = (unit: Unit) => desired.get(unit)! + unit.height / 2
-  const ordered = [...units].sort((a, b) => centre(a) - centre(b) || a.top - b.top)
+  const ordered = [...units].sort((a, b) => desired.get(a)! - desired.get(b)! || a.top - b.top)
   resolveOrder(ordered, desired, gap)
 }
 
