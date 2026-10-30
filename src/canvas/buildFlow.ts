@@ -18,6 +18,8 @@ import type { SectionHeaderData, SectionHeaderNodeType } from './SectionHeaderNo
 import type { GroupNodeType } from './GroupNode'
 import { buildGroupNodes, groupBox, type Box } from './groupFlow'
 import { isGroupNode } from '../state/groups'
+import { computeNeedMixes, type NeedMixResult } from './needMix'
+import { needSegments } from './needLook'
 import type { ConnectionEdgeData, ConnectionEdgeType } from './ConnectionEdge'
 
 export interface DroppedConnection {
@@ -56,6 +58,7 @@ function buildHeaderNodes(doc: ToCDocument, layout: DocumentLayout): SectionHead
 function buildCardNodes(
   allNodes: DocumentNode[],
   positionByNodeId: Map<string, { x: number; y: number; width: number }>,
+  needs: NeedMixResult,
 ): CardNodeType[] {
   return allNodes.map((node) => {
     const pos = positionByNodeId.get(node.id)
@@ -70,6 +73,7 @@ function buildCardNodes(
         text: node.text,
         color: node.color,
         provenance: node.provenance,
+        needMix: needSegments(needs, node.id),
       } satisfies CardNodeData,
     }
   })
@@ -164,7 +168,7 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
   const nodes = [
     ...buildHeaderNodes(doc, layout),
     ...groups,
-    ...buildCardNodes(cards, positionByNodeId),
+    ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc)),
   ]
   const { edges, dropped } = buildEdges(allNodes, positionByNodeId)
 

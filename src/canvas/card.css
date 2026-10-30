@@ -188,3 +188,25 @@
 .toc-card__loop-handle.react-flow__handle-right {
   top: 22px;
 }
+
+/* Need colour coding (display only). Stripe look: a 6px coloured strip on the left edge. */
+.toc-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 7px;
+  border-radius: 10px 0 0 10px;
+  background: var(--toc-need-stripe, transparent);
+}
+
+/* Bar look: a split bar across the top edge. */
+.toc-card__need-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 7px;
+  border-radius: 10px 10px 0 0;
+}
