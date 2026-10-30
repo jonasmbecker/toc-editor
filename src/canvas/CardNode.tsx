@@ -17,6 +17,12 @@ export type CardNodeType = Node<CardNodeData, 'card'>
 export const LOOP_OUT_HANDLE = 'loop-out'
 export const LOOP_IN_HANDLE = 'loop-in'
 
+/** Handle ids of the ordinary flow: out of the source's RIGHT edge, into the target's LEFT edge.
+ * Every forward edge names them, because an unnamed edge anchors to whichever handle of its type
+ * React Flow finds first, and on the source side that was the left-hand loop handle. */
+export const FLOW_OUT_HANDLE = 'out'
+export const FLOW_IN_HANDLE = 'in'
+
 function ProvenanceBadge() {
   return (
     <span className="toc-card__badge" title="Interpreted, not read verbatim from the source">
@@ -25,16 +31,18 @@ function ProvenanceBadge() {
   )
 }
 
-/** The id-less handles come first on purpose: React Flow anchors an edge with no
- * `sourceHandle`/`targetHandle` to the first handle of that type it finds, so the ordinary
- * right-to-left edges land on these and only edges that name a loop handle use the others. */
 export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
   return (
     <div
       className={`toc-card${selected ? ' toc-card--selected' : ''}`}
       style={nodeColorStyle(data.color)}
     >
-      <Handle type="target" position={Position.Left} className="toc-card__handle" />
+      <Handle
+        type="target"
+        id={FLOW_IN_HANDLE}
+        position={Position.Left}
+        className="toc-card__handle"
+      />
       <Handle
         type="source"
         id={LOOP_OUT_HANDLE}
@@ -45,7 +53,12 @@ export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
       <div className="toc-card__title">{data.title}</div>
       {data.text ? <div className="toc-card__text">{data.text}</div> : null}
       {data.provenance === 'interpreted' ? <ProvenanceBadge /> : null}
-      <Handle type="source" position={Position.Right} className="toc-card__handle" />
+      <Handle
+        type="source"
+        id={FLOW_OUT_HANDLE}
+        position={Position.Right}
+        className="toc-card__handle"
+      />
       <Handle
         type="target"
         id={LOOP_IN_HANDLE}

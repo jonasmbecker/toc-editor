@@ -2,7 +2,14 @@ import { MarkerType } from '@xyflow/react'
 import type { DocumentNode, ToCDocument } from '../model/schema'
 import { layoutDocument, SECTION_HEADER_HEIGHT, type DocumentLayout } from '../layout/columns'
 import { edgeAppearance } from './config'
-import { LOOP_IN_HANDLE, LOOP_OUT_HANDLE, type CardNodeData, type CardNodeType } from './CardNode'
+import {
+  FLOW_IN_HANDLE,
+  FLOW_OUT_HANDLE,
+  LOOP_IN_HANDLE,
+  LOOP_OUT_HANDLE,
+  type CardNodeData,
+  type CardNodeType,
+} from './CardNode'
 import type { SectionHeaderData, SectionHeaderNodeType } from './SectionHeaderNode'
 import type { ConnectionEdgeData, ConnectionEdgeType } from './ConnectionEdge'
 
@@ -97,8 +104,8 @@ function buildEdges(
         source: node.id,
         target: connection.targetId,
         type: loop ? 'loop' : 'connection',
-        sourceHandle: loop ? LOOP_OUT_HANDLE : undefined,
-        targetHandle: loop ? LOOP_IN_HANDLE : undefined,
+        sourceHandle: loop ? LOOP_OUT_HANDLE : FLOW_OUT_HANDLE,
+        targetHandle: loop ? LOOP_IN_HANDLE : FLOW_IN_HANDLE,
         markerEnd: appearance.showArrow ? markerFor(appearance.stroke, false) : undefined,
         markerStart: appearance.bothWays ? markerFor(appearance.stroke, true) : undefined,
         data: {

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { loopGeometry } from './loopGeometry'
 import { buildFlow } from './buildFlow'
 import type { ToCDocument } from '../model/schema'
-import { LOOP_IN_HANDLE, LOOP_OUT_HANDLE } from './CardNode'
+import { FLOW_IN_HANDLE, FLOW_OUT_HANDLE, LOOP_IN_HANDLE, LOOP_OUT_HANDLE } from './CardNode'
 
 function node(
   id: string,
@@ -54,7 +54,8 @@ describe('buildFlow routing and heads', () => {
   it('a both-ways arrow in flow order keeps the plain route, in accent, with a head at each end', () => {
     const forward = byId('a->b')
     expect(forward.type).toBe('connection')
-    expect(forward.sourceHandle).toBeUndefined()
+    expect(forward.sourceHandle).toBe(FLOW_OUT_HANDLE)
+    expect(forward.targetHandle).toBe(FLOW_IN_HANDLE)
     expect(forward.markerEnd).toMatchObject({ color: '#C2410C' })
     expect(forward.markerStart).toMatchObject({ color: '#C2410C', orient: 'auto-start-reverse' })
   })
