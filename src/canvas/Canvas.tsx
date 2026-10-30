@@ -61,14 +61,26 @@ function stageClassName(isConnecting: boolean, isReadOnly: boolean): string {
  * screen at fit-to-screen. Mirrored on the stage as data-compact for the CSS to read. */
 const COMPACT_ZOOM = 0.75
 
-/** Renders nothing: copies "zoomed out past COMPACT_ZOOM" onto the enclosing stage element as a
- * data attribute (not a class, so React's className never clobbers it). */
+/** Connection handles grow by up to this factor when zoomed out, so they stay a real target. */
+const MAX_HANDLE_BOOST = 1.6
+
+/** 1/zoom clamped to 1..MAX_HANDLE_BOOST, rounded so panning does not re-render on every frame. */
+function handleBoost(zoom: number): number {
+  const boost = Math.min(MAX_HANDLE_BOOST, Math.max(1, 1 / zoom))
+  return Math.round(boost * 20) / 20
+}
+
+/** Renders nothing: copies "zoomed out past COMPACT_ZOOM" and the handle boost onto the
+ * enclosing stage element (attributes, not className, so React never clobbers them). */
 function ZoomMarker() {
   const compact = useStore((state) => state.transform[2] < COMPACT_ZOOM)
+  const boost = useStore((state) => handleBoost(state.transform[2]))
   const marker = useRef<HTMLSpanElement>(null)
   useEffect(() => {
-    marker.current?.closest<HTMLElement>('.toc-stage')?.setAttribute('data-compact', String(compact))
-  }, [compact])
+    const stage = marker.current?.closest<HTMLElement>('.toc-stage')
+    stage?.setAttribute('data-compact', String(compact))
+    stage?.style.setProperty('--toc-handle-boost', String(boost))
+  }, [compact, boost])
   return <span ref={marker} hidden />
 }
 

@@ -1,0 +1,176 @@
+/* Card node and its connection handles; tokens per canvas.css. */
+
+/* Card node */
+.toc-card {
+  position: relative;
+  border-radius: 10px;
+  border: 1px solid #e2ded6;
+  box-shadow: 0 1px 2px rgba(47, 45, 46, 0.06);
+  padding: 10px 14px 10px 16px;
+  transition:
+    box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--toc-card-chip, #999);
+}
+
+.toc-card__title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  /* Three lines fit the tightest yPosition spacing in the templates; the full title is in the
+     node panel. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toc-card__text {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #6b6966;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toc-card__badge {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6966;
+  border: 1px dashed #b9b4ab;
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+/* Zoomed out (see ZoomMarker): titles only, so headlines stay readable at fit-to-screen. A
+   selected card keeps its body. */
+.toc-stage[data-compact='true'] .toc-card:not(.toc-card--selected) .toc-card__text,
+.toc-stage[data-compact='true'] .toc-card:not(.toc-card--selected) .toc-card__badge {
+  display: none;
+}
+
+.toc-card--selected .toc-card__text {
+  -webkit-line-clamp: 3;
+}
+
+.toc-card--selected,
+.toc-endpoint .toc-card {
+  border-color: #2563eb;
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.22),
+    0 6px 18px rgba(47, 45, 46, 0.12);
+}
+
+/* Connection handles: 16px dots on the card's left (target) and right (source) edge, hidden
+   until the card is hovered on a fine pointer or is an endpoint of the selected edge; while a
+   drag is in progress every target handle shows so the user can see where a drop lands. */
+.toc-card__handle.react-flow__handle {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 2px solid #2563eb;
+  box-shadow: 0 1px 3px rgba(47, 45, 46, 0.25);
+  cursor: crosshair;
+  opacity: 0;
+  transform: translate(0, -50%) scale(calc(0.6 * var(--toc-handle-boost, 1)));
+  transition:
+    opacity 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
+    background 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-card__handle.react-flow__handle-left {
+  left: -9px;
+}
+
+.toc-card__handle.react-flow__handle-right {
+  right: -9px;
+}
+
+/* A 32px invisible hit area around the 16px dot, so a drag starts on the first try. Every handle
+   scale is multiplied by --toc-handle-boost (set by ZoomMarker), which grows the handle up to
+   1.6x when zoomed out so it stays a real target at fit-to-screen. */
+.toc-card__handle.react-flow__handle::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+/* 'Drag to connect' cue: a chevron inside the source (right) handle. */
+.toc-card__handle.react-flow__handle-right::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-top: 2px solid #2563eb;
+  border-right: 2px solid #2563eb;
+  transform: translate(-65%, -50%) rotate(45deg);
+  pointer-events: none;
+}
+
+.toc-card__handle.react-flow__handle-right.connectingfrom::after {
+  border-color: #fff;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toc-card:hover .toc-card__handle.react-flow__handle {
+    opacity: 1;
+    transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
+  }
+}
+
+.toc-card--selected .toc-card__handle.react-flow__handle,
+.toc-endpoint .toc-card__handle.react-flow__handle,
+.toc-stage--connecting .toc-card__handle.react-flow__handle-left,
+.toc-card__handle.react-flow__handle.connectingfrom {
+  opacity: 1;
+  transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
+}
+
+.toc-card__handle.react-flow__handle.connectingfrom,
+.toc-card__handle.react-flow__handle.connectingto.valid {
+  background: #2563eb;
+}
+
+.toc-card__handle.react-flow__handle.connectingto.valid {
+  transform: translate(0, -50%) scale(calc(1.4 * var(--toc-handle-boost, 1)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-card__handle.react-flow__handle {
+    transition: none;
+  }
+}
+
+/* The loop anchors: present only so a backward loop can leave the left edge and enter the
+   right edge; never shown, never connectable. */
+.toc-card__loop-handle.react-flow__handle {
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+}
+

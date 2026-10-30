@@ -1,6 +1,7 @@
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react'
 import type { NodeProvenance } from '../model/schema'
 import { nodeColorStyle } from './config'
+import './card.css'
 
 export interface CardNodeData extends Record<string, unknown> {
   title: string
