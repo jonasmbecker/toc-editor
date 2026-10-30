@@ -15,6 +15,7 @@ export interface EvidenceBlockRowProps {
   onText: (text: string) => void
   onToggle: (n: number) => void
   onLinks: (links: EvidenceLink[]) => void
+  onMakeLink: () => void
   onHover: (supports: number[] | null) => void
   onBlur: () => void
   onRemove: () => void
@@ -81,14 +82,7 @@ export function EvidenceBlockRow(props: EvidenceBlockRowProps) {
         </button>
       </div>
       {pastedUrl ? (
-        <button
-          type="button"
-          className="toc-add toc-add--inline"
-          onClick={() => {
-            onLinks([{ url: row.text.trim() }])
-            props.onText('')
-          }}
-        >
+        <button type="button" className="toc-add toc-add--inline" onClick={props.onMakeLink}>
           Make this a link
         </button>
       ) : null}

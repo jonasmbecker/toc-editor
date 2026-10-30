@@ -73,6 +73,24 @@ describe('evidence tags and links', () => {
     expect(connection().assumptions).toBe('First.\n\nSecond.')
   })
 
+  it('keeps the same textarea and its trailing space while typing plain evidence', () => {
+    render(<ConnectionDetails />)
+    const box = screen.getByLabelText('Evidence block') as HTMLTextAreaElement
+    fireEvent.change(box, { target: { value: 'Source one ' } })
+    expect(screen.getByLabelText('Evidence block')).toBe(box)
+    expect(box.value).toBe('Source one ')
+  })
+
+  it('"Make this a link" turns a pasted url into one link chip', () => {
+    setup('https://example.org/x')
+    render(<ConnectionDetails />)
+    fireEvent.click(screen.getByRole('button', { name: 'Make this a link' }))
+    expect(connection().evidenceBlocks).toEqual([
+      { text: '', links: [{ url: 'https://example.org/x' }] },
+    ])
+    expect(screen.getByRole('link')).toHaveAttribute('href', 'https://example.org/x')
+  })
+
   it('plain text never auto-links', () => {
     setup('See https://example.org now')
     render(<ConnectionDetails />)

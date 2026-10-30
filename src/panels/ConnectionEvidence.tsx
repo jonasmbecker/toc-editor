@@ -46,6 +46,7 @@ export function ConnectionEvidence(props: ConnectionEvidenceProps) {
               onText={(text) => list.setText(row.rid, text)}
               onToggle={(n) => list.toggleSupport(row.rid, n)}
               onLinks={(links) => list.setLinks(row.rid, links)}
+              onMakeLink={() => list.makeLink(row.rid)}
               onHover={props.onHoverSupports}
               onBlur={list.settle}
               onRemove={() => list.remove(row.rid)}

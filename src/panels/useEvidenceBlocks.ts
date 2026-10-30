@@ -23,13 +23,15 @@ function plain(rows: EvidenceRow[]): EvidenceBlock[] {
   })
 }
 
-const signature = (blocks: EvidenceBlock[]) => JSON.stringify(blocks.filter(isFilled))
-
 /** The patch that stores `blocks`: the readable string always, the structured extension only
  * when some block carries a tag or link. */
 export function evidencePatch(blocks: EvidenceBlock[]): ConnectionPatch {
   return { evidence: flattenEvidence(blocks), evidenceBlocks: storedBlocks(blocks) }
 }
+
+/** Compared through the stored form on both sides, so a trailing space or blank line the user
+ * is still typing (trimmed away in the plain string) is not mistaken for an outside change. */
+const signature = (blocks: EvidenceBlock[]) => JSON.stringify(evidencePatch(blocks))
 
 /**
  * Evidence blocks as list state over `evidence` / `evidenceBlocks`. Same shape as
@@ -66,6 +68,9 @@ export function useEvidenceBlocks(
     rows,
     pendingFocus,
     setText: (rid: number, text: string) => change(rid, (row) => ({ ...row, text })),
+    /** A pasted bare url becomes the block's link in one commit (text cleared). */
+    makeLink: (rid: number) =>
+      change(rid, (row) => ({ ...row, text: '', links: [{ url: row.text.trim() }] })),
     toggleSupport(rid: number, n: number) {
       change(rid, (row) => {
         const has = row.supports?.includes(n)
