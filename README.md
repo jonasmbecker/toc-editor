@@ -35,12 +35,17 @@ through a shared link.
 ```bash
 npm install
 npm run dev            # the editor alone, on http://localhost:5173 (no sharing API)
-npx netlify-cli dev    # editor plus the sharing function, on http://localhost:8888
+npx netlify-cli serve --offline   # production build plus the sharing function, on http://localhost:8888
 ```
 
-`netlify dev` runs the function in `netlify/functions/` against a local blob store, so Share
-works offline. Add `--offline` to skip the Netlify login. The Netlify CLI is fetched on demand
-by `npx`; it is not a dependency of the project.
+`netlify serve` builds the app, then runs it with the function in `netlify/functions/` against a
+local blob store, so Share works offline. `--offline` skips the Netlify login. The Netlify CLI
+is fetched on demand by `npx`; it is not a dependency of the project.
+
+Use `netlify serve`, not `netlify dev`: `netlify dev` applies the production
+Content-Security-Policy from `netlify.toml` to the Vite dev server, whose inline React
+refresh preamble that policy blocks, so the page stays blank. `serve` runs the production
+bundle, which has no inline scripts, and so also tests the real headers locally.
 
 ## Scripts
 
