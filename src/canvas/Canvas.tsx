@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import {
+  useStore,
   Background,
   BackgroundVariant,
   Controls,
@@ -37,7 +38,7 @@ const connectionLineStyle = {
 }
 
 /** How close (px) a drag has to get to a target handle to snap onto it, so dropping anywhere
- * near a card's left edge counts rather than demanding a hit on the 10px dot. */
+ * near a card's left edge counts rather than demanding a hit on the 16px dot. */
 const CONNECTION_SNAP_RADIUS = 48
 
 /** Remount key for the details panel: a string, so the zustand selector returns a stable
@@ -54,6 +55,21 @@ function stageClassName(isConnecting: boolean, isReadOnly: boolean): string {
   return ['toc-stage', isConnecting && 'toc-stage--connecting', isReadOnly && 'toc-stage--readonly']
     .filter(Boolean)
     .join(' ')
+}
+
+/** Below this zoom the cards show only their titles, so headlines stay the largest thing on
+ * screen at fit-to-screen. Mirrored on the stage as data-compact for the CSS to read. */
+const COMPACT_ZOOM = 0.75
+
+/** Renders nothing: copies "zoomed out past COMPACT_ZOOM" onto the enclosing stage element as a
+ * data attribute (not a class, so React's className never clobbers it). */
+function ZoomMarker() {
+  const compact = useStore((state) => state.transform[2] < COMPACT_ZOOM)
+  const marker = useRef<HTMLSpanElement>(null)
+  useEffect(() => {
+    marker.current?.closest<HTMLElement>('.toc-stage')?.setAttribute('data-compact', String(compact))
+  }, [compact])
+  return <span ref={marker} hidden />
 }
 
 /** The top-left panel for the selection: the node editor, or on a view link the read-only
@@ -119,6 +135,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           <Background variant={BackgroundVariant.Dots} gap={24} color={CANVAS_COLORS.border} />
           <Controls showInteractive={false} />
           <MiniMap pannable zoomable nodeColor={minimapColor} />
+          <ZoomMarker />
         </ReactFlow>
         <Legend />
         <SelectionPanels />

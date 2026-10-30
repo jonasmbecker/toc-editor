@@ -58,6 +58,7 @@ export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
         id={FLOW_OUT_HANDLE}
         position={Position.Right}
         className="toc-card__handle"
+        title="Drag to connect"
       />
       <Handle
         type="target"
