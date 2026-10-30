@@ -8,10 +8,16 @@ export interface BlockListFieldProps {
   /** The single string as stored in the file. */
   text: string | undefined
   onChange: (text: string) => void
+  /** Number the blocks (1-based) so evidence can cite them. */
+  numbered?: boolean
+  /** Blocks (1-based) to tint, and a hover callback with the number or null. */
+  highlighted?: number[]
+  onHoverBlock?: (n: number | null) => void
 }
 
 /** A list of paragraphs editing one string; the list logic lives in `useBlockList`. */
-export function BlockListField({ id, labels, text, onChange }: BlockListFieldProps) {
+export function BlockListField(props: BlockListFieldProps) {
+  const { id, labels, text, onChange, numbered, highlighted, onHoverBlock } = props
   const list = useBlockList(text, onChange)
   const isEmpty = list.blocks.length === 0
 
@@ -39,6 +45,9 @@ export function BlockListField({ id, labels, text, onChange }: BlockListFieldPro
               onChange={(value) => list.update(block.id, value)}
               onBlur={list.settle}
               onRemove={() => list.remove(block.id)}
+              numbered={numbered}
+              highlighted={highlighted?.includes(index + 1)}
+              onHover={(on) => onHoverBlock?.(on ? index + 1 : null)}
             />
           ))}
         </div>

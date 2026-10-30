@@ -4,6 +4,7 @@ import {
   NODE_EXTENSION_KEYS,
   type ToCDocument,
 } from '../model/schema'
+import { flattenEvidence } from '../model/evidence'
 import { expandBothWays } from '../model/normalize'
 import { mapAllNodes } from '../state/nodes'
 
@@ -30,7 +31,12 @@ export function toFullJson(doc: ToCDocument, now = new Date()): ToCDocument {
 export function toCompatibleJson(doc: ToCDocument, now = new Date()): ToCDocument {
   const expanded = mapAllNodes(expandBothWays(doc), (node) => ({
     ...without(node, NODE_EXTENSION_KEYS),
-    connections: node.connections.map((c) => without(c, CONNECTION_EXTENSION_KEYS)),
+    connections: node.connections.map((c) => {
+      // The flattened string carries tags and links; refresh it from the blocks so it is
+      // right even if a block was edited by a tool that did not rewrite the string.
+      const flat = c.evidenceBlocks ? { ...c, evidence: flattenEvidence(c.evidenceBlocks) } : c
+      return without(flat, CONNECTION_EXTENSION_KEYS)
+    }),
   }))
   return withExportedAt(without(expanded, DOCUMENT_EXTENSION_KEYS), now)
 }

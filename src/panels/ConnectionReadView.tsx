@@ -1,5 +1,7 @@
 import type { BlockFieldLabels, DiagramLabels } from '../model/labels'
-import type { DocumentNode } from '../model/schema'
+import { splitEvidence } from '../model/evidence'
+import type { DocumentNode, EvidenceBlock } from '../model/schema'
+import { LinkChip } from './LinkChip'
 import { edgeAppearance, nodeColorStyle } from '../canvas/config'
 import type { ResolvedConnection } from '../state/connections'
 import { ConnectionPanelHeader } from './ConnectionPanelHeader'
@@ -40,8 +42,12 @@ export function ConnectionReadView({ resolved, labels, onClose }: ConnectionRead
           disabled
         />
       )}
-      <ReadBlocks labels={labels.mechanism} text={connection.assumptions} />
-      <ReadBlocks labels={labels.evidence} text={connection.evidence} />
+      <ReadBlocks
+        labels={labels.mechanism}
+        blocks={splitBlocks(connection.assumptions).map((text) => ({ text }))}
+        numbered
+      />
+      <ReadBlocks labels={labels.evidence} blocks={splitEvidence(connection)} />
       <p className="toc-footnote">{labels.footnote}</p>
     </aside>
   )
@@ -55,8 +61,15 @@ function EndCard({ node }: { node: DocumentNode }) {
   )
 }
 
-function ReadBlocks({ labels, text }: { labels: BlockFieldLabels; text: string | undefined }) {
-  const blocks = splitBlocks(text)
+interface ReadBlocksProps {
+  labels: BlockFieldLabels
+  blocks: EvidenceBlock[]
+  numbered?: boolean
+}
+
+/** Static paragraphs; evidence blocks also show which mechanisms they support (static pills)
+ * and their link chips, which stay clickable. */
+function ReadBlocks({ labels, blocks, numbered }: ReadBlocksProps) {
   return (
     <section className="toc-field">
       <div className="toc-field__head">
@@ -67,9 +80,31 @@ function ReadBlocks({ labels, text }: { labels: BlockFieldLabels; text: string |
       ) : (
         <div className="toc-blocks">
           {blocks.map((block, index) => (
-            <p key={index} className="toc-block toc-block--read">
-              {block}
-            </p>
+            <div
+              key={index}
+              className={`toc-block toc-block--read${numbered ? ' toc-block--numbered' : ''}`}
+            >
+              {numbered ? <span className="toc-block__number">{index + 1}</span> : null}
+              <div className="toc-block__body">
+                {block.text ? <p>{block.text}</p> : null}
+                {block.supports?.length ? (
+                  <div className="toc-tags" aria-label="Supports mechanism">
+                    {block.supports.map((n) => (
+                      <span key={n} className="toc-tag" aria-pressed="true">
+                        {n}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+                {block.links?.length ? (
+                  <div className="toc-chips">
+                    {block.links.map((link, i) => (
+                      <LinkChip key={i} link={link} />
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            </div>
           ))}
         </div>
       )}

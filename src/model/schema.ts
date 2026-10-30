@@ -22,6 +22,29 @@ const hexColorSchema = z
   .string()
   .regex(HEX_COLOR_PATTERN, 'must be a 6-digit hex colour, e.g. "#2F2D2E"')
 
+/** Only web addresses: a `javascript:` or `data:` url in an imported file fails validation
+ * rather than reaching an href. */
+export const WEB_URL_PATTERN = /^https?:\/\/\S+$/i
+
+export const evidenceLinkSchema = z
+  .object({
+    url: z
+      .string()
+      .regex(WEB_URL_PATTERN, 'must be a web address starting with http:// or https://'),
+    label: z.string().optional(),
+  })
+  .passthrough()
+
+/** One evidence paragraph with the mechanism blocks it supports (1-based paragraph numbers of
+ * `assumptions`) and its links. See `model/evidence.ts`. */
+export const evidenceBlockSchema = z
+  .object({
+    text: z.string(),
+    supports: z.array(z.number().int().positive()).optional(),
+    links: z.array(evidenceLinkSchema).optional(),
+  })
+  .passthrough()
+
 export const connectionSchema = z
   .object({
     targetId: z.string(),
@@ -32,6 +55,7 @@ export const connectionSchema = z
     id: z.string().optional(),
     provenance: connectionProvenanceSchema.optional(),
     isFeedbackLoop: z.boolean().optional(),
+    evidenceBlocks: z.array(evidenceBlockSchema).optional(),
   })
   .passthrough()
 
@@ -135,8 +159,10 @@ export const documentSchema = z
  */
 export const DOCUMENT_EXTENSION_KEYS = ['schemaVersion', 'diagramType', 'interventionLinks']
 export const NODE_EXTENSION_KEYS = ['provenance', 'kind', 'groupId']
-export const CONNECTION_EXTENSION_KEYS = ['id', 'provenance', 'isFeedbackLoop']
+export const CONNECTION_EXTENSION_KEYS = ['id', 'provenance', 'isFeedbackLoop', 'evidenceBlocks']
 
+export type EvidenceLink = z.infer<typeof evidenceLinkSchema>
+export type EvidenceBlock = z.infer<typeof evidenceBlockSchema>
 export type Connection = z.infer<typeof connectionSchema>
 export type DocumentNode = z.infer<typeof nodeSchema>
 export type Column = z.infer<typeof columnSchema>

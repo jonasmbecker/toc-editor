@@ -11,6 +11,10 @@ export interface BlockRowProps {
   onChange: (value: string) => void
   onBlur: () => void
   onRemove: () => void
+  /** Show the 1-based number as a circle (mechanism blocks that evidence can cite). */
+  numbered?: boolean
+  highlighted?: boolean
+  onHover?: (hovering: boolean) => void
 }
 
 /** One paragraph of a block list: an auto-growing borderless textarea with a left rule and a
@@ -18,6 +22,7 @@ export interface BlockRowProps {
  * (typing, undo, a block split on blur). */
 export function BlockRow(props: BlockRowProps) {
   const { id, value, labels, index, autoFocus, onChange, onBlur, onRemove } = props
+  const { numbered, highlighted, onHover } = props
   const textarea = useRef<HTMLTextAreaElement>(null)
 
   useLayoutEffect(() => {
@@ -28,7 +33,18 @@ export function BlockRow(props: BlockRowProps) {
   }, [value])
 
   return (
-    <div className="toc-block">
+    <div
+      className={`toc-block${numbered ? ' toc-block--numbered' : ''}${highlighted ? ' is-tinted' : ''}`}
+    >
+      {numbered ? (
+        <span
+          className="toc-block__number"
+          onMouseEnter={() => onHover?.(true)}
+          onMouseLeave={() => onHover?.(false)}
+        >
+          {index + 1}
+        </span>
+      ) : null}
       <textarea
         ref={textarea}
         id={id}

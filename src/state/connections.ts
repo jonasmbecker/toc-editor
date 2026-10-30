@@ -136,7 +136,7 @@ export function addConnection(
  * is removed from the connection (how "Clear rating" takes `confidence` back out so an
  * untouched ToCB file still round-trips byte-for-byte). */
 export type ConnectionPatch = Partial<
-  Pick<Connection, 'confidence' | 'assumptions' | 'evidence' | 'isFeedbackLoop'>
+  Pick<Connection, 'confidence' | 'assumptions' | 'evidence' | 'evidenceBlocks' | 'isFeedbackLoop'>
 >
 
 function applyPatch(connection: Connection, patch: ConnectionPatch): Connection {
