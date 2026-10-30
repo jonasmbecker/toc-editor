@@ -23,7 +23,7 @@ export function connectionRefKey(ref: ConnectionRef): string {
   return `${ref.sourceId}#${ref.index}`
 }
 
-export type ConnectionRefusal = 'self' | 'duplicate' | 'missing'
+export type ConnectionRefusal = 'self' | 'duplicate' | 'missing' | 'same-group'
 
 export type AddConnectionResult =
   | { ok: true; document: ToCDocument; ref: ConnectionRef }
@@ -113,7 +113,12 @@ export function addConnection(
 ): AddConnectionResult {
   if (sourceId === targetId) return { ok: false, refused: 'self' }
   const source = nodeAt(doc, sourceId)
-  if (!source || !nodeAt(doc, targetId)) return { ok: false, refused: 'missing' }
+  const target = nodeAt(doc, targetId)
+  if (!source || !target) return { ok: false, refused: 'missing' }
+  // A group and one of its own cards are one cluster: an arrow between them says nothing.
+  if (source.groupId === targetId || target.groupId === sourceId) {
+    return { ok: false, refused: 'same-group' }
+  }
   if (source.connections.some((c) => c.targetId === targetId)) {
     return { ok: false, refused: 'duplicate' }
   }

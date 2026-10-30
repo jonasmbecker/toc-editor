@@ -7,6 +7,8 @@ import { NodeIdentityFields } from './NodeIdentityFields'
 import { NodeColorField } from './NodeColorField'
 import { NodeDeleteControl } from './NodeDeleteControl'
 import { NodePositionFields } from './NodePositionFields'
+import { NodeGroupControls } from './NodeGroupControls'
+import { isGroupNode } from '../state/groups'
 import { swatchOptions } from './colorPalette'
 import './panels.css'
 
@@ -67,13 +69,24 @@ export function NodePanel() {
         onChange={(color) => transform('recolour node', colorEdit(node.id, color))}
       />
 
-      <NodePositionFields
+      {isGroupNode(node) ? null : (
+        <NodePositionFields
+          document={doc}
+          sectionIndex={sectionIndex}
+          columnIndex={columnIndex}
+          onMove={(nextSection, nextColumn) =>
+            transform('move node', moveEdit(node.id, nextSection, nextColumn))
+          }
+        />
+      )}
+
+      <NodeGroupControls
         document={doc}
+        node={node}
         sectionIndex={sectionIndex}
         columnIndex={columnIndex}
-        onMove={(nextSection, nextColumn) =>
-          transform('move node', moveEdit(node.id, nextSection, nextColumn))
-        }
+        onChange={transform}
+        onSelect={select}
       />
 
       <NodeDeleteControl

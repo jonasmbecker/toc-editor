@@ -1,0 +1,70 @@
+/* Group container: a dashed box behind a cluster of cards; tokens per canvas.css. */
+.toc-group {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  border: 1.5px dashed #b9b4ab;
+  background: color-mix(in srgb, var(--toc-group-tint, #ffffff) 40%, rgba(255, 255, 255, 0.55));
+  transition:
+    box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 120ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-group__head {
+  padding: 8px 14px 0;
+}
+
+.toc-group__title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #2f2d2e;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toc-group__text {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #6b6966;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toc-group--selected,
+.toc-endpoint .toc-group {
+  border: 1.5px solid #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22);
+}
+
+/* Same handle behaviour as a card: shown on hover, when selected, as an endpoint, or while a
+   connection is being dragged. */
+@media (hover: hover) and (pointer: fine) {
+  .toc-group:hover .toc-card__handle.react-flow__handle {
+    opacity: 1;
+    transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
+  }
+}
+
+.toc-group--selected .toc-card__handle.react-flow__handle,
+.toc-endpoint .toc-group .toc-card__handle.react-flow__handle {
+  opacity: 1;
+  transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
+}
+
+.toc-stage--connecting .toc-group .toc-card__handle.react-flow__handle-left {
+  opacity: 1;
+  transform: translate(0, -50%) scale(calc(1 * var(--toc-handle-boost, 1)));
+}
+
+/* Zoomed out: only the title. */
+.toc-stage[data-compact='true'] .toc-group__text {
+  display: none;
+}

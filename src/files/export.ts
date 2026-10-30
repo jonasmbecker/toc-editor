@@ -7,6 +7,7 @@ import {
 import { flattenEvidence } from '../model/evidence'
 import { expandBothWays } from '../model/normalize'
 import { mapAllNodes } from '../state/nodes'
+import { flattenGroups } from '../state/groups'
 
 /**
  * Two downloads. "Full" keeps this tool's extension fields. "Compatible" is for
@@ -29,7 +30,8 @@ export function toFullJson(doc: ToCDocument, now = new Date()): ToCDocument {
 }
 
 export function toCompatibleJson(doc: ToCDocument, now = new Date()): ToCDocument {
-  const expanded = mapAllNodes(expandBothWays(doc), (node) => ({
+  // ToCB has no groups: dissolve them first so arrows aimed at a group land on its first card.
+  const expanded = mapAllNodes(expandBothWays(flattenGroups(doc)), (node) => ({
     ...without(node, NODE_EXTENSION_KEYS),
     connections: node.connections.map((c) => {
       // The flattened string carries tags and links; refresh it from the blocks so it is

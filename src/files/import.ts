@@ -1,5 +1,6 @@
 import { parseDocument, type ParseIssue, type ToCDocument } from '../model/schema'
 import { collapseMutualLoops } from '../model/normalize'
+import { normalizeGroups } from '../state/groups'
 
 /**
  * Turns a chosen or dropped file, or any already-parsed JSON value, into a document, or into a
@@ -58,7 +59,7 @@ export function importFromJson(raw: unknown): ImportResult {
   const result = parseDocument(raw)
   if (!result.ok) return { ok: false, errors: describeIssues(result.issues) }
   // Older files store a both-ways arrow as two flagged connections; the tool keeps one.
-  return { ok: true, document: collapseMutualLoops(result.document) }
+  return { ok: true, document: normalizeGroups(collapseMutualLoops(result.document)) }
 }
 
 export function importFromText(text: string): ImportResult {

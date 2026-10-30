@@ -16,6 +16,7 @@ import { useControlledFlow } from './useControlledFlow'
 import { useConnectFlow } from './useConnectFlow'
 import { CardNode } from './CardNode'
 import { SectionHeaderNode } from './SectionHeaderNode'
+import { GroupNode } from './GroupNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { LoopEdge } from './LoopEdge'
 import { Legend } from './Legend'
@@ -27,7 +28,7 @@ import { StageBar } from '../share/StageBar'
 import { CANVAS_COLORS } from './config'
 import './canvas.css'
 
-const nodeTypes = { card: CardNode, sectionHeader: SectionHeaderNode }
+const nodeTypes = { card: CardNode, sectionHeader: SectionHeaderNode, group: GroupNode }
 const edgeTypes = { connection: ConnectionEdge, loop: LoopEdge }
 
 /** The in-progress line while dragging from a handle: dashed, in the selection colour. */
@@ -48,7 +49,8 @@ function keyOf(ref: ConnectionRef | null): string {
 }
 
 function minimapColor(node: Node): string {
-  return node.type === 'sectionHeader' ? CANVAS_COLORS.primary : '#C9C4BA'
+  if (node.type === 'sectionHeader') return CANVAS_COLORS.primary
+  return node.type === 'group' ? 'rgba(201, 196, 186, 0.35)' : '#C9C4BA'
 }
 
 function stageClassName(isConnecting: boolean, isReadOnly: boolean): string {
@@ -140,6 +142,9 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           nodesDraggable={!isReadOnly}
           nodesConnectable={!isReadOnly}
           deleteKeyCode={null}
+          // Default elevation lifts a selected node above the rest, which would draw a selected
+          // group's container over its own cards.
+          elevateNodesOnSelect={false}
           fitView
           minZoom={0.1}
           maxZoom={2.5}

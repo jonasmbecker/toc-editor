@@ -8,6 +8,7 @@ const REFUSAL_NOTICE: Record<ConnectionRefusal, string> = {
   self: 'A node cannot connect to itself',
   duplicate: 'These two are already connected',
   missing: 'One of those nodes is no longer in the diagram',
+  'same-group': 'A group and its own cards are already one cluster',
 }
 
 /**

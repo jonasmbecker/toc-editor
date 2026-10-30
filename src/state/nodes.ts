@@ -1,6 +1,7 @@
 import type { Column, DocumentNode, ToCDocument } from '../model/schema'
 import { normalizeHexColor } from '../model/color'
 import { EMPTY_COLUMN_WIDTH } from '../layout/columns'
+import { normalizeGroups } from './groups'
 import {
   allNodeIds,
   allNodes,
@@ -136,7 +137,10 @@ export function moveNodeToColumn(
   if (location.sectionIndex === sectionIndex && location.columnIndex === columnIndex) return doc
   const node =
     doc.sections[location.sectionIndex].columns[location.columnIndex].nodes[location.nodeIndex]
-  return withNodeInserted(withoutNodeAt(doc, location), node, sectionIndex, columnIndex)
+  // A card dragged out of its column leaves its group (and a group left with one card dissolves).
+  return normalizeGroups(
+    withNodeInserted(withoutNodeAt(doc, location), node, sectionIndex, columnIndex),
+  )
 }
 
 /** Deletes a node and cascades: strips any connection elsewhere in the document that targeted
@@ -144,10 +148,14 @@ export function moveNodeToColumn(
 export function deleteNode(doc: ToCDocument, nodeId: string): ToCDocument {
   const location = findNodeLocation(doc, nodeId)
   if (!location) return doc
-  return mapAllNodes(withoutNodeAt(doc, location), (node) =>
-    node.connections.some((c) => c.targetId === nodeId)
-      ? { ...node, connections: node.connections.filter((c) => c.targetId !== nodeId) }
-      : node,
+  // Deleting a group keeps its cards (normalizeGroups clears their dangling groupId); deleting a
+  // card can leave its group too small, which dissolves it.
+  return normalizeGroups(
+    mapAllNodes(withoutNodeAt(doc, location), (node) =>
+      node.connections.some((c) => c.targetId === nodeId)
+        ? { ...node, connections: node.connections.filter((c) => c.targetId !== nodeId) }
+        : node,
+    ),
   )
 }
 

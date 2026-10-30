@@ -11,6 +11,9 @@ import {
   type CardNodeType,
 } from './CardNode'
 import type { SectionHeaderData, SectionHeaderNodeType } from './SectionHeaderNode'
+import type { GroupNodeType } from './GroupNode'
+import { buildGroupNodes, groupBox, type Box } from './groupFlow'
+import { isGroupNode } from '../state/groups'
 import type { ConnectionEdgeData, ConnectionEdgeType } from './ConnectionEdge'
 
 export interface DroppedConnection {
@@ -19,7 +22,7 @@ export interface DroppedConnection {
 }
 
 export interface FlowGraph {
-  nodes: (CardNodeType | SectionHeaderNodeType)[]
+  nodes: (CardNodeType | SectionHeaderNodeType | GroupNodeType)[]
   edges: ConnectionEdgeType[]
   /** Connections whose `targetId` doesn't resolve to any node in the document. Surfaced rather
    * than silently skipped, so an imported file that lost an edge somewhere says so instead of
@@ -127,9 +130,19 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
   const allNodes = doc.sections.flatMap((section) =>
     section.columns.flatMap((column) => column.nodes),
   )
-  const positionByNodeId = new Map(layout.nodes.map((n) => [n.nodeId, n]))
+  const positionByNodeId = new Map<string, Box>(layout.nodes.map((n) => [n.nodeId, n]))
 
-  const nodes = [...buildHeaderNodes(doc, layout), ...buildCardNodes(allNodes, positionByNodeId)]
+  // A group is a node in the document but a container on the canvas: it is drawn around its
+  // members, and edges to or from it route to that container, not to its own layout slot.
+  const groups = buildGroupNodes(doc, positionByNodeId)
+  for (const group of groups) positionByNodeId.set(group.id, groupBox(group))
+  const cards = allNodes.filter((node) => !isGroupNode(node))
+
+  const nodes = [
+    ...buildHeaderNodes(doc, layout),
+    ...groups,
+    ...buildCardNodes(cards, positionByNodeId),
+  ]
   const { edges, dropped } = buildEdges(allNodes, positionByNodeId)
 
   return { nodes, edges, droppedConnections: dropped }

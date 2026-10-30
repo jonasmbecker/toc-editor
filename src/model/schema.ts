@@ -15,6 +15,11 @@ export const connectionProvenanceSchema = z.enum(['verbatim', 'verbatim-structur
 export const nodeProvenanceSchema = z.enum(['verbatim', 'interpreted'])
 export const diagramTypeSchema = z.enum(['theory-of-change', 'status-quo'])
 
+/** `kind` value of the node that titles a group of cards. It is an ordinary node in the column
+ * (so connections, ids and undo need no special case); the canvas draws it as a container
+ * around its members, and the compatible export removes it (see `state/groups.ts`). */
+export const GROUP_KIND = 'group'
+
 /** Constraining `color` to the shared hex pattern (see `model/color.ts`) means a later
  * import/share feature can't be handed a `url(...)` or similar as a colour value. Case is
  * deliberately *not* normalised here: a parsed document must round-trip unchanged. */
@@ -77,9 +82,9 @@ export const nodeSchema = z
     kind: z.string().optional(),
     /** Marks this node as a member of a bracketed cluster (several boxes the original diagram
      * drew as one grouped unit, e.g. "multipolar traps / race-to-bottom / race-to-market / arms
-     * race"). Purely a rendering hint: members are ordinary nodes with ordinary connections: a
-     * connection between two members of the same group is how the tool represents "a link
-     * between them" within the group. */
+     * race"). Its value is the id of the group node (a node whose `kind` is `GROUP_KIND`) in
+     * the same column. Members are ordinary nodes with ordinary connections, and a connection
+     * may target the group node itself to point at the whole cluster. See `state/groups.ts`. */
     groupId: z.string().optional(),
   })
   .passthrough()

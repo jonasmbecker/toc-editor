@@ -14,9 +14,11 @@ import type { FlowGraph } from './buildFlow'
 import type { ConnectionEdgeType } from './ConnectionEdge'
 import type { CardNodeType } from './CardNode'
 import type { SectionHeaderNodeType } from './SectionHeaderNode'
+import type { GroupNodeType } from './GroupNode'
+import { fitGroupHeights } from './groupFlow'
 import { endpointIds, refOfEdge, withSelection } from './selection'
 
-type FlowNode = CardNodeType | SectionHeaderNodeType
+type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType
 
 /**
  * Wires a derived `FlowGraph` into React Flow's controlled node/edge state. Selection is driven
@@ -45,15 +47,17 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     const endpoints = endpointIds(graph.edges, selectedConnection)
     setNodes((previous) => {
       const measuredById = new Map(previous.map((node) => [node.id, node.measured]))
-      return graph.nodes.map((node) => {
-        const measured = measuredById.get(node.id)
-        return {
-          ...node,
-          ...(measured ? { measured } : {}),
-          selected: node.id === selectedNodeId,
-          className: endpoints.has(node.id) ? 'toc-endpoint' : undefined,
-        }
-      })
+      return fitGroupHeights(
+        graph.nodes.map((node) => {
+          const measured = measuredById.get(node.id)
+          return {
+            ...node,
+            ...(measured ? { measured } : {}),
+            selected: node.id === selectedNodeId,
+            className: endpoints.has(node.id) ? 'toc-endpoint' : undefined,
+          }
+        }),
+      )
     })
     setEdges(graph.edges.map((edge) => withSelection(edge, selectedConnection)))
   }, [graph, selectedNodeId, selectedConnection, setNodes, setEdges])
@@ -62,7 +66,9 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
 
   const onSelectionChange: OnSelectionChangeFunc<FlowNode, ConnectionEdgeType> = useCallback(
     ({ nodes: pickedNodes, edges: pickedEdges }) => {
-      const card = pickedNodes.find((n) => n.type === 'card')
+      // A card wins over the group container behind it when both are picked.
+      const card =
+        pickedNodes.find((n) => n.type === 'card') ?? pickedNodes.find((n) => n.type === 'group')
       if (card) return select(card.id)
       if (pickedEdges[0]) return selectConnection(refOfEdge(pickedEdges[0]))
       select(null)
@@ -89,5 +95,23 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     [doc, transform, resync],
   )
 
-  return { nodes, edges, onNodesChange, onEdgesChange, onSelectionChange, onNodeDragStop }
+  // Card heights arrive after the first render; re-fit group containers whenever they do.
+  const onNodesChangeFitted: typeof onNodesChange = useCallback(
+    (changes) => {
+      onNodesChange(changes)
+      if (changes.some((change) => change.type === 'dimensions')) {
+        setNodes((current) => fitGroupHeights(current))
+      }
+    },
+    [onNodesChange, setNodes],
+  )
+
+  return {
+    nodes,
+    edges,
+    onNodesChange: onNodesChangeFitted,
+    onEdgesChange,
+    onSelectionChange,
+    onNodeDragStop,
+  }
 }
