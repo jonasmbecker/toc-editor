@@ -24,7 +24,7 @@
 }
 
 .toc-card__title {
-  font-size: 21px;
+  font-size: clamp(18px, calc(16px / var(--toc-zoom, 1)), 26px);
   font-weight: 700;
   line-height: 1.22;
   overflow-wrap: anywhere;

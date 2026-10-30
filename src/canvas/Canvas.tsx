@@ -79,12 +79,15 @@ function handleBoost(zoom: number): number {
 function ZoomMarker() {
   const compact = useStore((state) => state.transform[2] < COMPACT_ZOOM)
   const boost = useStore((state) => handleBoost(state.transform[2]))
+  // Rounded so panning never re-renders; the stylesheet turns it into adaptive title sizes.
+  const zoom = useStore((state) => Math.round(state.transform[2] * 50) / 50)
   const marker = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     const stage = marker.current?.closest<HTMLElement>('.toc-stage')
     stage?.setAttribute('data-compact', String(compact))
     stage?.style.setProperty('--toc-handle-boost', String(boost))
-  }, [compact, boost])
+    stage?.style.setProperty('--toc-zoom', String(zoom))
+  }, [compact, boost, zoom])
   return <span ref={marker} hidden />
 }
 

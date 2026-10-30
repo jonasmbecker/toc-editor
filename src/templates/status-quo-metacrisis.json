@@ -14,8 +14,8 @@
               "text": "Daniel Brown attachment-needs model, left column of the drawing.",
               "title": "Felt safety",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 40,
+              "width": 232,
+              "yPosition": 46,
               "provenance": "verbatim",
               "connections": []
             },
@@ -24,8 +24,8 @@
               "text": "",
               "title": "Attunement",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 200,
+              "width": 232,
+              "yPosition": 230,
               "provenance": "verbatim",
               "connections": []
             },
@@ -34,8 +34,8 @@
               "text": "",
               "title": "Comfort & Soothing",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 320,
+              "width": 232,
+              "yPosition": 368,
               "provenance": "verbatim",
               "connections": []
             },
@@ -44,8 +44,8 @@
               "text": "",
               "title": "Support to explore",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 440,
+              "width": 232,
+              "yPosition": 506,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -61,8 +61,8 @@
               "text": "",
               "title": "Expressed delight",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 560,
+              "width": 232,
+              "yPosition": 644,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -82,8 +82,8 @@
               "text": "Sub-manifestations noted under this box in the drawing: \"Thinking\" (intellectualize, rational, emotionally detached) and \"Spiritualizing\" (escaping). These describe HOW the Connection survival style disconnects from feeling, per NARM's model.",
               "title": "Connection (NARM survival style)",
               "color": "#E3F2FD",
-              "width": 220,
-              "yPosition": 40,
+              "width": 260,
+              "yPosition": 46,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -99,8 +99,8 @@
               "text": "",
               "title": "Attunement (NARM survival style)",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 200,
+              "width": 232,
+              "yPosition": 230,
               "provenance": "verbatim",
               "connections": []
             },
@@ -109,8 +109,8 @@
               "text": "",
               "title": "Trust (NARM survival style)",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 320,
+              "width": 232,
+              "yPosition": 368,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -130,8 +130,8 @@
               "text": "",
               "title": "Autonomy (NARM survival style)",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 440,
+              "width": 232,
+              "yPosition": 506,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -151,8 +151,8 @@
               "text": "",
               "title": "Love-Sexuality (NARM survival style)",
               "color": "#E3F2FD",
-              "width": 192,
-              "yPosition": 560,
+              "width": 232,
+              "yPosition": 644,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -186,8 +186,8 @@
               "text": "Full label as drawn: Craving for numbing: addiction to substances, entertainment, porn",
               "title": "Craving for numbing",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 20,
+              "width": 330,
+              "yPosition": 23,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -203,8 +203,8 @@
               "text": "Full label as drawn: Craving for control, safety, immunity → \"supremacy\"",
               "title": "Craving for control and safety",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 110,
+              "width": 330,
+              "yPosition": 133,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -219,8 +219,8 @@
               "text": "",
               "title": "Scapegoating, projecting the blame",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 200,
+              "width": 330,
+              "yPosition": 273,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -235,8 +235,8 @@
               "text": "Jonas marked this with a question mark in the original, signalling his own uncertainty about it.",
               "title": "Craving to be seen?",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 290,
+              "width": 330,
+              "yPosition": 377,
               "provenance": "verbatim",
               "connections": []
             },
@@ -245,8 +245,8 @@
               "text": "",
               "title": "Craving for power: \"nobody can be trusted\"",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 380,
+              "width": 330,
+              "yPosition": 481,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -261,8 +261,8 @@
               "text": "food, work etc. or regulate / shopping",
               "title": "Compulsive soothing",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 470,
+              "width": 330,
+              "yPosition": 608,
               "provenance": "verbatim",
               "connections": []
             },
@@ -271,8 +271,8 @@
               "text": "",
               "title": "Greed, craving for \"more\"",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 560,
+              "width": 330,
+              "yPosition": 711,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -287,8 +287,8 @@
               "text": "urge towards \"separation\"",
               "title": "Fear of dependence",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 650,
+              "width": 330,
+              "yPosition": 815,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -303,8 +303,8 @@
               "text": "career, status, money",
               "title": "Perform (to be loved, worthy)",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 740,
+              "width": 330,
+              "yPosition": 918,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -319,8 +319,8 @@
               "text": "",
               "title": "Narcissism",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 830,
+              "width": 330,
+              "yPosition": 1036,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -335,8 +335,8 @@
               "text": "",
               "title": "Hunting sexual attraction",
               "color": "#FFF3E0",
-              "width": 280,
-              "yPosition": 920,
+              "width": 330,
+              "yPosition": 1139,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -361,7 +361,7 @@
               "title": "Erosion of collective sensemaking",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 20,
+              "yPosition": 23,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -377,7 +377,7 @@
               "title": "Collective disempowerment",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 110,
+              "yPosition": 127,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -393,7 +393,7 @@
               "title": "Lacking willingness to radical change/regulate",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 200,
+              "yPosition": 251,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -409,7 +409,7 @@
               "title": "Racism + (post)colonialism",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 290,
+              "yPosition": 383,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -425,7 +425,7 @@
               "title": "Multipolar traps / arms race",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 390,
+              "yPosition": 498,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -446,7 +446,7 @@
               "title": "Consumerism / neoliberal capitalism",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 520,
+              "yPosition": 647,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -473,7 +473,7 @@
               "title": "Hyper agents / AI",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 650,
+              "yPosition": 797,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -489,7 +489,7 @@
               "title": "Patriarchy / sexism",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 740,
+              "yPosition": 900,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -514,8 +514,8 @@
               "text": "",
               "title": "Intergenerational war trauma",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 20,
+              "width": 260,
+              "yPosition": 23,
               "provenance": "verbatim",
               "connections": []
             },
@@ -524,8 +524,8 @@
               "text": "",
               "title": "Collective 'freeze'",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 110,
+              "width": 260,
+              "yPosition": 127,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -540,8 +540,8 @@
               "text": "",
               "title": "Dysfunctional democracy",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 200,
+              "width": 260,
+              "yPosition": 230,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -556,8 +556,8 @@
               "text": "",
               "title": "Populism, narrative warfare",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 290,
+              "width": 260,
+              "yPosition": 334,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -572,8 +572,8 @@
               "text": "",
               "title": "Lack of wisdom",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 380,
+              "width": 260,
+              "yPosition": 437,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -588,8 +588,8 @@
               "text": "",
               "title": "Debt + interest financial system",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 470,
+              "width": 260,
+              "yPosition": 541,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -604,8 +604,8 @@
               "text": "",
               "title": "Embedded growth obligation",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 560,
+              "width": 260,
+              "yPosition": 644,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -635,8 +635,8 @@
               "text": "",
               "title": "Loss of community",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 650,
+              "width": 260,
+              "yPosition": 748,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -651,8 +651,8 @@
               "text": "",
               "title": "Loss of spirituality",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 740,
+              "width": 260,
+              "yPosition": 851,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -667,8 +667,8 @@
               "text": "Manipulating / triggering desire to up consumption.",
               "title": "Marketing",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 830,
+              "width": 260,
+              "yPosition": 955,
               "provenance": "verbatim",
               "connections": []
             },
@@ -677,8 +677,8 @@
               "text": "",
               "title": "Power politics",
               "color": "#F0F4C3",
-              "width": 220,
-              "yPosition": 920,
+              "width": 260,
+              "yPosition": 1065,
               "provenance": "verbatim",
               "connections": []
             }
@@ -696,8 +696,8 @@
               "text": "Header-style label at the top of this column in the drawing — read as the overall theme of the column (societal/civilizational health breaking down) rather than a node with its own in/out arrows.",
               "title": "'Civilizational health' (column heading)",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 10,
+              "width": 260,
+              "yPosition": 12,
               "provenance": "verbatim",
               "connections": []
             },
@@ -706,8 +706,8 @@
               "text": "",
               "title": "Great power war / violence / genocide",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 120,
+              "width": 260,
+              "yPosition": 186,
               "provenance": "verbatim",
               "connections": []
             },
@@ -716,8 +716,8 @@
               "text": "",
               "title": "Extinction risk tech",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 230,
+              "width": 260,
+              "yPosition": 318,
               "provenance": "verbatim",
               "connections": []
             },
@@ -726,8 +726,8 @@
               "text": "",
               "title": "Climate breakdown",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 315,
+              "width": 260,
+              "yPosition": 416,
               "provenance": "verbatim",
               "connections": []
             },
@@ -736,8 +736,8 @@
               "text": "",
               "title": "Meaning crisis",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 400,
+              "width": 260,
+              "yPosition": 513,
               "provenance": "verbatim",
               "connections": []
             },
@@ -746,8 +746,8 @@
               "text": "",
               "title": "Pollution",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 459,
+              "width": 260,
+              "yPosition": 581,
               "provenance": "verbatim",
               "connections": []
             },
@@ -756,8 +756,8 @@
               "text": "",
               "title": "Resource & hydrocarbon depletion",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 518,
+              "width": 260,
+              "yPosition": 649,
               "provenance": "verbatim",
               "connections": []
             },
@@ -766,8 +766,8 @@
               "text": "",
               "title": "Ecocide",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 628,
+              "width": 260,
+              "yPosition": 776,
               "provenance": "verbatim",
               "connections": []
             },
@@ -776,8 +776,8 @@
               "text": "",
               "title": "Sexual assault",
               "color": "#FCE4EC",
-              "width": 220,
-              "yPosition": 687,
+              "width": 260,
+              "yPosition": 844,
               "provenance": "verbatim",
               "connections": []
             }
@@ -795,8 +795,8 @@
               "text": "Full label as drawn: Side note: Maté's individual-health-crisis path (unconnected in the drawing). Handwritten side-note on the whiteboard, not wired into the arrow diagram: \"Gabor Maté postulates additionally [a path] from [the same] unmet needs → individual health crisis.\" Kept here as a flagged annotation rather than invented into the causal chain, since Jonas did not draw it as a connected node.",
               "title": "Side note: Maté's health-crisis path",
               "color": "#ECEFF1",
-              "width": 280,
-              "yPosition": 20,
+              "width": 330,
+              "yPosition": 23,
               "provenance": "verbatim",
               "connections": []
             }

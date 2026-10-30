@@ -13,7 +13,7 @@ export const CANVAS_MARGIN = 24
 /** Rendered height of the section header bar (`SectionHeaderNode`). Kept here, next to
  * `HEADER_CLEARANCE`, so the two can't drift apart: raising the header's height without
  * raising the clearance would tuck the first row of cards under it. */
-export const SECTION_HEADER_HEIGHT = 56
+export const SECTION_HEADER_HEIGHT = 68
 const HEADER_BREATHING_ROOM = 28
 
 /** Vertical clearance between the section header band and a column's first node
