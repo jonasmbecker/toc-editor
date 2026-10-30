@@ -9,6 +9,8 @@ import { useToCStore } from '../state/store'
 import { tidyLayout } from '../canvas/tidyLayout'
 import { toCompatibleJson, toFullJson } from '../files/export'
 import { parseDocument } from '../model/schema'
+import { layoutDocument } from './columns'
+import { CARD_ANCHOR_Y } from '../canvas/anchors'
 
 const link = (targetId: string): Connection => ({ targetId, assumptions: '', evidence: '' })
 
@@ -58,17 +60,18 @@ describe('alignDocument', () => {
     expect(Math.abs(yOf(out, 'src') - ys[1])).toBeLessThanOrEqual(8)
   })
 
-  it('orders a column by where its neighbours are', () => {
+  it('orders a column so connections do not cross', () => {
     const doc = makeDocument(
       [
         makeNode('top', [link('x')], { yPosition: 0 }),
         makeNode('bottom', [link('y')], { yPosition: 200 }),
       ],
-      [makeNode('x', [], { yPosition: 400 }), makeNode('y', [], { yPosition: 0 })],
+      [makeNode('y', [], { yPosition: 0 }), makeNode('x', [], { yPosition: 400 })],
     )
     const out = alignDocument(doc)
-    expect(yOf(out, 'y')).toBeLessThan(yOf(out, 'x'))
-    expect(yOf(out, 'bottom')).toBeLessThan(yOf(out, 'top'))
+    expect(yOf(out, 'top') < yOf(out, 'bottom')).toBe(yOf(out, 'x') < yOf(out, 'y'))
+    expect(yOf(out, 'top')).toBe(yOf(out, 'x'))
+    expect(yOf(out, 'bottom')).toBe(yOf(out, 'y'))
   })
 
   it('is deterministic and returns the input itself when nothing needs to move', () => {
@@ -126,6 +129,38 @@ describe('alignDocument', () => {
     )
     expect(useToCStore.getState().undo()).toBe('tidy layout')
     expect(useToCStore.getState().document).toBe(doc)
+  })
+
+  it('is a fixed point: a second and third press change nothing', () => {
+    const once = alignDocument(statusQuoMetacrisis())
+    const twice = alignDocument(once)
+    expect(allNodes(twice).map((n) => n.yPosition)).toEqual(allNodes(once).map((n) => n.yPosition))
+    expect(alignDocument(twice)).toBe(twice)
+  })
+
+  it('reports the near-horizontal share on the metacrisis map', () => {
+    const share = (doc: ToCDocument) => {
+      const layout = layoutDocument(doc)
+      const at = new Map(layout.nodes.map((n) => [n.nodeId, n]))
+      let total = 0
+      let flat = 0
+      for (const node of allNodes(doc)) {
+        for (const c of node.connections) {
+          const a = at.get(node.id)
+          const b = at.get(c.targetId)
+          if (!a || !b) continue
+          const dx = Math.abs(b.x - (a.x + a.width))
+          const dy = Math.abs(b.y + CARD_ANCHOR_Y - (a.y + CARD_ANCHOR_Y))
+          total++
+          if (dx > 0 && (Math.atan2(dy, dx) * 180) / Math.PI < 10) flat++
+        }
+      }
+      return flat / total
+    }
+    const before = share(statusQuoMetacrisis())
+    const after = share(alignDocument(statusQuoMetacrisis()))
+    console.log(`near-horizontal share: before ${before.toFixed(2)}, after ${after.toFixed(2)}`)
+    expect(after).toBeGreaterThan(before * 2)
   })
 
   it('does not move connections within a column and never loses a card', () => {

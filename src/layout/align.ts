@@ -16,7 +16,7 @@ import { mapAllNodes } from '../state/tree'
 export const DEFAULT_CARD_HEIGHT = 100
 export const TIDY_GAP = 24
 const MEMBER_GAP = 16
-const SWEEPS = 4
+const SWEEPS = 40
 const GRID = 8
 
 export interface AlignOptions {
@@ -78,13 +78,18 @@ function columnUnits(nodes: DocumentNode[], opts: AlignOptions): Unit[] {
   const groupIds = new Set(groups.map((g) => g.id))
   const byY = (a: DocumentNode, b: DocumentNode) => a.yPosition - b.yPosition
   const units: Unit[] = []
+  const order = new Map<string, number>()
+  nodes.forEach((n, i) => {
+    if (!order.has(n.id)) order.set(n.id, i)
+    if (n.groupId && !order.has(n.groupId)) order.set(n.groupId, i)
+  })
   for (const group of groups) {
     const members = nodes.filter((n) => n.groupId === group.id && !isGroupNode(n)).sort(byY)
     if (members.length > 0) units.push(groupUnit(group, members, opts))
   }
   const loose = nodes.filter((n) => !isGroupNode(n) && !(n.groupId && groupIds.has(n.groupId)))
   for (const node of loose) units.push(cardUnit(node, opts.heights))
-  return units.sort((a, b) => a.top - b.top)
+  return units.sort((a, b) => order.get(a.id)! - order.get(b.id)!)
 }
 
 function buildColumns(doc: ToCDocument, opts: AlignOptions): Unit[][] {
@@ -120,9 +125,11 @@ function buildLinks(doc: ToCDocument, columns: Unit[][]): Map<Unit, Link[]> {
 
 function desiredTop(unit: Unit, links: Link[] | undefined): number {
   if (!links || links.length === 0) return unit.top
-  let sum = 0
-  for (const link of links) sum += link.other.top + link.theirs - link.mine
-  return sum / links.length
+  // The median, not the mean: with a fan-out the line to the middle neighbour stays dead straight
+  // instead of every line leaning a little.
+  const wishes = links.map((link) => link.other.top + link.theirs - link.mine).sort((a, b) => a - b)
+  const middle = wishes.length >> 1
+  return wishes.length % 2 === 1 ? wishes[middle] : (wishes[middle - 1] + wishes[middle]) / 2
 }
 
 interface Block {
@@ -181,6 +188,63 @@ function sweep(columns: Unit[][], links: Map<Unit, Link[]>, gap: number, pass: n
   }
 }
 
+interface Edge {
+  from: Unit
+  fromAnchor: number
+  to: Unit
+  toAnchor: number
+  /** Index of the column pair the edge spans, so only edges between the same two columns can cross. */
+  span: string
+}
+
+function buildEdges(columns: Unit[][], links: Map<Unit, Link[]>): Edge[] {
+  const columnOf = new Map<Unit, number>()
+  columns.forEach((units, index) => units.forEach((unit) => columnOf.set(unit, index)))
+  const edges: Edge[] = []
+  for (const [unit, list] of links) {
+    for (const link of list) {
+      const [a, b] = [columnOf.get(unit)!, columnOf.get(link.other)!]
+      if (a >= b) continue
+      edges.push({
+        from: unit,
+        fromAnchor: link.mine,
+        to: link.other,
+        toAnchor: link.theirs,
+        span: `${a}:${b}`,
+      })
+    }
+  }
+  return edges
+}
+
+const CROSSING_COST = 200
+
+function countCrossings(group: Edge[]): number {
+  let crossings = 0
+  for (let i = 0; i < group.length; i++) {
+    for (let j = i + 1; j < group.length; j++) {
+      const [p, q] = [group[i], group[j]]
+      const left = p.from.top + p.fromAnchor - (q.from.top + q.fromAnchor)
+      const right = p.to.top + p.toAnchor - (q.to.top + q.toAnchor)
+      if (left * right < 0) crossings++
+    }
+  }
+  return crossings
+}
+
+/** What Tidy shrinks: every crossing counts heavily, then the total vertical distance between
+ * the two ends of each connection. */
+function skew(edges: Edge[]): number {
+  let total = 0
+  const bySpan = new Map<string, Edge[]>()
+  for (const edge of edges) {
+    total += Math.abs(edge.from.top + edge.fromAnchor - (edge.to.top + edge.toAnchor))
+    bySpan.set(edge.span, [...(bySpan.get(edge.span) ?? []), edge])
+  }
+  for (const group of bySpan.values()) total += CROSSING_COST * countCrossings(group)
+  return total
+}
+
 function snapToGrid(value: number): number {
   return Math.round(value / GRID) * GRID
 }
@@ -208,7 +272,31 @@ export function alignDocument(doc: ToCDocument, options: AlignOptions = {}): ToC
   const gap = options.gap ?? TIDY_GAP
   const columns = buildColumns(doc, options)
   const links = buildLinks(doc, columns)
-  for (let pass = 0; pass < SWEEPS; pass++) sweep(columns, links, gap, pass)
+  const units = columns.flat()
+  const edges = buildEdges(columns, links)
+  // Start from a canonical stack (document order, no gaps beyond TIDY_GAP) so the result depends
+  // only on the diagram's structure, never on where the cards happen to sit: pressing Tidy again
+  // gives the same layout. The sweeps can swing between neighbouring orders, so the least skewed
+  // layout seen is the one kept.
+  for (const column of columns) {
+    let cursor = 0
+    for (const unit of column) {
+      unit.top = cursor
+      cursor += unit.height + gap
+    }
+  }
+  let best = units.map((unit) => unit.top)
+  let bestCost = skew(edges)
+  for (let pass = 0; pass < SWEEPS; pass++) {
+    sweep(columns, links, gap, pass)
+    for (const unit of units) unit.top = snapToGrid(unit.top)
+    const cost = skew(edges)
+    if (cost < bestCost) {
+      bestCost = cost
+      best = units.map((unit) => unit.top)
+    }
+  }
+  units.forEach((unit, i) => (unit.top = best[i]))
   const positions = collectPositions(columns)
   return mapAllNodes(doc, (node) => {
     const y = positions.get(node.id)
