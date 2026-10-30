@@ -26,21 +26,6 @@ export function useNeedColours(): boolean {
   )
 }
 
-/** On/off switch for the need stripes, bottom right of the canvas. */
-export function NeedColoursSwitch() {
-  const on = useNeedColours()
-  return (
-    <button
-      type="button"
-      className="toc-need-switch"
-      aria-pressed={on}
-      onClick={() => setNeedColours(!on)}
-    >
-      Need colours {on ? 'on' : 'off'}
-    </button>
-  )
-}
-
 export function needSegments({ needs, mixes }: NeedMixResult, nodeId: string): NeedSegment[] {
   const mix = mixes.get(nodeId)
   if (!mix) return []

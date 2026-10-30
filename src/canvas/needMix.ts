@@ -6,9 +6,11 @@ import type { ToCDocument } from '../model/schema'
  * The needs are the cards of the first column of the first section (Daniel Brown's five). A
  * card in the next column of that section is the same need seen through NARM, so it takes the
  * seed of the card level with it. Every card further right gets a mix: the average of the mixes
- * of the cards with an arrow into it, weighted by each arrow's confidence, so a card fed by two strategies that stem from different
- * needs shows both. Only forward arrows (into a later column, or down the same column) are followed, which keeps the
- * trace free of cycles, so feedback loops never change a colour.
+ * of the cards with an arrow into it, weighted by each arrow's confidence, so a card fed by two
+ * strategies that stem from different needs shows both. Only forward arrows (into a later
+ * column, or down the same column) are followed, which keeps the trace free of cycles, so
+ * feedback loops never change a colour. A grouped card with no arrow of its own takes its
+ * group's mix.
  */
 
 /** Okabe-Ito colours, chosen to stay apart for the common kinds of colour blindness. */
@@ -85,6 +87,49 @@ function weightedAverage(parents: { mix: NeedMix; weight: number }[], size: numb
   return result
 }
 
+type Incoming = Map<string, { id: string; weight: number }[]>
+
+/** Each need card gets its own colour; a NARM card level with one takes that need's colour. */
+function seedMixes(placed: Placed[], needCards: Placed[]): Map<string, NeedMix> {
+  const mixes = new Map<string, NeedMix>()
+  needCards.forEach((card, i) => mixes.set(card.id, unit(i, needCards.length)))
+  for (const card of placed.filter((p) => p.section === 0 && p.column === 1)) {
+    const mate = needCards.findIndex((need) => need.yPosition === card.yPosition)
+    if (mate >= 0) mixes.set(card.id, unit(mate, needCards.length))
+  }
+  return mixes
+}
+
+function forwardArrowsInto(placed: Placed[]): Incoming {
+  const byId = new Map(placed.map((p) => [p.id, p]))
+  const incoming: Incoming = new Map()
+  for (const source of placed) {
+    for (const { id: targetId, weight } of source.targets) {
+      const target = byId.get(targetId)
+      if (!target || !isForward(source, target)) continue
+      incoming.set(targetId, [...(incoming.get(targetId) ?? []), { id: source.id, weight }])
+    }
+  }
+  return incoming
+}
+
+function mixFor(node: Placed, incoming: Incoming, mixes: Map<string, NeedMix>, size: number) {
+  const parents = (incoming.get(node.id) ?? []).flatMap(({ id, weight }) => {
+    const mix = mixes.get(id)
+    return mix ? [{ mix, weight }] : []
+  })
+  if (parents.length > 0) return weightedAverage(parents, size)
+  return node.groupId ? mixes.get(node.groupId) : undefined
+}
+
+/** Left to right; within a column, group members after the group they inherit from. */
+function traceOrder(placed: Placed[]): Placed[] {
+  const grouped = (p: Placed) => Number(p.groupId !== undefined)
+  return [...placed].sort(
+    (a, b) => a.rank - b.rank || grouped(a) - grouped(b) || a.yPosition - b.yPosition,
+  )
+}
+
 export function computeNeedMixes(doc: ToCDocument): NeedMixResult {
   const empty: NeedMixResult = { needs: [], mixes: new Map() }
   if (doc.diagramType !== 'status-quo') return empty
@@ -97,36 +142,12 @@ export function computeNeedMixes(doc: ToCDocument): NeedMixResult {
     title: card.title,
     color: NEED_PALETTE[i],
   }))
-  const mixes = new Map<string, NeedMix>()
-  needCards.forEach((card, i) => mixes.set(card.id, unit(i, needs.length)))
-  for (const card of placed.filter((p) => p.section === 0 && p.column === 1)) {
-    const mate = needCards.findIndex((need) => need.yPosition === card.yPosition)
-    if (mate >= 0) mixes.set(card.id, unit(mate, needs.length))
-  }
-
-  const byId = new Map(placed.map((p) => [p.id, p]))
-  const incoming = new Map<string, { id: string; weight: number }[]>()
-  for (const source of placed) {
-    for (const { id: targetId, weight } of source.targets) {
-      const target = byId.get(targetId)
-      if (!target || !isForward(source, target)) continue
-      incoming.set(targetId, [...(incoming.get(targetId) ?? []), { id: source.id, weight }])
-    }
-  }
-
-  const ordered = [...placed].sort((a, b) => a.rank - b.rank || a.yPosition - b.yPosition)
-  for (const node of ordered) {
+  const mixes = seedMixes(placed, needCards)
+  const incoming = forwardArrowsInto(placed)
+  for (const node of traceOrder(placed)) {
     if (mixes.has(node.id)) continue
-    const parents = (incoming.get(node.id) ?? []).flatMap(({ id, weight }) => {
-      const mix = mixes.get(id)
-      return mix ? [{ mix, weight }] : []
-    })
-    if (parents.length > 0) mixes.set(node.id, weightedAverage(parents, needs.length))
-  }
-  // A card in a group with no arrow of its own takes the group's mix.
-  for (const node of ordered) {
-    const groupMix = node.groupId ? mixes.get(node.groupId) : undefined
-    if (!mixes.has(node.id) && groupMix) mixes.set(node.id, groupMix)
+    const mix = mixFor(node, incoming, mixes, needs.length)
+    if (mix) mixes.set(node.id, mix)
   }
   return { needs, mixes }
 }

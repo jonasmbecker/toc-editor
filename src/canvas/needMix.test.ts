@@ -76,6 +76,21 @@ describe('computeNeedMixes', () => {
     expect(mixes.get('s1')).toEqual([1, 0])
   })
 
+  it('gives a grouped card its group mix, and passes it on downstream', () => {
+    const d = doc()
+    const c = (targetId: string) => ({ targetId, confidence: 50, assumptions: '', evidence: '' })
+    const strategies = d.sections[1].columns[0].nodes
+    strategies[0].connections.push(c('g'))
+    d.sections[2].columns[0].nodes.push(
+      { ...makeNode('g', [], { yPosition: 300 }), kind: 'group' },
+      { ...makeNode('g1', [c('o1')], { yPosition: 320 }), groupId: 'g' },
+    )
+    d.sections.push({ title: 'Outcomes', columns: [{ nodes: [makeNode('o1')] }] })
+    const { mixes } = computeNeedMixes(d)
+    expect(mixes.get('g1')).toEqual([1, 0])
+    expect(mixes.get('o1')).toEqual([1, 0])
+  })
+
   it('does nothing for a plain theory of change', () => {
     const plain = { ...doc(), diagramType: 'theory-of-change' } as ToCDocument
     expect(computeNeedMixes(plain).mixes.size).toBe(0)
