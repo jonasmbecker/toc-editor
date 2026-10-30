@@ -1,4 +1,4 @@
-import { BaseEdge, getBezierPath, type Edge, type EdgeProps } from '@xyflow/react'
+import { BaseEdge, getBezierPath, getSmoothStepPath, Position, type Edge, type EdgeProps } from '@xyflow/react'
 import { CANVAS_COLORS, edgeAppearance, type ConnectionProvenance } from './config'
 import type { ConnectionRef } from '../state/connections'
 
@@ -6,6 +6,9 @@ export interface ConnectionEdgeData extends Record<string, unknown> {
   confidence?: number
   provenance?: ConnectionProvenance
   isFeedbackLoop?: boolean
+  /** x of the vertical run of a stepped edge, set by `buildFlow` so edges sharing a gap don't
+   * overlap. */
+  stepX?: number
   /** Where this edge lives in the document, so a click can open it in the details panel. The
    * same `ConnectionRef` the store and the panel use. */
   ref: ConnectionRef
@@ -30,14 +33,17 @@ export function ConnectionEdge({
   markerEnd,
   markerStart,
 }: EdgeProps<ConnectionEdgeType>) {
-  const [path] = getBezierPath({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-  })
+  const geometry = { sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition }
+  // Right-angle route with one turn in the gap before the target column. Same-column (vertical)
+  // edges keep the bezier; a dragged card that leaves `stepX` outside the two ends falls back to
+  // the midpoint.
+  const horizontal = sourcePosition === Position.Right && targetPosition === Position.Left
+  const stepX = data?.stepX
+  const centerX =
+    stepX !== undefined && stepX > sourceX && stepX < targetX ? stepX : undefined
+  const [path] = horizontal
+    ? getSmoothStepPath({ ...geometry, borderRadius: 6, centerX })
+    : getBezierPath(geometry)
   const { stroke, dashArray, lineCap, width } = edgeAppearance(data ?? {})
   const color = selected ? CANVAS_COLORS.select : stroke
 

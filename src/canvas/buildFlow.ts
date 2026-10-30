@@ -143,7 +143,40 @@ function buildEdges(
       })
     })
   }
+  staggerSteps(edges, positions)
   return { edges, dropped }
+}
+
+/** Stepped edges turn in the gap just before their target column. Edges from different sources
+ * into the same column would share one vertical run and read as a single line, so each distinct
+ * source (top to bottom) gets its own x inside that gap. Several edges from one source (a
+ * fan-out) keep sharing a run: that reads as one bus. */
+function staggerSteps(edges: ConnectionEdgeType[], positions: PositionById): void {
+  const byTargetX = new Map<number, ConnectionEdgeType[]>()
+  for (const edge of edges) {
+    if (edge.type !== 'connection' || edge.sourceHandle !== FLOW_OUT_HANDLE) continue
+    const target = positions.get(edge.target)
+    if (!target) continue
+    byTargetX.set(target.x, [...(byTargetX.get(target.x) ?? []), edge])
+  }
+  for (const [targetX, group] of byTargetX) {
+    let gapLeft = -Infinity
+    for (const box of positions.values()) {
+      const right = box.x + box.width
+      if (right <= targetX && right > gapLeft) gapLeft = right
+    }
+    if (!Number.isFinite(gapLeft)) continue
+    const sources = [...new Set(group.map((edge) => edge.source))].sort(
+      (a, b) => (positions.get(a)?.y ?? 0) - (positions.get(b)?.y ?? 0),
+    )
+    for (const edge of group) {
+      const slot = sources.indexOf(edge.source)
+      edge.data = {
+        ...edge.data,
+        stepX: gapLeft + ((slot + 1) / (sources.length + 1)) * (targetX - gapLeft),
+      } as ConnectionEdgeData
+    }
+  }
 }
 
 /** Converts a parsed document into React Flow's node/edge shape. Positions come entirely from
