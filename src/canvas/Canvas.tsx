@@ -20,6 +20,7 @@ import { GroupNode } from './GroupNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { LoopEdge } from './LoopEdge'
 import { Legend } from './Legend'
+import { NeedLookSwitch } from './needLook'
 import { tidyLayout } from './tidyLayout'
 import { SnapGuide } from './SnapGuide'
 import { CanvasTopBar } from './CanvasTopBar'
@@ -168,6 +169,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
         <Legend />
+        <NeedLookSwitch />
         <button
           type="button"
           className="toc-minimap-toggle"
