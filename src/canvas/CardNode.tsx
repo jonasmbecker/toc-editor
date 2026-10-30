@@ -24,6 +24,51 @@ export const LOOP_IN_HANDLE = 'loop-in'
 export const FLOW_OUT_HANDLE = 'out'
 export const FLOW_IN_HANDLE = 'in'
 
+/** Handle ids of an edge between two cards stacked in the same column: it runs vertically,
+ * bottom edge to top edge when the target sits lower, top edge to bottom edge when it sits
+ * higher, instead of leaving the right edge and curling back behind the column. Not
+ * connectable; the user draws from the ordinary handles. */
+export const STACK_DOWN_OUT_HANDLE = 'down-out'
+export const STACK_DOWN_IN_HANDLE = 'down-in'
+export const STACK_UP_OUT_HANDLE = 'up-out'
+export const STACK_UP_IN_HANDLE = 'up-in'
+
+/** The four hidden handles a same-column edge anchors to, shared by cards and groups. */
+export function StackHandles() {
+  return (
+    <>
+      <Handle
+        type="source"
+        id={STACK_DOWN_OUT_HANDLE}
+        position={Position.Bottom}
+        className="toc-card__loop-handle"
+        isConnectable={false}
+      />
+      <Handle
+        type="target"
+        id={STACK_DOWN_IN_HANDLE}
+        position={Position.Top}
+        className="toc-card__loop-handle"
+        isConnectable={false}
+      />
+      <Handle
+        type="source"
+        id={STACK_UP_OUT_HANDLE}
+        position={Position.Top}
+        className="toc-card__loop-handle"
+        isConnectable={false}
+      />
+      <Handle
+        type="target"
+        id={STACK_UP_IN_HANDLE}
+        position={Position.Bottom}
+        className="toc-card__loop-handle"
+        isConnectable={false}
+      />
+    </>
+  )
+}
+
 function ProvenanceBadge() {
   return (
     <span className="toc-card__badge" title="Interpreted, not read verbatim from the source">
@@ -68,6 +113,7 @@ export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
         className="toc-card__loop-handle"
         isConnectable={false}
       />
+      <StackHandles />
     </div>
   )
 }

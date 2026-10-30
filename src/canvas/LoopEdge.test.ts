@@ -2,7 +2,16 @@ import { describe, expect, it } from 'vitest'
 import { loopGeometry } from './loopGeometry'
 import { buildFlow } from './buildFlow'
 import type { ToCDocument } from '../model/schema'
-import { FLOW_IN_HANDLE, FLOW_OUT_HANDLE, LOOP_IN_HANDLE, LOOP_OUT_HANDLE } from './CardNode'
+import {
+  FLOW_IN_HANDLE,
+  FLOW_OUT_HANDLE,
+  LOOP_IN_HANDLE,
+  LOOP_OUT_HANDLE,
+  STACK_DOWN_IN_HANDLE,
+  STACK_DOWN_OUT_HANDLE,
+  STACK_UP_IN_HANDLE,
+  STACK_UP_OUT_HANDLE,
+} from './CardNode'
 
 function node(
   id: string,
@@ -65,5 +74,39 @@ describe('buildFlow routing and heads', () => {
     expect(loop.type).toBe('loop')
     expect(loop.markerStart).toMatchObject({ color: '#C2410C' })
     expect(byId('b->c').type).toBe('connection')
+  })
+})
+
+describe('buildFlow same-column routing', () => {
+  const stacked: ToCDocument = {
+    ...doc,
+    sections: [
+      {
+        title: 'S',
+        columns: [
+          {
+            nodes: [
+              node('top', [{ targetId: 'bottom' }]),
+              { ...node('bottom', [{ targetId: 'top' }]), yPosition: 200 },
+            ],
+          },
+        ],
+      },
+    ],
+  }
+  const { edges } = buildFlow(stacked)
+  const byId = (prefix: string) => edges.find((e) => e.id.startsWith(prefix))!
+
+  it('an edge to a lower card in the same column runs bottom edge to top edge', () => {
+    const down = byId('top->bottom')
+    expect(down.type).toBe('connection')
+    expect(down.sourceHandle).toBe(STACK_DOWN_OUT_HANDLE)
+    expect(down.targetHandle).toBe(STACK_DOWN_IN_HANDLE)
+  })
+
+  it('an edge to a higher card in the same column runs top edge to bottom edge', () => {
+    const up = byId('bottom->top')
+    expect(up.sourceHandle).toBe(STACK_UP_OUT_HANDLE)
+    expect(up.targetHandle).toBe(STACK_UP_IN_HANDLE)
   })
 })

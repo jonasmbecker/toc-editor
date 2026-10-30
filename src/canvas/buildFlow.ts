@@ -7,6 +7,10 @@ import {
   FLOW_OUT_HANDLE,
   LOOP_IN_HANDLE,
   LOOP_OUT_HANDLE,
+  STACK_DOWN_IN_HANDLE,
+  STACK_DOWN_OUT_HANDLE,
+  STACK_UP_IN_HANDLE,
+  STACK_UP_OUT_HANDLE,
   type CardNodeData,
   type CardNodeType,
 } from './CardNode'
@@ -84,6 +88,26 @@ function isLoopRoute(targetId: string, sourceId: string, positions: PositionById
   return !!source && !!target && target.x < source.x
 }
 
+type Route = 'flow' | 'loop' | 'stack-down' | 'stack-up'
+
+/** Same column (equal x) runs vertically between the stacked cards; a target further left takes
+ * the loop route; everything else is the ordinary left-to-right flow. */
+function routeFor(targetId: string, sourceId: string, positions: PositionById): Route {
+  const source = positions.get(sourceId)
+  const target = positions.get(targetId)
+  if (source && target && source.x === target.x && sourceId !== targetId) {
+    return target.y >= source.y ? 'stack-down' : 'stack-up'
+  }
+  return isLoopRoute(targetId, sourceId, positions) ? 'loop' : 'flow'
+}
+
+const HANDLES: Record<Route, { sourceHandle: string; targetHandle: string }> = {
+  flow: { sourceHandle: FLOW_OUT_HANDLE, targetHandle: FLOW_IN_HANDLE },
+  loop: { sourceHandle: LOOP_OUT_HANDLE, targetHandle: LOOP_IN_HANDLE },
+  'stack-down': { sourceHandle: STACK_DOWN_OUT_HANDLE, targetHandle: STACK_DOWN_IN_HANDLE },
+  'stack-up': { sourceHandle: STACK_UP_OUT_HANDLE, targetHandle: STACK_UP_IN_HANDLE },
+}
+
 function markerFor(color: string, start: boolean) {
   return { type: MarkerType.ArrowClosed, color, orient: start ? 'auto-start-reverse' : 'auto' }
 }
@@ -101,14 +125,13 @@ function buildEdges(
         return
       }
       const appearance = edgeAppearance(connection)
-      const loop = isLoopRoute(connection.targetId, node.id, positions)
+      const route = routeFor(connection.targetId, node.id, positions)
       edges.push({
         id: `${node.id}->${connection.targetId}#${connection.id ?? index}`,
         source: node.id,
         target: connection.targetId,
-        type: loop ? 'loop' : 'connection',
-        sourceHandle: loop ? LOOP_OUT_HANDLE : FLOW_OUT_HANDLE,
-        targetHandle: loop ? LOOP_IN_HANDLE : FLOW_IN_HANDLE,
+        type: route === 'loop' ? 'loop' : 'connection',
+        ...HANDLES[route],
         markerEnd: appearance.showArrow ? markerFor(appearance.stroke, false) : undefined,
         markerStart: appearance.bothWays ? markerFor(appearance.stroke, true) : undefined,
         data: {

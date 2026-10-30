@@ -1,5 +1,11 @@
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react'
-import { FLOW_IN_HANDLE, FLOW_OUT_HANDLE, LOOP_IN_HANDLE, LOOP_OUT_HANDLE } from './CardNode'
+import {
+  FLOW_IN_HANDLE,
+  FLOW_OUT_HANDLE,
+  LOOP_IN_HANDLE,
+  LOOP_OUT_HANDLE,
+  StackHandles,
+} from './CardNode'
 import './group.css'
 
 export interface GroupNodeData extends Record<string, unknown> {
@@ -50,6 +56,7 @@ export function GroupNode({ data, selected }: NodeProps<GroupNodeType>) {
         className="toc-card__loop-handle"
         isConnectable={false}
       />
+      <StackHandles />
     </div>
   )
 }
