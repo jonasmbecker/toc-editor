@@ -5,6 +5,10 @@ import { GROUP_KIND, type Connection, type DocumentNode, type ToCDocument } from
 import { allNodes, nodeAt } from '../state/tree'
 import { makeDocument, makeNode } from '../test/fixtures'
 import { statusQuoMetacrisis } from '../templates'
+import { useToCStore } from '../state/store'
+import { tidyLayout } from '../canvas/tidyLayout'
+import { toCompatibleJson, toFullJson } from '../files/export'
+import { parseDocument } from '../model/schema'
 
 const link = (targetId: string): Connection => ({ targetId, assumptions: '', evidence: '' })
 
@@ -14,15 +18,14 @@ function yOf(doc: ToCDocument, id: string): number {
 
 function overlaps(doc: ToCDocument): string[] {
   const found: string[] = []
-  for (const section of doc.sections) {
-    for (const column of section.columns) {
-      const cards = column.nodes.filter((n) => n.kind !== GROUP_KIND && !n.groupId)
-      const sorted = [...cards].sort((a, b) => a.yPosition - b.yPosition)
-      for (let i = 1; i < sorted.length; i++) {
-        if (sorted[i].yPosition < sorted[i - 1].yPosition + DEFAULT_CARD_HEIGHT) {
-          found.push(`${sorted[i - 1].id}/${sorted[i].id}`)
-        }
-      }
+  const columns = doc.sections.flatMap((section) => section.columns)
+  for (const column of columns) {
+    const cards = column.nodes.filter((n) => n.kind !== GROUP_KIND && !n.groupId)
+    const sorted = [...cards].sort((a, b) => a.yPosition - b.yPosition)
+    for (let i = 1; i < sorted.length; i++) {
+      const [upper, lower] = [sorted[i - 1], sorted[i]]
+      if (lower.yPosition < upper.yPosition + DEFAULT_CARD_HEIGHT)
+        found.push(`${upper.id}/${lower.id}`)
     }
   }
   return found
@@ -106,6 +109,23 @@ describe('alignDocument', () => {
     })
     // Centres match (a is 160 tall, b is 80 tall), within the 8px grid.
     expect(Math.abs(yOf(out, 'a') + 80 - (yOf(out, 'b') + 40))).toBeLessThanOrEqual(8)
+  })
+
+  it('round-trips a tidied template through both exports and undoes in one step', () => {
+    const doc = statusQuoMetacrisis()
+    useToCStore.getState().load(doc)
+    tidyLayout([])
+    const tidied = useToCStore.getState().document
+    expect(tidied).not.toBe(doc)
+    for (const exported of [toFullJson(tidied), toCompatibleJson(tidied)]) {
+      expect(parseDocument(JSON.parse(JSON.stringify(exported))).ok).toBe(true)
+    }
+    const full = parseDocument(JSON.parse(JSON.stringify(toFullJson(tidied))))
+    expect(full.ok && allNodes(full.document).map((n) => n.yPosition)).toEqual(
+      allNodes(tidied).map((n) => n.yPosition),
+    )
+    expect(useToCStore.getState().undo()).toBe('tidy layout')
+    expect(useToCStore.getState().document).toBe(doc)
   })
 
   it('does not move connections within a column and never loses a card', () => {

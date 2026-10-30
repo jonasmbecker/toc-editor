@@ -20,7 +20,7 @@ import { GroupNode } from './GroupNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { LoopEdge } from './LoopEdge'
 import { Legend } from './Legend'
-import { TidyButton } from './TidyButton'
+import { tidyLayout } from './tidyLayout'
 import { SnapGuide } from './SnapGuide'
 import { CanvasTopBar } from './CanvasTopBar'
 import { NodePanel } from '../panels/NodePanel'
@@ -124,6 +124,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
         connectionCount={flow.edges.length}
         droppedCount={graph.droppedConnections.length}
         onHome={onHome}
+        onTidy={() => tidyLayout(flow.nodes)}
       />
       <StageBar />
       <div className={stageClassName(connect.isConnecting, isReadOnly)}>
@@ -157,7 +158,6 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           <Controls showInteractive={false} />
           <MiniMap pannable zoomable nodeColor={minimapColor} />
           <ZoomMarker />
-          {isReadOnly ? null : <TidyButton />}
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
         <Legend />

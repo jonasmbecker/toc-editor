@@ -63,6 +63,15 @@ function anchorsFor(flow: SnapFlow, graph: FlowGraph, id: string, own: Extent): 
   return anchors
 }
 
+/** The guide spans from the dragged card's column to the card it is levelled with. */
+function guideLine(anchor: SnapAnchor, own: Extent): SnapGuideLine {
+  return {
+    y: anchor.centerY,
+    left: Math.min(own.left, anchor.left),
+    right: Math.max(own.right, anchor.right),
+  }
+}
+
 /**
  * Snap on drag: a card dragged to within SNAP_DISTANCE_PX (screen pixels) of the height that
  * makes one of its connections straight jumps onto it, and a guide line is drawn while it holds.
@@ -102,15 +111,7 @@ export function useStraightSnap(graph: FlowGraph) {
       const threshold = SNAP_DISTANCE_PX / instance.getZoom()
       const hit = findStraightSnap(change.position.y, height, anchors, threshold)
       snapped.current = hit ? { id: change.id, top: hit.top } : null
-      setGuide(
-        hit
-          ? {
-              y: hit.anchor.centerY,
-              left: Math.min(own.current.left, hit.anchor.left),
-              right: Math.max(own.current.right, hit.anchor.right),
-            }
-          : null,
-      )
+      setGuide(hit ? guideLine(hit.anchor, own.current) : null)
       return hit ? ({ ...change, position: { x: change.position.x, y: hit.top } } as T) : change
     },
     [graph, alt],

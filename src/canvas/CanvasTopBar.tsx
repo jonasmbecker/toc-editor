@@ -3,6 +3,7 @@ import { DEFAULT_DIAGRAM_TYPE, labelsFor } from '../model/labels'
 import { useToCStore } from '../state/store'
 import { setDiagramType } from '../state/document'
 import { TopBarActions } from './TopBarActions'
+import { TidyButton } from './TidyButton'
 
 export interface CanvasTopBarProps {
   title: string
@@ -11,6 +12,8 @@ export interface CanvasTopBarProps {
   connectionCount: number
   droppedCount: number
   onHome: () => void
+  /** Shown as a "Tidy layout" button when given and the diagram is editable. */
+  onTidy?: () => void
 }
 
 const DIAGRAM_TYPES = diagramTypeSchema.options
@@ -22,6 +25,7 @@ export function CanvasTopBar({
   connectionCount,
   droppedCount,
   onHome,
+  onTidy,
 }: CanvasTopBarProps) {
   const transform = useToCStore((state) => state.transform)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
@@ -52,6 +56,7 @@ export function CanvasTopBar({
           </span>
         ) : null}
       </span>
+      {onTidy && !isReadOnly ? <TidyButton onTidy={onTidy} /> : null}
       <TopBarActions onHome={onHome} />
     </header>
   )
