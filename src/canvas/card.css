@@ -27,12 +27,7 @@
   font-size: 18px;
   font-weight: 700;
   line-height: 1.25;
-  /* Three lines fit the tightest yPosition spacing in the templates; the full title is in the
-     node panel. */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .toc-card__text {

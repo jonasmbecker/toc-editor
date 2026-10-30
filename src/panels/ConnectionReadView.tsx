@@ -20,7 +20,6 @@ export interface ConnectionReadViewProps {
  * its value and band sentence, blocks are plain paragraphs. Text is never rendered as HTML. */
 export function ConnectionReadView({ resolved, labels, onClose }: ConnectionReadViewProps) {
   const { connection, source, target } = resolved
-  const isPairing = connection.provenance === 'verbatim-structure'
 
   return (
     <aside className="toc-panel toc-panel--connection" aria-label="Connection details">
@@ -30,18 +29,16 @@ export function ConnectionReadView({ resolved, labels, onClose }: ConnectionRead
         <EndCard node={source} />
         <div className="toc-ends__leads">
           <EdgeSwatch appearance={edgeAppearance(connection)} />
-          <span>{isPairing ? 'is paired with' : 'leads to'}</span>
+          <span>leads to</span>
         </div>
         <span className="toc-end__label">To</span>
         <EndCard node={target} />
       </div>
-      {isPairing ? null : (
-        <ConfidenceField
-          confidence={connection.confidence}
-          isFeedbackLoop={connection.isFeedbackLoop === true}
-          disabled
-        />
-      )}
+      <ConfidenceField
+        confidence={connection.confidence}
+        isFeedbackLoop={connection.isFeedbackLoop === true}
+        disabled
+      />
       <ReadBlocks
         labels={labels.mechanism}
         blocks={splitBlocks(connection.assumptions).map((text) => ({ text }))}

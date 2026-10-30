@@ -42,19 +42,6 @@ describe('edgeAppearance', () => {
     expect(confidenceSentence(undefined)).toMatch(/^Not rated yet/)
   })
 
-  it('a feedback loop wins over a verbatim-structure pairing', () => {
-    // A connection could in principle carry both fields; the loop takes precedence so a
-    // genuine back-connection is never mistaken for a non-causal row pairing.
-    const loop = edgeAppearance({ isFeedbackLoop: true, provenance: 'verbatim-structure' })
-    const pairing = edgeAppearance({ provenance: 'verbatim-structure' })
-    expect(loop.stroke).not.toBe(pairing.stroke)
-    expect(loop.showArrow).toBe(true)
-  })
-
-  it('a verbatim-structure pairing has no arrowhead', () => {
-    expect(edgeAppearance({ provenance: 'verbatim-structure' }).showArrow).toBe(false)
-  })
-
   it("an ordinary connection's dash pattern follows its confidence band", () => {
     expect(edgeAppearance({ confidence: 80 }).dashArray).toBeUndefined()
     expect(edgeAppearance({ confidence: 50 }).dashArray).toBe('7 5')

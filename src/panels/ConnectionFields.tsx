@@ -37,7 +37,7 @@ export interface ConnectionFieldsProps {
   onEdit: (label: string, patch: ConnectionPatch, coalesceKey?: string) => void
 }
 
-/** The editable middle of the Connection Details panel: confidence (or the pairing note) and
+/** The editable middle of the Connection Details panel: confidence and
  * the two block lists. Direction lives in the "Between" header. */
 export function ConnectionFields({
   resolved,
@@ -46,7 +46,6 @@ export function ConnectionFields({
   onEdit,
 }: ConnectionFieldsProps) {
   const { connection } = resolved
-  const isPairing = connection.provenance === 'verbatim-structure'
   const coalesceScope = connectionRefKey(connectionRef)
   const [hoverMechanism, setHoverMechanism] = useState<number | null>(null)
   const [hoverSupports, setHoverSupports] = useState<number[] | null>(null)
@@ -54,21 +53,13 @@ export function ConnectionFields({
 
   return (
     <>
-      {isPairing ? (
-        <section className="toc-field">
-          <p className="toc-field__note">
-            Paired rows are not a causal arrow, so confidence does not apply.
-          </p>
-        </section>
-      ) : (
-        <ConfidenceField
-          confidence={connection.confidence}
-          isFeedbackLoop={connection.isFeedbackLoop === true}
-          onChange={(confidence) =>
-            onEdit('rate connection', { confidence }, `confidence:${coalesceScope}`)
-          }
-        />
-      )}
+      <ConfidenceField
+        confidence={connection.confidence}
+        isFeedbackLoop={connection.isFeedbackLoop === true}
+        onChange={(confidence) =>
+          onEdit('rate connection', { confidence }, `confidence:${coalesceScope}`)
+        }
+      />
       <BlockListField
         id="conn-mechanism"
         labels={labels.mechanism}

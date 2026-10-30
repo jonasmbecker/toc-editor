@@ -32,12 +32,10 @@ export interface ConnectionEndsProps {
 /**
  * "Between": the two nodes in column order with the direction control between them. The DOM
  * order is first card, second card, control (so Tab reaches both cards before the control, as
- * the design asks) and CSS `order` puts the control visually in the middle. A pairing has no
- * direction: it shows "is paired with" instead.
+ * the design asks) and CSS `order` puts the control visually in the middle.
  */
 export function ConnectionEnds({ resolved, onSelectNode, onDirectionChange }: ConnectionEndsProps) {
   const { connection, first, second, direction } = resolved
-  const isPairing = connection.provenance === 'verbatim-structure'
   const swatch = <EdgeSwatch appearance={edgeAppearance(connection)} />
 
   return (
@@ -50,22 +48,13 @@ export function ConnectionEnds({ resolved, onSelectNode, onDirectionChange }: Co
         <EndCard node={second} onSelect={onSelectNode} />
       </div>
       <div className="toc-between__middle">
-        {isPairing ? (
-          <div className="toc-ends__leads">
-            {swatch}
-            <span>is paired with</span>
-          </div>
-        ) : (
-          <>
-            <DirectionControl
-              value={direction}
-              firstTitle={first.title}
-              secondTitle={second.title}
-              onChange={onDirectionChange}
-            />
-            <div className="toc-ends__leads">{swatch}</div>
-          </>
-        )}
+        <DirectionControl
+          value={direction}
+          firstTitle={first.title}
+          secondTitle={second.title}
+          onChange={onDirectionChange}
+        />
+        <div className="toc-ends__leads">{swatch}</div>
       </div>
     </div>
   )

@@ -3,7 +3,7 @@ import { importFromText, describePath, MAX_IMPORT_BYTES, importFromFile } from '
 import { toCompatibleJson, toFullJson, exportFilename } from './export'
 import { saveDraft, loadDraft, clearDraft, isDraftCurrent } from './draft'
 import { blankTheoryOfChange, statusQuoMetacrisis, TEMPLATES } from '../templates'
-import { parseDocument } from '../model/schema'
+import { parseDocument, type ToCDocument } from '../model/schema'
 import { extensionKeysIn, listFixtures, readFixtureText } from '../test/fixtures'
 
 const NOW = new Date('2026-10-29T12:00:00.000Z')
@@ -111,11 +111,22 @@ describe('templates and filenames', () => {
   it('bundles the status-quo fixture plus the two extension keys', () => {
     const fixture = importFromText(readFixtureText('theory-of-metacrisis-status-quo_v1.json'))
     if (!fixture.ok) throw new Error('fixture failed')
-    expect(statusQuoMetacrisis()).toEqual({
-      ...fixture.document,
-      schemaVersion: 1,
-      diagramType: 'status-quo',
-    })
+    // The bundled template keeps the fixture's structure but carries readability edits (wider
+    // columns, shorter card titles, no row pairings), so compare shape, not bytes.
+    const ids = (doc: ToCDocument) =>
+      doc.sections.map((s) => s.columns.map((c) => c.nodes.map((n) => n.id)))
+    const template = statusQuoMetacrisis()
+    expect(ids(template)).toEqual(ids(fixture.document))
+    expect(template.sections.map((s) => s.title)).toEqual(
+      fixture.document.sections.map((s) => s.title),
+    )
+    expect(template.schemaVersion).toBe(1)
+    expect(template.diagramType).toBe('status-quo')
+    const pairings = template.sections
+      .flatMap((s) => s.columns.flatMap((c) => c.nodes))
+      .flatMap((n) => n.connections)
+      .filter((k) => k.provenance === 'verbatim-structure')
+    expect(pairings).toEqual([])
   })
   it('builds filenames from the title', () => {
     expect(exportFilename('Theory of the Status Quo: From A to B!')).toBe(

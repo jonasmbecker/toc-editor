@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   useStore,
   Background,
@@ -114,6 +114,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
   const graph = useMemo(() => buildFlow(doc), [doc])
   const flow = useControlledFlow(doc, graph)
   const connect = useConnectFlow()
+  const [showMinimap, setShowMinimap] = useState(false)
 
   return (
     <div className="toc-app">
@@ -151,16 +152,27 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           // group's container over its own cards.
           elevateNodesOnSelect={false}
           fitView
+          fitViewOptions={{ padding: 0.1 }}
           minZoom={0.1}
           maxZoom={2.5}
         >
           <Background variant={BackgroundVariant.Dots} gap={24} color={CANVAS_COLORS.border} />
           <Controls showInteractive={false} />
-          <MiniMap pannable zoomable nodeColor={minimapColor} />
+          {showMinimap ? (
+            <MiniMap pannable zoomable nodeColor={minimapColor} style={{ bottom: 44 }} />
+          ) : null}
           <ZoomMarker />
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
         <Legend />
+        <button
+          type="button"
+          className="toc-minimap-toggle"
+          aria-pressed={showMinimap}
+          onClick={() => setShowMinimap((shown) => !shown)}
+        >
+          Minimap
+        </button>
         <SelectionPanels />
       </div>
     </div>

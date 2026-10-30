@@ -27,15 +27,10 @@ const ROWS = [
     label: 'Both ways (feedback loop)',
     appearance: edgeAppearance({ isFeedbackLoop: true }),
   },
-  {
-    key: 'pair',
-    label: 'Paired rows, not causal',
-    appearance: edgeAppearance({ provenance: 'verbatim-structure' }),
-  },
 ]
 
 export function Legend() {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (
     <div className={`toc-legend${isCollapsed ? ' toc-legend--collapsed' : ''}`}>

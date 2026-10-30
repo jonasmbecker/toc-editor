@@ -24,11 +24,6 @@ export function ConnectionPanelHeader({
         Interpreted
       </span>
     ) : null,
-    connection.provenance === 'verbatim-structure' ? (
-      <span key="pair" className="toc-tag">
-        Paired rows
-      </span>
-    ) : null,
   ].filter(Boolean)
 
   return (

@@ -67,7 +67,6 @@ export function confidenceSentence(confidence: number | undefined): string {
 export const CANVAS_COLORS = {
   edge: '#5B5A5E',
   accent: '#C2410C',
-  pair: '#9C9893',
   select: '#2563EB',
   border: '#E2DED6',
   secondary: '#6B6966',
@@ -80,7 +79,6 @@ export interface EdgeAppearance {
   dashArray?: string
   lineCap?: 'round'
   width: number
-  /** Pairings (`verbatim-structure`, the "≈" row links) are not causal arrows. */
   showArrow: boolean
   /** A both-ways connection (`isFeedbackLoop`): a head at each end. */
   bothWays: boolean
@@ -88,8 +86,7 @@ export interface EdgeAppearance {
 
 /**
  * The single decision tree for how a connection is drawn: both-ways connections win (accent
- * colour, heavier line, a head at each end), then non-causal pairings (grey, dotted, no
- * arrowhead), then an ordinary one-way edge. Both-ways and one-way edges carry the confidence
+ * colour, heavier line, a head at each end), then an ordinary one-way edge. Both-ways and one-way edges carry the confidence
  * band's dash, so a 30% both-ways arrow is a dotted rust line. Which route an edge takes
  * (around the columns or the plain bezier) is geometry, decided in `buildFlow`, not here.
  * Shared by `buildFlow` (which needs the colour to build the edge's markers),
@@ -101,10 +98,6 @@ export function edgeAppearance(data: {
   provenance?: ConnectionProvenance
   isFeedbackLoop?: boolean
 }): EdgeAppearance {
-  if (data.provenance === 'verbatim-structure' && !data.isFeedbackLoop) {
-    const pair = { stroke: CANVAS_COLORS.pair, dashArray: '1 6', width: 2.6 }
-    return { ...pair, showArrow: false, bothWays: false }
-  }
   const { dashArray, lineCap } = CONFIDENCE_BANDS[bandForConfidence(data.confidence)]
   if (data.isFeedbackLoop) {
     const loop = { stroke: CANVAS_COLORS.accent, dashArray, lineCap, width: 2 }

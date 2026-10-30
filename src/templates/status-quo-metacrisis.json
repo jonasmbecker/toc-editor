@@ -17,14 +17,7 @@
               "width": 192,
               "yPosition": 40,
               "provenance": "verbatim",
-              "connections": [
-                {
-                  "targetId": "need-narm-connection",
-                  "evidence": "Drawn as paired rows, linked with a \"≈\" symbol in the original.",
-                  "provenance": "verbatim-structure",
-                  "assumptions": "Unconfirmed whether \"≈\" means \"equivalent to\" vs. a looser \"related to\" — see open questions."
-                }
-              ]
+              "connections": []
             },
             {
               "id": "need-brown-attunement",
@@ -34,13 +27,7 @@
               "width": 192,
               "yPosition": 200,
               "provenance": "verbatim",
-              "connections": [
-                {
-                  "targetId": "need-narm-attunement",
-                  "evidence": "Drawn as paired rows, linked with a \"≈\" symbol.",
-                  "provenance": "verbatim-structure"
-                }
-              ]
+              "connections": []
             },
             {
               "id": "need-brown-comfort-soothing",
@@ -50,14 +37,7 @@
               "width": 192,
               "yPosition": 320,
               "provenance": "verbatim",
-              "connections": [
-                {
-                  "targetId": "need-narm-trust",
-                  "evidence": "Drawn as paired rows, linked with a \"&\" symbol (different from the \"≈\" used elsewhere).",
-                  "provenance": "verbatim-structure",
-                  "assumptions": "Unclear if \"&\" vs \"≈\" is a meaningful distinction or just handwriting variation — see open questions."
-                }
-              ]
+              "connections": []
             },
             {
               "id": "need-brown-support-explore",
@@ -203,10 +183,10 @@
           "nodes": [
             {
               "id": "strategy-numbing",
-              "text": "",
-              "title": "Craving for numbing: addiction to substances, entertainment, porn",
+              "text": "Full label as drawn: Craving for numbing: addiction to substances, entertainment, porn",
+              "title": "Craving for numbing",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 20,
               "provenance": "verbatim",
               "connections": [
@@ -220,10 +200,10 @@
             },
             {
               "id": "strategy-control-supremacy",
-              "text": "",
-              "title": "Craving for control, safety, immunity → \"supremacy\"",
+              "text": "Full label as drawn: Craving for control, safety, immunity → \"supremacy\"",
+              "title": "Craving for control and safety",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 110,
               "provenance": "verbatim",
               "connections": [
@@ -239,7 +219,7 @@
               "text": "",
               "title": "Scapegoating, projecting the blame",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 200,
               "provenance": "verbatim",
               "connections": [
@@ -255,7 +235,7 @@
               "text": "Jonas marked this with a question mark in the original, signalling his own uncertainty about it.",
               "title": "Craving to be seen?",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 290,
               "provenance": "verbatim",
               "connections": []
@@ -265,7 +245,7 @@
               "text": "",
               "title": "Craving for power: \"nobody can be trusted\"",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 380,
               "provenance": "verbatim",
               "connections": [
@@ -281,7 +261,7 @@
               "text": "food, work etc. or regulate / shopping",
               "title": "Compulsive soothing",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 470,
               "provenance": "verbatim",
               "connections": []
@@ -291,7 +271,7 @@
               "text": "",
               "title": "Greed, craving for \"more\"",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 560,
               "provenance": "verbatim",
               "connections": [
@@ -307,7 +287,7 @@
               "text": "urge towards \"separation\"",
               "title": "Fear of dependence",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 650,
               "provenance": "verbatim",
               "connections": [
@@ -323,7 +303,7 @@
               "text": "career, status, money",
               "title": "Perform (to be loved, worthy)",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 740,
               "provenance": "verbatim",
               "connections": [
@@ -339,7 +319,7 @@
               "text": "",
               "title": "Narcissism",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 830,
               "provenance": "verbatim",
               "connections": [
@@ -355,7 +335,7 @@
               "text": "",
               "title": "Hunting sexual attraction",
               "color": "#FFF3E0",
-              "width": 220,
+              "width": 280,
               "yPosition": 920,
               "provenance": "verbatim",
               "connections": [
@@ -380,7 +360,7 @@
               "text": "",
               "title": "Erosion of collective sensemaking",
               "color": "#FFE0B2",
-              "width": 220,
+              "width": 300,
               "yPosition": 20,
               "provenance": "verbatim",
               "connections": [
@@ -396,7 +376,7 @@
               "text": "(\"Ohnmacht\") lethargy",
               "title": "Collective disempowerment",
               "color": "#FFE0B2",
-              "width": 220,
+              "width": 300,
               "yPosition": 110,
               "provenance": "verbatim",
               "connections": [
@@ -412,7 +392,7 @@
               "text": "",
               "title": "Lacking willingness to radical change/regulate",
               "color": "#FFE0B2",
-              "width": 220,
+              "width": 300,
               "yPosition": 200,
               "provenance": "verbatim",
               "connections": [
@@ -428,7 +408,7 @@
               "text": "",
               "title": "Racism + (post)colonialism",
               "color": "#FFE0B2",
-              "width": 220,
+              "width": 300,
               "yPosition": 290,
               "provenance": "verbatim",
               "connections": [
@@ -441,10 +421,10 @@
             },
             {
               "id": "driver-multipolar-dynamics",
-              "text": "Drawn as one bracketed cluster of four related dynamics, not four separately-connected boxes: multipolar traps (\"if I don't do it, someone else will / can't compete\"); race-to-bottom (\"if we tax/regulate, companies move to the Bahamas\"); race-to-market (privatize upside, externalize risk); arms race (e.g. nuclear, AI/bioweapons).",
-              "title": "Multipolar traps / race-to-bottom / race-to-market / arms race",
+              "text": "Full label as drawn: Multipolar traps / race-to-bottom / race-to-market / arms race. Drawn as one bracketed cluster of four related dynamics, not four separately-connected boxes: multipolar traps (\"if I don't do it, someone else will / can't compete\"); race-to-bottom (\"if we tax/regulate, companies move to the Bahamas\"); race-to-market (privatize upside, externalize risk); arms race (e.g. nuclear, AI/bioweapons).",
+              "title": "Multipolar traps / arms race",
               "color": "#FFE0B2",
-              "width": 260,
+              "width": 300,
               "yPosition": 390,
               "provenance": "verbatim",
               "connections": [
@@ -462,10 +442,10 @@
             },
             {
               "id": "driver-consumerism-cluster",
-              "text": "Drawn as one bracketed cluster, not four separately-connected boxes: consumerism; individualism; neoliberal capitalism; extractivism.",
-              "title": "Consumerism / individualism / neoliberal capitalism / extractivism",
+              "text": "Full label as drawn: Consumerism / individualism / neoliberal capitalism / extractivism. Drawn as one bracketed cluster, not four separately-connected boxes: consumerism; individualism; neoliberal capitalism; extractivism.",
+              "title": "Consumerism / neoliberal capitalism",
               "color": "#FFE0B2",
-              "width": 260,
+              "width": 300,
               "yPosition": 520,
               "provenance": "verbatim",
               "connections": [
@@ -492,7 +472,7 @@
               "text": "\"extremely motivated & capable to accrue power\"",
               "title": "Hyper agents / AI",
               "color": "#FFE0B2",
-              "width": 220,
+              "width": 300,
               "yPosition": 650,
               "provenance": "verbatim",
               "connections": [
@@ -508,7 +488,7 @@
               "text": "",
               "title": "Patriarchy / sexism",
               "color": "#FFE0B2",
-              "width": 220,
+              "width": 300,
               "yPosition": 740,
               "provenance": "verbatim",
               "connections": [
@@ -812,8 +792,8 @@
           "nodes": [
             {
               "id": "annotation-mate-health-crisis",
-              "text": "Handwritten side-note on the whiteboard, not wired into the arrow diagram: \"Gabor Maté postulates additionally [a path] from [the same] unmet needs → individual health crisis.\" Kept here as a flagged annotation rather than invented into the causal chain, since Jonas did not draw it as a connected node.",
-              "title": "Side note: Maté's individual-health-crisis path (unconnected in the drawing)",
+              "text": "Full label as drawn: Side note: Maté's individual-health-crisis path (unconnected in the drawing). Handwritten side-note on the whiteboard, not wired into the arrow diagram: \"Gabor Maté postulates additionally [a path] from [the same] unmet needs → individual health crisis.\" Kept here as a flagged annotation rather than invented into the causal chain, since Jonas did not draw it as a connected node.",
+              "title": "Side note: Maté's health-crisis path",
               "color": "#ECEFF1",
               "width": 280,
               "yPosition": 20,

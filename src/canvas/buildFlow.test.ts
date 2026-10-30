@@ -135,28 +135,4 @@ describe('buildFlow: edge marker colour follows edgeAppearance', () => {
     const { edges } = buildFlow(doc)
     expect(edges[0].markerEnd).toMatchObject({ color: '#C2410C' })
   })
-
-  it('gives a verbatim-structure pairing no marker at all', () => {
-    const doc: ToCDocument = {
-      color: '#000000',
-      title: 'synthetic',
-      sections: [
-        {
-          title: 's',
-          columns: [
-            {
-              nodes: [
-                minimalNode('a', {
-                  connections: [{ targetId: 'b', provenance: 'verbatim-structure' }],
-                }),
-                minimalNode('b'),
-              ],
-            },
-          ],
-        },
-      ],
-    }
-    const { edges } = buildFlow(doc)
-    expect(edges[0].markerEnd).toBeUndefined()
-  })
 })
