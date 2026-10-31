@@ -86,6 +86,9 @@ export const nodeSchema = z
      * the same column. Members are ordinary nodes with ordinary connections, and a connection
      * may target the group node itself to point at the whole cluster. See `state/groups.ts`. */
     groupId: z.string().optional(),
+    /** Where to read more about this card's concept: reputable web pages, shown as chips in the
+     * node panel. An extension: the compatible export folds them into the text. */
+    links: z.array(evidenceLinkSchema).optional(),
   })
   .passthrough()
 
@@ -163,7 +166,7 @@ export const documentSchema = z
  * cannot be added above without being named here.
  */
 export const DOCUMENT_EXTENSION_KEYS = ['schemaVersion', 'diagramType', 'interventionLinks']
-export const NODE_EXTENSION_KEYS = ['provenance', 'kind', 'groupId']
+export const NODE_EXTENSION_KEYS = ['provenance', 'kind', 'groupId', 'links']
 export const CONNECTION_EXTENSION_KEYS = ['id', 'provenance', 'isFeedbackLoop', 'evidenceBlocks']
 
 export type EvidenceLink = z.infer<typeof evidenceLinkSchema>

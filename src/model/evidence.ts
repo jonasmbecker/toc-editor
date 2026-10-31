@@ -21,7 +21,7 @@ function supportsLine(supports: number[]): string {
   return `Supports mechanism ${sorted.join(', ')}`
 }
 
-function linkLine(link: EvidenceLink): string {
+export function linkLine(link: EvidenceLink): string {
   return link.label ? `${link.label}: ${link.url}` : link.url
 }
 

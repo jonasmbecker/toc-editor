@@ -10,6 +10,7 @@ import { NodePositionFields } from './NodePositionFields'
 import { NodeGroupControls } from './NodeGroupControls'
 import { isGroupNode } from '../state/groups'
 import { swatchOptions } from './colorPalette'
+import { LinkChip } from './LinkChip'
 import './panels.css'
 
 function titleEdit(nodeId: string, title: string) {
@@ -61,6 +62,14 @@ export function NodePanel() {
           transform('edit node text', textEdit(node.id, text), { coalesceKey: `text:${node.id}` })
         }
       />
+
+      {node.links?.length ? (
+        <div className="toc-chips">
+          {node.links.map((link) => (
+            <LinkChip key={link.url} link={link} />
+          ))}
+        </div>
+      ) : null}
 
       <NodeColorField
         options={swatchOptions(doc)}

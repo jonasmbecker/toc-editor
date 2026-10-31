@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { resolveSelectedNode, useToCStore } from '../state/store'
 import { splitBlocks } from './blocks'
+import { LinkChip } from './LinkChip'
 import { NodePanelHeader } from './NodePanelHeader'
 import './panels.css'
 
@@ -33,6 +34,13 @@ export function NodeReadPanel() {
       ) : (
         <p className="toc-panel__read-empty">No description.</p>
       )}
+      {node.links?.length ? (
+        <div className="toc-chips">
+          {node.links.map((link) => (
+            <LinkChip key={link.url} link={link} />
+          ))}
+        </div>
+      ) : null}
     </aside>
   )
 }

@@ -4,7 +4,7 @@ import {
   NODE_EXTENSION_KEYS,
   type ToCDocument,
 } from '../model/schema'
-import { flattenEvidence } from '../model/evidence'
+import { flattenEvidence, linkLine } from '../model/evidence'
 import { expandBothWays } from '../model/normalize'
 import { mapAllNodes } from '../state/nodes'
 import { flattenGroups } from '../state/groups'
@@ -33,6 +33,10 @@ export function toCompatibleJson(doc: ToCDocument, now = new Date()): ToCDocumen
   // ToCB has no groups: dissolve them first so arrows aimed at a group land on its first card.
   const expanded = mapAllNodes(expandBothWays(flattenGroups(doc)), (node) => ({
     ...without(node, NODE_EXTENSION_KEYS),
+    // ToCB has no node links: they become lines at the end of the text.
+    text: node.links?.length
+      ? [node.text, ...node.links.map(linkLine)].filter(Boolean).join('\n')
+      : node.text,
     connections: node.connections.map((c) => {
       // The flattened string carries tags and links; refresh it from the blocks so it is
       // right even if a block was edited by a tool that did not rewrite the string.
