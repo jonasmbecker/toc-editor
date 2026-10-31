@@ -227,9 +227,8 @@ export async function handleSuggest(request: Request, deps: SuggestDeps): Promis
     return await sendWithinLimits(repo, deps, fields.value, change.value)
   } catch (error) {
     logFailure(error)
-    return failure(
-      502,
-      'Your suggestion could not be sent right now. Your edits are still here, try again in a few minutes.',
-    )
+    // TEMP-DIAGNOSTIC: remove after the end-to-end test.
+    const detail = error instanceof GithubError ? error.message : `${error instanceof Error ? error.name : typeof error}`
+    return json(502, { error: 'Your suggestion could not be sent right now. Your edits are still here, try again in a few minutes.', detail })
   }
 }
