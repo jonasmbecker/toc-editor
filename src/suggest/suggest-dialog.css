@@ -3,6 +3,9 @@
 
 .toc-suggest {
   width: 480px;
+  /* On a short window the card scrolls inside itself instead of clipping above the fold. */
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
 }
 
 .toc-suggest__form {
