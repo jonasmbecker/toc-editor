@@ -11,9 +11,9 @@ export interface ConnectionEdgeData extends Record<string, unknown> {
   ref: ConnectionRef
 }
 
-/** Both edge components share one data shape; `type` picks the route (`LoopEdge` for an edge
+/** Both edge components share one data shape; `type` picks the route (`RoutedEdge` for an edge
  * whose target sits to the left of its source, this component for everything else). */
-export type ConnectionEdgeType = Edge<ConnectionEdgeData, 'connection' | 'loop'>
+export type ConnectionEdgeType = Edge<ConnectionEdgeData, 'connection' | 'routed'>
 
 /** Whether a connection was interpreted rather than read verbatim is shown in its Connection
  * Details header, not on the canvas: a midpoint circle on every inferred edge cluttered the map

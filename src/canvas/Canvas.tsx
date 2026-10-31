@@ -18,7 +18,7 @@ import { CardNode } from './CardNode'
 import { SectionHeaderNode } from './SectionHeaderNode'
 import { GroupNode } from './GroupNode'
 import { ConnectionEdge } from './ConnectionEdge'
-import { LoopEdge } from './LoopEdge'
+import { RoutedEdge } from './RoutedEdge'
 import { Legend } from './Legend'
 import { NeedColoursSwitch } from './NeedColoursSwitch'
 import { computeNeedMixes } from './needMix'
@@ -33,7 +33,7 @@ import { CANVAS_COLORS } from './config'
 import './canvas.css'
 
 const nodeTypes = { card: CardNode, sectionHeader: SectionHeaderNode, group: GroupNode }
-const edgeTypes = { connection: ConnectionEdge, loop: LoopEdge }
+const edgeTypes = { connection: ConnectionEdge, routed: RoutedEdge }
 
 /** The in-progress line while dragging from a handle: dashed, in the selection colour. */
 const connectionLineStyle = {
@@ -158,7 +158,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           // group's container over its own cards.
           elevateNodesOnSelect={false}
           fitView
-          fitViewOptions={{ padding: 0.03 }}
+          fitViewOptions={{ padding: 0.1 }}
           minZoom={0.1}
           maxZoom={2.5}
         >

@@ -5,8 +5,6 @@ import { edgeAppearance } from './config'
 import {
   FLOW_IN_HANDLE,
   FLOW_OUT_HANDLE,
-  LOOP_IN_HANDLE,
-  LOOP_OUT_HANDLE,
   STACK_DOWN_IN_HANDLE,
   STACK_DOWN_OUT_HANDLE,
   STACK_UP_IN_HANDLE,
@@ -81,35 +79,32 @@ function buildCardNodes(
 
 type PositionById = Map<string, { x: number; y: number; width: number }>
 
-/** Routing follows geometry, not the direction label: any edge whose target sits to the left
- * of its source (an earlier section, or an earlier column of the same section) takes the loop
- * route around the columns, left edge out and right edge in. A one-way arrow pointing back is
- * drawn that way in the normal colour; a both-ways arrow between two columns in flow order
- * keeps the plain bezier and only gains its second head. */
-function isLoopRoute(targetId: string, sourceId: string, positions: PositionById): boolean {
+type Route = 'flow' | 'stack-down' | 'stack-up' | 'routed'
+
+/** Routing follows the columns, not the direction label. Same column runs vertically between the
+ * stacked cards. A link that skips a column, or points back to an earlier one (a feedback loop),
+ * is routed around the cards along a corridor outside them (`RoutedEdge`). Everything else is the
+ * ordinary left-to-right curve; a both-ways arrow between neighbours only gains its second head. */
+function routeFor(
+  targetId: string,
+  sourceId: string,
+  positions: PositionById,
+  columns: Map<string, number>,
+): Route {
   const source = positions.get(sourceId)
   const target = positions.get(targetId)
-  return !!source && !!target && target.x < source.x
-}
-
-type Route = 'flow' | 'loop' | 'stack-down' | 'stack-up'
-
-/** Same column (equal x) runs vertically between the stacked cards; a target further left takes
- * the loop route; everything else is the ordinary left-to-right flow. */
-function routeFor(targetId: string, sourceId: string, positions: PositionById): Route {
-  const source = positions.get(sourceId)
-  const target = positions.get(targetId)
-  if (source && target && source.x === target.x && sourceId !== targetId) {
+  const span = (columns.get(targetId) ?? 0) - (columns.get(sourceId) ?? 0)
+  if (source && target && span === 0 && sourceId !== targetId) {
     return target.y >= source.y ? 'stack-down' : 'stack-up'
   }
-  return isLoopRoute(targetId, sourceId, positions) ? 'loop' : 'flow'
+  return span > 1 || span < 0 ? 'routed' : 'flow'
 }
 
 const HANDLES: Record<Route, { sourceHandle: string; targetHandle: string }> = {
   flow: { sourceHandle: FLOW_OUT_HANDLE, targetHandle: FLOW_IN_HANDLE },
-  loop: { sourceHandle: LOOP_OUT_HANDLE, targetHandle: LOOP_IN_HANDLE },
   'stack-down': { sourceHandle: STACK_DOWN_OUT_HANDLE, targetHandle: STACK_DOWN_IN_HANDLE },
   'stack-up': { sourceHandle: STACK_UP_OUT_HANDLE, targetHandle: STACK_UP_IN_HANDLE },
+  routed: { sourceHandle: FLOW_OUT_HANDLE, targetHandle: FLOW_IN_HANDLE },
 }
 
 function markerFor(color: string, start: boolean) {
@@ -119,6 +114,7 @@ function markerFor(color: string, start: boolean) {
 function buildEdges(
   allNodes: DocumentNode[],
   positions: PositionById,
+  columns: Map<string, number>,
 ): { edges: ConnectionEdgeType[]; dropped: DroppedConnection[] } {
   const edges: ConnectionEdgeType[] = []
   const dropped: DroppedConnection[] = []
@@ -129,12 +125,12 @@ function buildEdges(
         return
       }
       const appearance = edgeAppearance(connection)
-      const route = routeFor(connection.targetId, node.id, positions)
+      const route = routeFor(connection.targetId, node.id, positions, columns)
       edges.push({
         id: `${node.id}->${connection.targetId}#${connection.id ?? index}`,
         source: node.id,
         target: connection.targetId,
-        type: route === 'loop' ? 'loop' : 'connection',
+        type: route === 'routed' ? 'routed' : 'connection',
         ...HANDLES[route],
         markerEnd: appearance.showArrow ? markerFor(appearance.stroke, false) : undefined,
         markerStart: appearance.bothWays ? markerFor(appearance.stroke, true) : undefined,
@@ -148,6 +144,12 @@ function buildEdges(
     })
   }
   return { edges, dropped }
+}
+
+/** Global left-to-right column index of every document node (distinct layout x, sorted). */
+function columnIndexById(layout: DocumentLayout): Map<string, number> {
+  const xs = [...new Set(layout.nodes.map((n) => Math.round(n.x)))].sort((a, b) => a - b)
+  return new Map(layout.nodes.map((n) => [n.nodeId, xs.indexOf(Math.round(n.x))]))
 }
 
 /** Converts a parsed document into React Flow's node/edge shape. Positions come entirely from
@@ -170,7 +172,7 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
     ...groups,
     ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc)),
   ]
-  const { edges, dropped } = buildEdges(allNodes, positionByNodeId)
+  const { edges, dropped } = buildEdges(allNodes, positionByNodeId, columnIndexById(layout))
 
   return { nodes, edges, droppedConnections: dropped }
 }

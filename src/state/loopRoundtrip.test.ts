@@ -38,20 +38,20 @@ describe('loop round-trip (review task loop-roundtrip)', () => {
     expect(nodes.flatMap((n) => n.connections)).toHaveLength(44)
   })
 
-  it('a dragged connection from a polycrisis outcome to an unmet need is one-way backward, routed as a loop', () => {
+  it('a dragged connection from a polycrisis outcome to an unmet need is one-way backward, routed around the cards', () => {
     expect(resolveConnection(added.document, added.ref)?.direction).toBe('backward')
     expect(findConnection(added.document, added.ref)).not.toHaveProperty('isFeedbackLoop')
     const edge = buildFlow(added.document).edges.find((e) =>
       e.id.startsWith(`${SOURCE}->${TARGET}`),
     )
-    expect(edge?.type).toBe('loop')
+    expect(edge?.type).toBe('routed')
     expect(edge?.markerStart).toBeUndefined()
   })
 
   it('both ways flags it and gives the loop a head at each end', () => {
     expect(findConnection(withLoop, added.ref)?.isFeedbackLoop).toBe(true)
     const edge = buildFlow(withLoop).edges.find((e) => e.id.startsWith(`${SOURCE}->${TARGET}`))
-    expect(edge?.type).toBe('loop')
+    expect(edge?.type).toBe('routed')
     expect(edge?.markerStart).toMatchObject({ color: '#C2410C' })
   })
 

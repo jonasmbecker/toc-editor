@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { loopGeometry } from './loopGeometry'
 import { buildFlow } from './buildFlow'
 import type { ToCDocument } from '../model/schema'
 import {
   FLOW_IN_HANDLE,
   FLOW_OUT_HANDLE,
-  LOOP_IN_HANDLE,
-  LOOP_OUT_HANDLE,
   STACK_DOWN_IN_HANDLE,
   STACK_DOWN_OUT_HANDLE,
   STACK_UP_IN_HANDLE,
@@ -38,24 +35,15 @@ const doc: ToCDocument = {
   ],
 }
 
-describe('loopGeometry', () => {
-  it('starts at the source, ends at the target, labels below the source', () => {
-    const g = loopGeometry(500, 300, 400, 100)
-    expect(g.path.startsWith('M500,300 C')).toBe(true)
-    expect(g.path.endsWith(' 400,100')).toBe(true)
-    expect(g.labelY).toBeGreaterThan(300)
-  })
-})
-
 describe('buildFlow routing and heads', () => {
   const { edges } = buildFlow(doc)
   const byId = (prefix: string) => edges.find((e) => e.id.startsWith(prefix))!
 
-  it('a one-way arrow pointing left takes the loop route in the normal colour with one head', () => {
+  it('a one-way arrow pointing left is routed around the cards in the normal colour with one head', () => {
     const back = byId('b->a')
-    expect(back.type).toBe('loop')
-    expect(back.sourceHandle).toBe(LOOP_OUT_HANDLE)
-    expect(back.targetHandle).toBe(LOOP_IN_HANDLE)
+    expect(back.type).toBe('routed')
+    expect(back.sourceHandle).toBe(FLOW_OUT_HANDLE)
+    expect(back.targetHandle).toBe(FLOW_IN_HANDLE)
     expect(back.markerEnd).toMatchObject({ color: '#5B5A5E' })
     expect(back.markerStart).toBeUndefined()
   })
@@ -69,9 +57,9 @@ describe('buildFlow routing and heads', () => {
     expect(forward.markerStart).toMatchObject({ color: '#C2410C', orient: 'auto-start-reverse' })
   })
 
-  it('a both-ways arrow pointing left takes the loop route with both heads', () => {
+  it('a both-ways arrow pointing left is routed around the cards with both heads', () => {
     const loop = byId('c->b')
-    expect(loop.type).toBe('loop')
+    expect(loop.type).toBe('routed')
     expect(loop.markerStart).toMatchObject({ color: '#C2410C' })
     expect(byId('b->c').type).toBe('connection')
   })
