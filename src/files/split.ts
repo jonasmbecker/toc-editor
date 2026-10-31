@@ -1,4 +1,4 @@
-import type { DocumentNode, ToCDocument } from '../model/schema'
+import type { ToCDocument } from '../model/schema'
 
 /**
  * The theory repo keeps the map in two files so a proposal's diff shows what changed in the
@@ -80,14 +80,16 @@ export function mergeDocument(content: MapContent, layout: MapLayout): MergeResu
     ...section,
     columns: (section.columns as Record<string, unknown>[]).map((column) => ({
       ...column,
-      nodes: (column.nodes as Omit<DocumentNode, 'width' | 'yPosition'>[]).map((node) => {
+      // `Omit` over the passthrough node type collapses to an index signature, so name the one
+      // field read here instead.
+      nodes: (column.nodes as (Record<string, unknown> & { id: string })[]).map((node) => {
         const place = layout.cards[node.id]
         if (!place) {
           errors.push(`layout.json has no position for card "${node.id}".`)
           return node
         }
         return insertAfter(
-          node as Record<string, unknown>,
+          node,
           'color',
           CARD_LAYOUT_KEYS.map((k): [string, unknown] => [k, place[k]]),
         )
