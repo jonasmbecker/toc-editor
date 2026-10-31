@@ -1,18 +1,21 @@
 import { BaseEdge, getBezierPath, type Edge, type EdgeProps } from '@xyflow/react'
 import { CANVAS_COLORS, edgeAppearance, type ConnectionProvenance } from './config'
 import type { ConnectionRef } from '../state/connections'
+import type { Lane } from './edgeRouting'
 
 export interface ConnectionEdgeData extends Record<string, unknown> {
   confidence?: number
   provenance?: ConnectionProvenance
   isFeedbackLoop?: boolean
+  /** Slots of a routed edge in the gaps and the corridor, assigned in `buildFlow`. */
+  lane?: Lane
   /** Where this edge lives in the document, so a click can open it in the details panel. The
    * same `ConnectionRef` the store and the panel use. */
   ref: ConnectionRef
 }
 
 /** Both edge components share one data shape; `type` picks the route (`RoutedEdge` for an edge
- * whose target sits to the left of its source, this component for everything else). */
+ * that skips a column or points back, this component for everything else). */
 export type ConnectionEdgeType = Edge<ConnectionEdgeData, 'connection' | 'routed'>
 
 /** Whether a connection was interpreted rather than read verbatim is shown in its Connection

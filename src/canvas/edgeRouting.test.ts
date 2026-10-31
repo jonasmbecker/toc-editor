@@ -4,6 +4,8 @@ import type { ToCDocument } from '../model/schema'
 import {
   FLOW_IN_HANDLE,
   FLOW_OUT_HANDLE,
+  LOOP_IN_HANDLE,
+  LOOP_OUT_HANDLE,
   STACK_DOWN_IN_HANDLE,
   STACK_DOWN_OUT_HANDLE,
   STACK_UP_IN_HANDLE,
@@ -39,11 +41,11 @@ describe('buildFlow routing and heads', () => {
   const { edges } = buildFlow(doc)
   const byId = (prefix: string) => edges.find((e) => e.id.startsWith(prefix))!
 
-  it('a one-way arrow pointing left is routed around the cards in the normal colour with one head', () => {
+  it('a one-way arrow pointing left takes the compact loop between adjacent columns in the normal colour with one head', () => {
     const back = byId('b->a')
     expect(back.type).toBe('routed')
-    expect(back.sourceHandle).toBe(FLOW_OUT_HANDLE)
-    expect(back.targetHandle).toBe(FLOW_IN_HANDLE)
+    expect(back.sourceHandle).toBe(LOOP_OUT_HANDLE)
+    expect(back.targetHandle).toBe(LOOP_IN_HANDLE)
     expect(back.markerEnd).toMatchObject({ color: '#5B5A5E' })
     expect(back.markerStart).toBeUndefined()
   })

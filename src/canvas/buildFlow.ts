@@ -5,6 +5,8 @@ import { edgeAppearance } from './config'
 import {
   FLOW_IN_HANDLE,
   FLOW_OUT_HANDLE,
+  LOOP_IN_HANDLE,
+  LOOP_OUT_HANDLE,
   STACK_DOWN_IN_HANDLE,
   STACK_DOWN_OUT_HANDLE,
   STACK_UP_IN_HANDLE,
@@ -19,6 +21,8 @@ import { isGroupNode } from '../state/groups'
 import { computeNeedMixes, type NeedMixResult } from './needMix'
 import { needSegments } from './needLook'
 import type { ConnectionEdgeData, ConnectionEdgeType } from './ConnectionEdge'
+import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from './anchors'
+import { assignLanes, type Rect, type RouteLink } from './edgeRouting'
 
 export interface DroppedConnection {
   sourceId: string
@@ -79,12 +83,13 @@ function buildCardNodes(
 
 type PositionById = Map<string, { x: number; y: number; width: number }>
 
-type Route = 'flow' | 'stack-down' | 'stack-up' | 'routed'
+type Route = 'flow' | 'stack-down' | 'stack-up' | 'routed' | 'near-loop'
 
 /** Routing follows the columns, not the direction label. Same column runs vertically between the
- * stacked cards. A link that skips a column, or points back to an earlier one (a feedback loop),
- * is routed around the cards along a corridor outside them (`RoutedEdge`). Everything else is the
- * ordinary left-to-right curve; a both-ways arrow between neighbours only gains its second head. */
+ * stacked cards. A link that skips a column, or a loop that skips one going back, is routed around
+ * the cards along a corridor outside them; a loop to the adjacent column before stays a compact
+ * curve in the gap between the two (both drawn by `RoutedEdge`). Everything else is the ordinary
+ * left-to-right curve; a both-ways arrow between neighbours only gains its second head. */
 function routeFor(
   targetId: string,
   sourceId: string,
@@ -97,7 +102,8 @@ function routeFor(
   if (source && target && span === 0 && sourceId !== targetId) {
     return target.y >= source.y ? 'stack-down' : 'stack-up'
   }
-  return span > 1 || span < 0 ? 'routed' : 'flow'
+  if (span === -1) return 'near-loop'
+  return span > 1 || span < -1 ? 'routed' : 'flow'
 }
 
 const HANDLES: Record<Route, { sourceHandle: string; targetHandle: string }> = {
@@ -105,6 +111,7 @@ const HANDLES: Record<Route, { sourceHandle: string; targetHandle: string }> = {
   'stack-down': { sourceHandle: STACK_DOWN_OUT_HANDLE, targetHandle: STACK_DOWN_IN_HANDLE },
   'stack-up': { sourceHandle: STACK_UP_OUT_HANDLE, targetHandle: STACK_UP_IN_HANDLE },
   routed: { sourceHandle: FLOW_OUT_HANDLE, targetHandle: FLOW_IN_HANDLE },
+  'near-loop': { sourceHandle: LOOP_OUT_HANDLE, targetHandle: LOOP_IN_HANDLE },
 }
 
 function markerFor(color: string, start: boolean) {
@@ -115,6 +122,7 @@ function buildEdges(
   allNodes: DocumentNode[],
   positions: PositionById,
   columns: Map<string, number>,
+  headers: Rect[],
 ): { edges: ConnectionEdgeType[]; dropped: DroppedConnection[] } {
   const edges: ConnectionEdgeType[] = []
   const dropped: DroppedConnection[] = []
@@ -130,7 +138,7 @@ function buildEdges(
         id: `${node.id}->${connection.targetId}#${connection.id ?? index}`,
         source: node.id,
         target: connection.targetId,
-        type: route === 'routed' ? 'routed' : 'connection',
+        type: route === 'routed' || route === 'near-loop' ? 'routed' : 'connection',
         ...HANDLES[route],
         markerEnd: appearance.showArrow ? markerFor(appearance.stroke, false) : undefined,
         markerStart: appearance.bothWays ? markerFor(appearance.stroke, true) : undefined,
@@ -143,7 +151,38 @@ function buildEdges(
       })
     })
   }
+  assignRouteLanes(edges, allNodes, positions, columns, headers)
   return { edges, dropped }
+}
+
+/** Gives every routed edge its own slot in the gaps and the corridor (see `assignLanes`). */
+function assignRouteLanes(
+  edges: ConnectionEdgeType[],
+  allNodes: DocumentNode[],
+  positions: PositionById,
+  columns: Map<string, number>,
+  headers: Rect[],
+) {
+  const groupIds = new Set(allNodes.filter(isGroupNode).map((n) => n.id))
+  const anchorY = (id: string) =>
+    (positions.get(id)?.y ?? 0) + (groupIds.has(id) ? GROUP_ANCHOR_Y : CARD_ANCHOR_Y)
+  const routed = edges.filter((e) => e.type === 'routed')
+  const links = routed.map((e): RouteLink => {
+    const source = positions.get(e.source)!
+    const target = positions.get(e.target)!
+    const near = e.sourceHandle === LOOP_OUT_HANDLE
+    return {
+      id: e.id,
+      sx: near ? source.x : source.x + source.width,
+      sy: anchorY(e.source),
+      tx: near ? target.x + target.width : target.x,
+      ty: anchorY(e.target),
+      sc: columns.get(e.source) ?? 0,
+      tc: columns.get(e.target) ?? 0,
+    }
+  })
+  const lanes = assignLanes(links, headers)
+  for (const e of routed) e.data = { ...e.data!, lane: lanes.get(e.id) }
 }
 
 /** Global left-to-right column index of every document node (distinct layout x, sorted). */
@@ -172,7 +211,18 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
     ...groups,
     ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc)),
   ]
-  const { edges, dropped } = buildEdges(allNodes, positionByNodeId, columnIndexById(layout))
+  const headerBoxes = layout.sectionHeaders.map((h) => ({
+    x: h.x,
+    y: 0,
+    w: h.width,
+    h: SECTION_HEADER_HEIGHT,
+  }))
+  const { edges, dropped } = buildEdges(
+    allNodes,
+    positionByNodeId,
+    columnIndexById(layout),
+    headerBoxes,
+  )
 
   return { nodes, edges, droppedConnections: dropped }
 }
