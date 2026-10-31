@@ -1,6 +1,7 @@
 import statusQuoJson from './status-quo-metacrisis.json'
 import type { ToCDocument } from '../model/schema'
 import { importFromJson } from '../files/import'
+import { loadTheoryMap } from '../repo/mapSource'
 
 /** Every call returns a fresh document, so opening a template never shares state with the last. */
 
@@ -48,13 +49,27 @@ export function statusQuoMetacrisis(): ToCDocument {
   return result.document
 }
 
+/** The default map: the theory repo's `main`, or the bundled copy when GitHub cannot give a
+ * map the editor can open (offline, blocked, rate-limited, a 404, a file that fails the
+ * schema). Never rejects and never says why: opening the map must not depend on GitHub. */
+export async function loadDefaultMap(): Promise<ToCDocument> {
+  try {
+    return await loadTheoryMap()
+  } catch {
+    return statusQuoMetacrisis()
+  }
+}
+
 export interface TemplateInfo {
   id: string
   name: string
   description: string
   /** Shown as the full-width first card on the home screen. */
   isFeatured?: boolean
+  /** The bundled copy: instant, offline, and what tests and the fallback use. */
   create: () => ToCDocument
+  /** When given, opening the card uses this instead of `create`. */
+  load?: () => Promise<ToCDocument>
 }
 
 export const TEMPLATES: TemplateInfo[] = [
@@ -64,6 +79,7 @@ export const TEMPLATES: TemplateInfo[] = [
     description: 'From unmet childhood needs to the metacrisis: the digitised whiteboard.',
     isFeatured: true,
     create: statusQuoMetacrisis,
+    load: loadDefaultMap,
   },
   {
     id: 'blank-toc',

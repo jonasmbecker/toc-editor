@@ -24,14 +24,16 @@
 # - Scripts: only our own bundle, no inline scripts. Vite's production index.html has none.
 # - Styles: 'unsafe-inline' is for the inline style attributes React Flow and the colour chips
 #   need; inline *scripts* stay blocked, which is what the baseline requires.
-# - connect-src 'self': the browser only talks to /api/diagrams on this origin.
+# - connect-src: this origin (/api/diagrams) plus two read-only GitHub hosts: raw.githubusercontent
+#   .com for the theory repo's map files and api.github.com to look up a suggestion's pull
+#   request (`/?suggestion=<number>`). Neither call carries a token or a cookie.
 # - frame-ancestors 'none' plus X-Frame-Options DENY: the editor cannot be framed.
 # - Referrer-Policy no-referrer: edit and view tokens sit in the URL and must not leak to
 #   any site a user navigates to from here.
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://raw.githubusercontent.com https://api.github.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "no-referrer"

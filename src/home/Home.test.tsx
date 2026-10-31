@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { Home } from './Home'
 import type { Draft } from '../files/draft'
-import { blankTheoryOfChange } from '../templates'
+import { blankTheoryOfChange, statusQuoMetacrisis } from '../templates'
+import { serializeMapFile, splitDocument } from '../files/split'
 
 function renderHome(draft: Draft | null = null) {
   const onOpen = vi.fn()
@@ -74,5 +75,40 @@ describe('Home', () => {
     })
     await waitFor(() => expect(onOpen).toHaveBeenCalledTimes(1))
     expect(onOpen.mock.calls[0][0].title).toBe('Untitled theory of change')
+  })
+})
+
+describe('Home: the featured map', () => {
+  it('fetches the theory repo ahead, so a click opens the repo version from the cache', async () => {
+    const edited = { ...splitDocument(statusQuoMetacrisis()).content, title: 'Edited on GitHub' }
+    const { layout } = splitDocument(statusQuoMetacrisis())
+    const fetchMock = vi.fn((url: string) =>
+      Promise.resolve(
+        new Response(serializeMapFile(url.endsWith('content.json') ? edited : layout)),
+      ),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    const { onOpen } = renderHome()
+    await waitFor(() => expect(sessionStorage.length).toBe(1))
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+
+    fireEvent.click(screen.getByRole('button', { name: /Metacrisis status-quo map/ }))
+    await waitFor(() => expect(onOpen).toHaveBeenCalledTimes(1))
+    expect(onOpen.mock.calls[0][0].title).toBe('Edited on GitHub')
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('opens the bundled map, with no message, when GitHub cannot be reached', async () => {
+    const { onOpen } = renderHome()
+    fireEvent.click(screen.getByRole('button', { name: /Metacrisis status-quo map/ }))
+    await waitFor(() => expect(onOpen).toHaveBeenCalledTimes(1))
+    expect(serializeMapFile(onOpen.mock.calls[0][0])).toBe(serializeMapFile(statusQuoMetacrisis()))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('never calls GitHub for a blank template', () => {
+    const { onOpen } = renderHome()
+    fireEvent.click(screen.getByRole('button', { name: /Blank status-quo map/ }))
+    expect(onOpen).toHaveBeenCalledTimes(1)
   })
 })

@@ -1,6 +1,7 @@
-import { useRef, useState, type DragEvent } from 'react'
+import { useEffect, useRef, useState, type DragEvent } from 'react'
 import type { ToCDocument } from '../model/schema'
-import { TEMPLATES } from '../templates'
+import { TEMPLATES, type TemplateInfo } from '../templates'
+import { warmTheoryMap } from '../repo/mapSource'
 import { importFromFile } from '../files/import'
 import type { Draft } from '../files/draft'
 import './home.css'
@@ -43,6 +44,21 @@ function DraftBanner({
 }
 
 function TemplateCards({ onOpen }: { onOpen: (document: ToCDocument) => void }) {
+  const [openingId, setOpeningId] = useState<string | null>(null)
+
+  // Fetch the repo's map ahead, so the click below usually opens from the cache at once.
+  useEffect(() => warmTheoryMap(), [])
+
+  async function openTemplate(template: TemplateInfo) {
+    if (!template.load) return onOpen(template.create())
+    setOpeningId(template.id)
+    try {
+      onOpen(await template.load())
+    } finally {
+      setOpeningId(null)
+    }
+  }
+
   return (
     <section className="toc-home__cards" aria-label="Start a diagram">
       {TEMPLATES.map((template) => (
@@ -50,10 +66,14 @@ function TemplateCards({ onOpen }: { onOpen: (document: ToCDocument) => void }) 
           key={template.id}
           type="button"
           className={`toc-home__card${template.isFeatured ? ' toc-home__card--wide' : ''}`}
-          onClick={() => onOpen(template.create())}
+          disabled={openingId !== null}
+          aria-busy={openingId === template.id}
+          onClick={() => void openTemplate(template)}
         >
           <span className="toc-home__card-name">{template.name}</span>
-          <span className="toc-home__card-desc">{template.description}</span>
+          <span className="toc-home__card-desc">
+            {openingId === template.id ? 'Opening the map' : template.description}
+          </span>
         </button>
       ))}
     </section>
