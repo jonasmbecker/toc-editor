@@ -90,12 +90,12 @@ describe('Home: the featured map', () => {
     vi.stubGlobal('fetch', fetchMock)
     const { onOpen } = renderHome()
     await waitFor(() => expect(sessionStorage.length).toBe(1))
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledTimes(3)
 
     fireEvent.click(screen.getByRole('button', { name: /Metacrisis status-quo map/ }))
     await waitFor(() => expect(onOpen).toHaveBeenCalledTimes(1))
     expect(onOpen.mock.calls[0][0].title).toBe('Edited on GitHub')
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledTimes(3)
   })
 
   it('opens the bundled map, with no message, when GitHub cannot be reached', async () => {

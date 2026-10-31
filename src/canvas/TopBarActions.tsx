@@ -6,6 +6,8 @@ import { ensureShared, makeOwnCopy } from '../share/actions'
 import { SaveStatusPill } from '../share/SaveStatusPill'
 import { ShareDialog, type SharePhase } from '../share/ShareDialog'
 import { CopyIcon, LinkIcon } from '../share/icons'
+import { useOriginStore } from '../suggest/originStore'
+import { SuggestDialog } from '../suggest/SuggestDialog'
 import '../share/share.css'
 
 /** The Share button stores a not-yet-shared document when clicked (an event, so React's
@@ -64,6 +66,39 @@ function ShareAction() {
   )
 }
 
+/** Offered only on the default map opened from the theory repo, when it is editable and not a
+ * share link: those are the maps a suggestion can be compared against and branched from. */
+function SuggestAction() {
+  const origin = useOriginStore((state) => state.origin)
+  const isReadOnly = useToCStore((state) => state.isReadOnly)
+  const isShared = useShareStore((state) => state.role !== null)
+  const [isOpen, setIsOpen] = useState(false)
+  const button = useRef<HTMLButtonElement>(null)
+
+  if (!origin || isReadOnly || isShared) return null
+  return (
+    <>
+      <button
+        ref={button}
+        type="button"
+        className="toc-topbar__btn"
+        onClick={() => setIsOpen(true)}
+      >
+        Suggest a change
+      </button>
+      {isOpen ? (
+        <SuggestDialog
+          origin={origin}
+          onClose={() => {
+            setIsOpen(false)
+            button.current?.focus()
+          }}
+        />
+      ) : null}
+    </>
+  )
+}
+
 function exportNow(mode: ExportMode) {
   downloadDocument(useToCStore.getState().document, mode)
 }
@@ -96,6 +131,7 @@ export function TopBarActions({ onHome }: { onHome: () => void }) {
       >
         Export for theoryofchangebuilder
       </button>
+      <SuggestAction />
       <ShareAction />
     </>
   )

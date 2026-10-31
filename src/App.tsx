@@ -11,6 +11,8 @@ import { useBlockWindowDrop } from './files/useBlockWindowDrop'
 import { OpeningSuggestion } from './repo/OpeningSuggestion'
 import { suggestionParam } from './repo/suggestion'
 import { useSuggestionStore } from './repo/suggestionStore'
+import { theoryOriginOf } from './repo/mapSource'
+import { useOriginStore } from './suggest/originStore'
 import { OpeningShared } from './share/OpeningShared'
 import { parseShareRoute, setPath } from './share/route'
 import { useServerSave } from './share/serverSave'
@@ -58,6 +60,7 @@ type Address = ReturnType<typeof readAddress>
 function forgetOrigin(): void {
   useShareStore.getState().reset()
   useSuggestionStore.getState().clear()
+  useOriginStore.getState().setOrigin(null)
 }
 
 /** What an address with a document behind it shows while that document loads. */
@@ -93,6 +96,7 @@ function App() {
   function open(document: ToCDocument) {
     forgetOrigin()
     useToCStore.getState().load(document)
+    useOriginStore.getState().setOrigin(theoryOriginOf(document))
     setView('editor')
   }
 

@@ -102,36 +102,80 @@ export function documentFromFiles({ content, layout }: MapFiles): ToCDocument {
 
 interface CachedFiles extends MapFiles {
   fetchedAt: number
+  /** The commit the files were read at; null when GitHub would not say. */
+  sha?: string | null
 }
 
-function readCache(now: number): MapFiles | null {
+const SHA_PATTERN = /^[0-9a-f]{40}$/
+
+function readCache(now: number): (MapFiles & { sha: string | null }) | null {
   try {
     const raw = sessionStorage.getItem(CACHE_KEY)
     if (!raw) return null
     const cached = JSON.parse(raw) as CachedFiles
     if (typeof cached.fetchedAt !== 'number' || now - cached.fetchedAt > CACHE_TTL_MS) return null
-    return { content: cached.content, layout: cached.layout }
+    const sha = typeof cached.sha === 'string' && SHA_PATTERN.test(cached.sha) ? cached.sha : null
+    return { content: cached.content, layout: cached.layout, sha }
   } catch {
     return null
   }
 }
 
-function writeCache(files: MapFiles, now: number): void {
+function writeCache(files: MapFiles, sha: string | null, now: number): void {
   try {
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ...files, fetchedAt: now }))
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ...files, sha, fetchedAt: now }))
   } catch {
     // Storage full or blocked: the next open simply fetches again.
   }
 }
 
-/** One request at a time: a click that lands while the fetch-ahead is still running joins it. */
-let pendingFetch: Promise<MapFiles> | null = null
+/** The commit `main` points at, or null when GitHub will not say (rate limit, offline). */
+async function fetchMainSha(): Promise<string | null> {
+  try {
+    const response = await fetch(`${API_HOST}/repos/${THEORY_REPO}/commits/main`, {
+      headers: { Accept: 'application/vnd.github.sha' },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    })
+    if (!response.ok) return null
+    const text = (await response.text()).trim()
+    return SHA_PATTERN.test(text) ? text : null
+  } catch {
+    return null
+  }
+}
 
-function fetchMain(): Promise<MapFiles> {
-  pendingFetch ??= fetchMapFiles(THEORY_REPO, 'main').finally(() => {
+interface Fetched extends MapFiles {
+  sha: string | null
+}
+
+/** One request at a time: a click that lands while the fetch-ahead is still running joins it. */
+let pendingFetch: Promise<Fetched> | null = null
+
+/** Reads the files at the commit `main` points at, so the sha a suggestion is branched from is
+ * exactly the one the person edited. Without a sha it reads `main` and the sha stays null. */
+function fetchMain(): Promise<Fetched> {
+  pendingFetch ??= (async () => {
+    const sha = await fetchMainSha()
+    const files = await fetchMapFiles(THEORY_REPO, sha ?? 'main')
+    return { ...files, sha }
+  })().finally(() => {
     pendingFetch = null
   })
   return pendingFetch
+}
+
+/** Where the map the person is editing came from: the commit and the document as loaded, which
+ * a suggestion is compared against. Set by every `loadTheoryMap`; `App` claims it only when the
+ * document it opens is this very object (so a draft, a share link or a template never claims). */
+export interface TheoryOrigin {
+  sha: string
+  document: ToCDocument
+}
+
+let lastOrigin: TheoryOrigin | null = null
+
+export function theoryOriginOf(document: ToCDocument): TheoryOrigin | null {
+  return lastOrigin && lastOrigin.document === document ? lastOrigin : null
 }
 
 /**
@@ -143,14 +187,17 @@ export async function loadTheoryMap(now: () => number = Date.now): Promise<ToCDo
   const cached = readCache(now())
   if (cached) {
     try {
-      return documentFromFiles(cached)
+      const document = documentFromFiles(cached)
+      lastOrigin = cached.sha ? { sha: cached.sha, document } : null
+      return document
     } catch {
       // A stale or damaged entry: fall through to a fresh fetch.
     }
   }
   const files = await fetchMain()
   const document = documentFromFiles(files)
-  writeCache(files, now())
+  writeCache(files, files.sha, now())
+  lastOrigin = files.sha ? { sha: files.sha, document } : null
   return document
 }
 

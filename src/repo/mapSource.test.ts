@@ -10,6 +10,7 @@ import {
   RepoFetchError,
   documentFromFiles,
   loadTheoryMap,
+  theoryOriginOf,
   rawUrl,
   THEORY_REPO,
 } from './mapSource'
@@ -21,12 +22,16 @@ function respond(body: string, status = 200) {
 }
 
 /** Serves the split bundled map from the raw host, as GitHub would. */
+const SHA = 'a'.repeat(40)
+const SHA_URL = 'https://api.github.com/repos/jonasmbecker/theory-of-metacrisis/commits/main'
+
 function serveMap(overrides: Partial<Record<'content' | 'layout', string>> = {}) {
   const fetchMock = vi.fn((url: string) => {
-    if (url === rawUrl(THEORY_REPO, 'main', 'content')) {
+    if (url === SHA_URL) return respond(SHA)
+    if (url === rawUrl(THEORY_REPO, SHA, 'content')) {
       return respond(overrides.content ?? serializeMapFile(content))
     }
-    if (url === rawUrl(THEORY_REPO, 'main', 'layout')) {
+    if (url === rawUrl(THEORY_REPO, SHA, 'layout')) {
       return respond(overrides.layout ?? serializeMapFile(layout))
     }
     return respond('not found', 404)
@@ -40,14 +45,40 @@ const title = (doc: ToCDocument) => doc.title
 describe('loading the theory map from the repo', () => {
   beforeEach(() => sessionStorage.clear())
 
-  it('fetches content.json and layout.json from the repo main and merges them', async () => {
+  it('reads content.json and layout.json at the commit main points at and merges them', async () => {
     const fetchMock = serveMap()
     const doc = await loadTheoryMap()
     expect(fetchMock.mock.calls.map(([url]) => url).sort()).toEqual([
-      'https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/main/map/content.json',
-      'https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/main/map/layout.json',
+      SHA_URL,
+      `https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/${SHA}/map/content.json`,
+      `https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/${SHA}/map/layout.json`,
     ])
     expect(serializeMapFile(doc)).toBe(serializeMapFile(statusQuoMetacrisis()))
+    expect(theoryOriginOf(doc)?.sha).toBe(SHA)
+    expect(theoryOriginOf(statusQuoMetacrisis())).toBeNull()
+  })
+
+  it('reads main and offers no origin when GitHub will not give the commit', async () => {
+    const fetchMock = vi.fn((url: string) =>
+      url.endsWith('content.json')
+        ? respond(serializeMapFile(content))
+        : url.endsWith('layout.json')
+          ? respond(serializeMapFile(layout))
+          : respond('rate limited', 403),
+    )
+    vi.stubGlobal('fetch', fetchMock)
+    const doc = await loadTheoryMap()
+    expect(fetchMock).toHaveBeenCalledWith(
+      rawUrl(THEORY_REPO, 'main', 'content'),
+      expect.anything(),
+    )
+    expect(theoryOriginOf(doc)).toBeNull()
+  })
+
+  it('keeps the commit through the cache', async () => {
+    serveMap()
+    await loadTheoryMap()
+    expect(theoryOriginOf(await loadTheoryMap())?.sha).toBe(SHA)
   })
 
   it('shows a change merged into the repo', async () => {
@@ -61,15 +92,15 @@ describe('loading the theory map from the repo', () => {
     const start = 1_000_000
     await loadTheoryMap(() => start)
     await loadTheoryMap(() => start + CACHE_TTL_MS - 1)
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledTimes(3)
     await loadTheoryMap(() => start + CACHE_TTL_MS + 1)
-    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(fetchMock).toHaveBeenCalledTimes(6)
   })
 
   it('lets a click that lands during the fetch-ahead join that request', async () => {
     const fetchMock = serveMap()
     const [ahead, click] = await Promise.all([loadTheoryMap(), loadTheoryMap()])
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledTimes(3)
     expect(serializeMapFile(click)).toBe(serializeMapFile(ahead))
   })
 
@@ -83,7 +114,7 @@ describe('loading the theory map from the repo', () => {
     sessionStorage.setItem(CACHE_KEY, '{"fetchedAt": 1, nonsense')
     const fetchMock = serveMap()
     await loadTheoryMap()
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock).toHaveBeenCalledTimes(3)
   })
 
   it('still opens when storage is blocked', async () => {
@@ -146,9 +177,9 @@ describe('the default map falls back to the bundled copy without a word', () => 
     const timeout = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(expiry.signal)
     vi.stubGlobal('fetch', (_url: string, init: RequestInit) => {
       return new Promise((_resolve, reject) => {
-        init.signal?.addEventListener('abort', () =>
-          reject(new DOMException('timeout', 'TimeoutError')),
-        )
+        const fail = () => reject(new DOMException('timeout', 'TimeoutError'))
+        if (init.signal?.aborted) fail()
+        init.signal?.addEventListener('abort', fail)
       })
     })
     const pending = loadDefaultMap()
