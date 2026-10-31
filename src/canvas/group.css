@@ -21,8 +21,12 @@
   cursor: grabbing;
 }
 
+.toc-stage--readonly .toc-group__head {
+  cursor: default;
+}
+
 /* Hover hint: the frame darkens while the title strip is hovered, marking it as the handle. */
-.toc-group:has(.toc-group__head:hover) {
+.toc-stage:not(.toc-stage--readonly) .toc-group:has(.toc-group__head:hover) {
   border-color: #8f8a80;
 }
 
