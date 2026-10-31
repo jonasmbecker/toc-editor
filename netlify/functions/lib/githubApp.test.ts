@@ -33,6 +33,19 @@ describe('normalizePrivateKey', () => {
     expect(normalizePrivateKey(PEM.replace(/\n/g, '\\n'))).toBe(PEM)
   })
 
+  it('rebuilds a key whose line breaks became spaces, were lost, or are Windows ones', () => {
+    const body = PEM.split('\n').slice(1, -1)
+    const [begin, end] = [PEM.split('\n')[0], PEM.split('\n').at(-1)]
+    expect(normalizePrivateKey(`${begin} ${body.join(' ')} ${end}`)).toBe(PEM)
+    expect(normalizePrivateKey(`${begin}${body.join('')}${end}`)).toBe(PEM)
+    expect(normalizePrivateKey(PEM.replace(/\n/g, '\r\n'))).toBe(PEM)
+    const config = readAppConfig({
+      ...ENV,
+      GITHUB_APP_PRIVATE_KEY: `${begin} ${body.join(' ')} ${end}`,
+    })!
+    expect(() => appJwt(config, NOW)).not.toThrow()
+  })
+
   it('removes wrapping quotes', () => {
     expect(normalizePrivateKey(`"${PEM.replace(/\n/g, '\\n')}"`)).toBe(PEM)
     expect(normalizePrivateKey(`'${PEM}'`)).toBe(PEM)

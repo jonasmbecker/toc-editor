@@ -19,11 +19,20 @@ export interface AppConfig {
 const API = 'https://api.github.com'
 const CALL_TIMEOUT_MS = 8000
 
-/** Pasted keys come with real newlines, literal `\n` sequences or wrapping quotes, depending on
- * how they were entered in the Netlify dashboard. */
+/** Pasted keys come with real newlines, literal `\n` sequences, wrapping quotes, or with the line
+ * breaks turned into spaces or lost, depending on how they were entered in the Netlify dashboard.
+ * The PEM is rebuilt from its label and base64 body (whitespace removed, 64 per line), which is
+ * the one layout OpenSSL accepts. */
 export function normalizePrivateKey(raw: string): string {
-  const unquoted = raw.trim().replace(/^(["'])([\s\S]*)\1$/, '$2')
-  return unquoted.replace(/\\n/g, '\n').trim()
+  const unquoted = raw
+    .trim()
+    .replace(/^(["'])([\s\S]*)\1$/, '$2')
+    .replace(/\\n/g, '\n')
+    .trim()
+  const pem = /-----BEGIN ([A-Z ]*PRIVATE KEY)-----([\s\S]*?)-----END \1-----/.exec(unquoted)
+  if (!pem) return unquoted
+  const lines = pem[2].replace(/\s+/g, '').match(/.{1,64}/g) ?? []
+  return [`-----BEGIN ${pem[1]}-----`, ...lines, `-----END ${pem[1]}-----`].join('\n')
 }
 
 /** The App's settings, or null when any is missing or has the wrong shape, which is how the
