@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { buildFlow } from './buildFlow'
 import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from './anchors'
 import { LOOP_OUT_HANDLE } from './CardNode'
-import { routePoints, sampleLine, type Pt, type Rect } from './edgeRouting'
+import { assignChannels, routePoints, sampleLine, type Pt, type Rect } from './edgeRouting'
 import { statusQuoMetacrisis } from '../templates'
 import { SECTION_HEADER_HEIGHT } from '../layout/columns'
 
@@ -33,6 +33,77 @@ function inside(box: Rect, p: Pt, margin = 0): boolean {
     p.y < box.y + box.h + margin
   )
 }
+
+/** The links that skip a column and were hardest to trace on the map (skip-links slice). */
+const TEST_LINKS = [
+  'group-consumerism->outcome-climate-breakdown',
+  'group-consumerism->outcome-pollution',
+  'group-consumerism->outcome-resource-depletion',
+  'driver-patriarchy-sexism->outcome-sexual-assault',
+]
+
+describe('skip links threaded through the skipped columns', () => {
+  /** About what a two-line card measures in the browser. */
+  const HEIGHT = 56
+  const graph = buildFlow(withFeedbackLoop())
+  const cards: Rect[] = graph.nodes
+    .filter((n) => n.type === 'card')
+    .map((n) => ({ x: n.position.x, y: n.position.y, w: n.width ?? 0, h: HEIGHT }))
+  const forward = graph.edges.filter((e) => e.type === 'routed' && e.data?.lane?.ends)
+  const links = forward
+    .filter((e) => e.data!.lane!.above)
+    .map((e) => ({ id: e.id, ...e.data!.lane!.ends! }))
+  const channels = assignChannels(links, cards)
+  const test = TEST_LINKS.map((prefix) => forward.find((e) => e.id.startsWith(prefix))!)
+
+  it('finds the test links', () => {
+    expect(test.every(Boolean)).toBe(true)
+  })
+
+  it('every test link gets a channel and its own colour', () => {
+    for (const edge of test) expect(channels.has(edge.id)).toBe(true)
+    const colours = test.map((e) => e.data!.tint)
+    expect(colours.every(Boolean)).toBe(true)
+    expect(new Set(colours).size).toBe(colours.length)
+  })
+
+  it('test links in the same band run at least 3px apart', () => {
+    const ys = test.map((e) => channels.get(e.id)!).sort((a, b) => a - b)
+    for (let i = 1; i < ys.length; i++) expect(ys[i] - ys[i - 1]).toBeGreaterThanOrEqual(3)
+  })
+
+  it('a channel never runs through a card, and keeps clear of card edges', () => {
+    const problems: string[] = []
+    for (const edge of test) {
+      const lane = edge.data!.lane!
+      const { sx, sy, tx, ty } = lane.ends!
+      const points = routePoints(
+        { x: sx, y: sy },
+        { x: tx, y: ty },
+        { cards, headers: [] },
+        lane,
+        channels.get(edge.id),
+      )
+      const middle = points.slice(1, -1)
+      for (let i = 1; i < middle.length; i++) {
+        for (const p of sampleLine([middle[i - 1], middle[i]])) {
+          for (const card of cards) {
+            if (inside(card, p, 10)) problems.push(`${edge.id} too close at ${p.x},${p.y}`)
+          }
+        }
+      }
+    }
+    expect(problems).toEqual([])
+  })
+
+  it('a channel keeps out of the section header bars', () => {
+    const column: Rect[] = [{ x: 100, y: 100, w: 100, h: 50 }]
+    const headers: Rect[] = [{ x: 100, y: 0, w: 100, h: 60 }]
+    const link = { id: 'x', sx: 0, sy: 20, tx: 300, ty: 40 }
+    const y = assignChannels([link], column, headers).get('x')!
+    expect(y > 71 || y < -11).toBe(true)
+  })
+})
 
 describe('routed connections on the metacrisis map', () => {
   const graph = buildFlow(withFeedbackLoop())

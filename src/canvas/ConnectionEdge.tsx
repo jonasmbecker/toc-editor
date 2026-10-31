@@ -9,6 +9,8 @@ export interface ConnectionEdgeData extends Record<string, unknown> {
   isFeedbackLoop?: boolean
   /** Slots of a routed edge in the gaps and the corridor, assigned in `buildFlow`. */
   lane?: Lane
+  /** Colour of a column-skipping link, so it can be told apart from the lines beside it. */
+  tint?: string
   /** Where this edge lives in the document, so a click can open it in the details panel. The
    * same `ConnectionRef` the store and the panel use. */
   ref: ConnectionRef

@@ -5,6 +5,8 @@
  * - A link that skips a column, or a feedback loop that skips one going back, leaves into the gap
  *   beside its source column, runs along a corridor outside the cards (above the header bars for
  *   forward links, below the lowest card for loops), and drops into the gap beside the target.
+ *   A forward link first looks for a free channel between card rows through the skipped columns
+ *   (`assignChannels`) and only uses the corridor when there is none.
  * - A feedback loop between ADJACENT columns stays a compact curve inside the gap between them.
  *
  * Every routed link gets its own slot in the gaps and in the corridor (`assignLanes`), so lines
@@ -53,6 +55,9 @@ export interface Lane {
   targetSlot: number
   targetCount: number
   corridorSlot: number
+  /** The link's ends, so a forward skip link can look for a channel through the skipped columns
+   * once the cards' real heights are known (see `assignChannels`). Absent on a near loop. */
+  ends?: { sx: number; sy: number; tx: number; ty: number }
 }
 
 /** Clearance between a vertical run and the nearest card edge, and the widest spacing between
@@ -134,6 +139,7 @@ export function assignLanes(links: RouteLink[], headers: Rect[]): Map<string, La
         targetSlot,
         targetCount,
         corridorSlot,
+        ends: { sx: l.sx, sy: l.sy, tx: l.tx, ty: l.ty },
       })
     })
   }
@@ -205,7 +211,13 @@ function rightEdgeIn(cards: Rect[], from: number, to: number): number {
 /** Control points of the route for a link, orthogonal with corners left for `roundedPath`. For
  * the outer arc `s` is the source's right edge and `t` the target's left edge; for a near loop
  * `s` is the source's left edge and `t` the target's right edge. */
-export function routePoints(s: Pt, t: Pt, scene: RouteScene, lane: Lane): Pt[] {
+export function routePoints(
+  s: Pt,
+  t: Pt,
+  scene: RouteScene,
+  lane: Lane,
+  channelY?: number,
+): Pt[] {
   const { cards, headers } = scene
   if (lane.near) {
     const gapLeft = rightEdgeIn(cards, t.x, s.x - 2)
@@ -221,10 +233,77 @@ export function routePoints(s: Pt, t: Pt, scene: RouteScene, lane: Lane): Pt[] {
   const tx = t.x - CLEAR - lane.targetSlot * step(lane.targetCount)
   const top = Math.min(...cards.map((c) => c.y), ...headers.map((h) => h.y))
   const bottom = Math.max(...cards.map((c) => c.y + c.h))
-  const y = lane.above
-    ? top - CORRIDOR_MARGIN - lane.corridorSlot * CORRIDOR_STEP
-    : bottom + CORRIDOR_MARGIN + lane.corridorSlot * CORRIDOR_STEP
+  const y =
+    channelY ??
+    (lane.above
+      ? top - CORRIDOR_MARGIN - lane.corridorSlot * CORRIDOR_STEP
+      : bottom + CORRIDOR_MARGIN + lane.corridorSlot * CORRIDOR_STEP)
   return [s, { x: sx, y: s.y }, { x: sx, y }, { x: tx, y }, { x: tx, y: t.y }, t]
+}
+
+/** The ends of a forward skip link, as `assignChannels` needs them. */
+export interface ChannelLink {
+  id: string
+  sx: number
+  sy: number
+  tx: number
+  ty: number
+}
+
+/** A free band between card rows must be at least this tall to carry a line. */
+const CHANNEL_MIN = 14
+/** A line keeps this far inside its band, off the cards on either side. */
+const CHANNEL_EDGE = 6
+
+/** Gives every forward skip link a horizontal channel through the columns it skips: a free band
+ * between card rows, as near the middle of the link as one exists, so the link stays short and
+ * straight instead of climbing to the corridor above the map. Links that land in the same band
+ * are spread across it in target order, so their lines run side by side and never overlap. Card
+ * rows and section header bars both block a band. */
+export function assignChannels(
+  links: ChannelLink[],
+  cards: Rect[],
+  headers: Rect[] = [],
+): Map<string, number> {
+  const obstacles = [...cards, ...headers]
+  const chosen = new Map<string, { link: ChannelLink; lo: number; hi: number; mid: number }[]>()
+  for (const link of links) {
+    const from = widestRightInColumn(cards, link.sx) + CLEAR
+    const to = link.tx - CLEAR
+    const blocked = obstacles
+      .filter((c) => c.x < to && c.x + c.w > from)
+      .map((c) => [c.y - CLEAR, c.y + c.h + CLEAR] as const)
+      .sort((a, b) => a[0] - b[0])
+    const bands: [number, number][] = []
+    let cursor = -Infinity
+    for (const [top, bottom] of blocked) {
+      if (top > cursor) bands.push([cursor, top])
+      cursor = Math.max(cursor, bottom)
+    }
+    bands.push([cursor, Infinity])
+    const mid = (link.sy + link.ty) / 2
+    const fits = bands
+      .filter(([a, b]) => b - a >= CHANNEL_MIN)
+      .map(([a, b]) => ({ lo: a + CHANNEL_EDGE, hi: b - CHANNEL_EDGE }))
+      .map((band) => ({ ...band, y: Math.min(band.hi, Math.max(band.lo, mid)) }))
+      .sort((p, q) => Math.abs(p.y - mid) - Math.abs(q.y - mid))
+    if (fits.length === 0) continue
+    const key = `${fits[0].lo}|${fits[0].hi}`
+    chosen.set(key, [...(chosen.get(key) ?? []), { link, lo: fits[0].lo, hi: fits[0].hi, mid }])
+  }
+
+  const channels = new Map<string, number>()
+  for (const members of chosen.values()) {
+    members.sort((a, b) => a.link.ty - b.link.ty || a.link.sy - b.link.sy)
+    const { lo, hi } = members[0]
+    const n = members.length
+    const spacing = n > 1 ? Math.min(MAX_STEP, (hi - lo) / (n - 1)) : 0
+    const centre = members.reduce((sum, m) => sum + m.mid, 0) / n
+    const span = (n - 1) * spacing
+    const first = Math.min(hi - span, Math.max(lo, centre - span / 2))
+    members.forEach((m, i) => channels.set(m.link.id, first + i * spacing))
+  }
+  return channels
 }
 
 /** Right edge of the column a source card sits in (the widest card sharing its left edge), so a

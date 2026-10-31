@@ -1,9 +1,17 @@
-import { BaseEdge, useStore, type EdgeProps } from '@xyflow/react'
+import { BaseEdge, useStore, type EdgeProps, type ReactFlowState } from '@xyflow/react'
+import { useToCStore } from '../state/store'
 import { CANVAS_COLORS, edgeAppearance } from './config'
-import { roundedPath, routePoints, type Lane, type Rect, type RouteScene } from './edgeRouting'
+import {
+  assignChannels,
+  roundedPath,
+  routePoints,
+  type Lane,
+  type Rect,
+  type RouteScene,
+} from './edgeRouting'
 import type { ConnectionEdgeType } from './ConnectionEdge'
 
-/** Only used if an edge reaches the canvas without lanes (not produced by uildFlow). */
+/** Only used if an edge reaches the canvas without lanes (not produced by uildFlow). */
 const FALLBACK_LANE: Lane = {
   near: false,
   above: true,
@@ -18,9 +26,46 @@ function sameScene(a: RouteScene, b: RouteScene): boolean {
   return JSON.stringify(a) === JSON.stringify(b)
 }
 
-/** A connection that skips columns or points back: routed along a corridor outside the cards
- * (see `edgeRouting`), so it never passes through or behind one. */
+/** Every card and section header as drawn now, so routes use the measured heights. */
+function readScene(s: ReactFlowState): RouteScene {
+  const cards: Rect[] = []
+  const headers: Rect[] = []
+  for (const n of s.nodeLookup.values()) {
+    if (n.type !== 'card' && n.type !== 'sectionHeader') continue
+    const pos = n.internals.positionAbsolute
+    const box = {
+      x: Math.round(pos.x),
+      y: Math.round(pos.y),
+      w: n.measured.width ?? n.width ?? 0,
+      h: n.measured.height ?? n.height ?? 0,
+    }
+    ;(n.type === 'card' ? cards : headers).push(box)
+  }
+  return { cards, headers }
+}
+
+/** The y of this link's channel through the skipped columns, or undefined for a link that takes
+ * the corridor (a loop). Worked out for all forward skip links together,
+ * because links sharing a band are spread across it. */
+function channelOf(s: ReactFlowState, id: string): number | undefined {
+  const links = (s.edges as ConnectionEdgeType[]).flatMap((e) =>
+    e.type === 'routed' && e.data?.lane?.above && e.data.lane.ends
+      ? [{ id: e.id, ...e.data.lane.ends }]
+      : [],
+  )
+  const { cards, headers } = readScene(s)
+  return assignChannels(links, cards, headers).get(id)
+}
+
+/** A connection that skips columns or points back. A forward link threads through a free channel
+ * between card rows in the columns it skips; a loop, or a link with no free channel, runs along a
+ * corridor outside the cards (see `edgeRouting`). Either way it never passes through or behind a
+ * card. Each skip link has its own colour, and with a card selected the links that touch it stay
+ * bold while the other skip links fade back. */
 export function RoutedEdge({
+  id,
+  source,
+  target,
   sourceX,
   sourceY,
   targetX,
@@ -30,41 +75,35 @@ export function RoutedEdge({
   markerEnd,
   markerStart,
 }: EdgeProps<ConnectionEdgeType>) {
-  const scene = useStore((s) => {
-    const cards: Rect[] = []
-    const headers: Rect[] = []
-    for (const n of s.nodeLookup.values()) {
-      if (n.type !== 'card' && n.type !== 'sectionHeader') continue
-      const pos = n.internals.positionAbsolute
-      const box = {
-        x: Math.round(pos.x),
-        y: Math.round(pos.y),
-        w: n.measured.width ?? n.width ?? 0,
-        h: n.measured.height ?? n.height ?? 0,
-      }
-      ;(n.type === 'card' ? cards : headers).push(box)
-    }
-    return { cards, headers }
-  }, sameScene)
+  const selectedNodeId = useToCStore((s) => s.selectedNodeId)
+  const scene = useStore(readScene, sameScene)
+  const channelY = useStore((s) => channelOf(s, id))
   const points = routePoints(
     { x: sourceX, y: sourceY },
     { x: targetX, y: targetY },
     scene,
     data?.lane ?? FALLBACK_LANE,
+    channelY,
   )
   const { stroke, dashArray, lineCap, width } = edgeAppearance(data ?? {})
-  const color = selected ? CANVAS_COLORS.select : stroke
+  const tinted = Boolean(data?.tint)
+  const color = selected ? CANVAS_COLORS.select : (data?.tint ?? stroke)
+  const touches = selectedNodeId === source || selectedNodeId === target
+  const faded = tinted && selectedNodeId != null && !touches
+  const drawn = tinted ? 2 : width
 
   return (
     <BaseEdge
+      id={id}
       path={roundedPath(points)}
       markerEnd={markerEnd}
       markerStart={markerStart}
       style={{
         stroke: color,
-        strokeWidth: selected ? width + 1 : width,
+        strokeWidth: selected || (tinted && touches) ? drawn + 1 : drawn,
         strokeDasharray: dashArray,
         strokeLinecap: lineCap,
+        opacity: faded ? 0.15 : 1,
       }}
     />
   )

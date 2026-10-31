@@ -81,7 +81,11 @@ function buildCardNodes(
   })
 }
 
-type PositionById = Map<string, { x: number; y: number; width: number }>
+/** One strong hue per column-skipping link, so parallel lines can be told apart (the editor's
+ * selection blue is left out). Feedback loops keep their rust accent. */
+const SKIP_PALETTE = ['#B45309', '#0F766E', '#7C3AED', '#BE185D', '#15803D', '#0369A1']
+
+type PositionById =Map<string, { x: number; y: number; width: number }>
 
 type Route = 'flow' | 'stack-down' | 'stack-up' | 'routed' | 'near-loop'
 
@@ -126,14 +130,17 @@ function buildEdges(
 ): { edges: ConnectionEdgeType[]; dropped: DroppedConnection[] } {
   const edges: ConnectionEdgeType[] = []
   const dropped: DroppedConnection[] = []
+  let skipCount = 0
   for (const node of allNodes) {
     node.connections.forEach((connection, index) => {
       if (!positions.has(connection.targetId)) {
         dropped.push({ sourceId: node.id, targetId: connection.targetId })
         return
       }
-      const appearance = edgeAppearance(connection)
       const route = routeFor(connection.targetId, node.id, positions, columns)
+      const skip = route === 'routed' && !connection.isFeedbackLoop
+      const tint = skip ? SKIP_PALETTE[skipCount++ % SKIP_PALETTE.length] : undefined
+      const appearance = { ...edgeAppearance(connection), ...(tint ? { stroke: tint, width: 2 } : {}) }
       edges.push({
         id: `${node.id}->${connection.targetId}#${connection.id ?? index}`,
         source: node.id,
@@ -147,6 +154,7 @@ function buildEdges(
           provenance: connection.provenance,
           isFeedbackLoop: connection.isFeedbackLoop,
           ref: { sourceId: node.id, index },
+          tint,
         } satisfies ConnectionEdgeData,
       })
     })
