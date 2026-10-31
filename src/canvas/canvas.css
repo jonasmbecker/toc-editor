@@ -143,14 +143,6 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-.toc-loop-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-anchor: middle;
-  pointer-events: none;
-}
-
 .toc-topbar__draft {
   font-size: 11px;
   font-weight: 600;

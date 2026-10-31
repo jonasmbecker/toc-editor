@@ -88,9 +88,9 @@ export interface EdgeAppearance {
  * The single decision tree for how a connection is drawn: both-ways connections win (accent
  * colour, heavier line, a head at each end), then an ordinary one-way edge. Both-ways and one-way edges carry the confidence
  * band's dash, so a 30% both-ways arrow is a dotted rust line. Which route an edge takes
- * (around the columns or the plain bezier) is geometry, decided in `buildFlow`, not here.
+ * (around the cards or the plain bezier) is geometry, decided in `buildFlow`, not here.
  * Shared by `buildFlow` (which needs the colour to build the edge's markers),
- * `ConnectionEdge`/`LoopEdge` (the full style), the Legend and the panel's swatches, so none
+ * `ConnectionEdge`/`RoutedEdge` (the full style), the Legend and the panel's swatches, so none
  * of them can drift apart.
  */
 export function edgeAppearance(data: {
