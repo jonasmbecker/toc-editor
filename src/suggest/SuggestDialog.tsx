@@ -3,6 +3,7 @@ import { useToCStore } from '../state/store'
 import { hasChanges, layoutLine, summarizeChanges } from '../files/changeSummary'
 import { CloseIcon, CopyIcon } from '../share/icons'
 import type { TheoryOrigin } from '../repo/mapSource'
+import { useOriginStore } from './originStore'
 import {
   clearForm,
   loadForm,
@@ -72,8 +73,16 @@ export function SuggestDialog({ origin, onClose }: SuggestDialogProps) {
   const extra = layoutLine(summary)
   const lines = summary.lines.length > 0 && extra ? [...summary.lines, extra] : summary.lines
   const changed = hasChanges(summary)
+  const sent = useOriginStore((state) => state.sent)
   const [form, setForm] = useState<SuggestForm>(loadForm)
-  const [phase, setPhase] = useState<Phase>({ kind: 'form' })
+  const [sending, setSending] = useState(false)
+  // Unchanged since the last suggestion went through: show its link, never a second send.
+  const phase: Phase =
+    sent && sent.document === document
+      ? { kind: 'sent', url: sent.url }
+      : sending
+        ? { kind: 'sending' }
+        : { kind: 'form' }
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const dialog = useRef<HTMLDivElement>(null)
@@ -95,14 +104,15 @@ export function SuggestDialog({ origin, onClose }: SuggestDialogProps) {
   async function send() {
     if (!canSend) return
     setError(null)
-    setPhase({ kind: 'sending' })
+    setSending(true)
     const result = await sendSuggestion(document, origin.sha, form)
+    setSending(false)
     if (result.ok) {
       clearForm()
-      setPhase({ kind: 'sent', url: result.url })
+      setForm({ name: '', reason: '' })
+      useOriginStore.getState().markSent(document, result.url)
     } else {
       setError(result.message)
-      setPhase({ kind: 'form' })
     }
   }
 

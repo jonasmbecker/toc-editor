@@ -141,6 +141,28 @@ describe('the Suggest a change dialog', () => {
   })
 })
 
+describe('after a suggestion went through', () => {
+  it('shows its link on reopen instead of sending the same edits twice', async () => {
+    openMap()
+    editTitle()
+    vi.stubGlobal('fetch', reply(201, { url: PR, number: 12 }))
+    await openDialog()
+    fireEvent.change(screen.getByLabelText('Your name'), { target: { value: 'Dana' } })
+    fireEvent.change(screen.getByLabelText(/Why this change/), { target: { value: 'Because' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Send suggestion' }))
+    fireEvent.click(await screen.findByRole('button', { name: 'Done' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Suggest a change' }))
+    expect(await screen.findByRole('link')).toHaveAttribute('href', PR)
+    expect(screen.queryByRole('button', { name: 'Send suggestion' })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }))
+
+    useToCStore.getState().transform('edit again', (doc) => ({ ...doc, title: 'Another title' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Suggest a change' }))
+    expect(await screen.findByRole('button', { name: 'Send suggestion' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Your name')).toHaveValue('')
+  })
+})
+
 describe('sendSuggestion', () => {
   it('turns a network failure into a friendly sentence', async () => {
     const down = vi.fn(() => Promise.reject(new TypeError('Failed to fetch')))
