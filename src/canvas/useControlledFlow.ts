@@ -9,6 +9,7 @@ import type { ToCDocument } from '../model/schema'
 import { useToCStore } from '../state/store'
 import { moveNodeToColumn, moveNodeVertically } from '../state/nodes'
 import { findNodeLocation } from '../state/tree'
+import { moveGroup } from '../state/groups'
 import { useStraightSnap } from './useStraightSnap'
 import { resolveDropTarget, snapYPosition } from './dragSnap'
 import { HEADER_CLEARANCE } from '../layout/columns'
@@ -16,7 +17,7 @@ import type { FlowGraph } from './buildFlow'
 import type { ConnectionEdgeType } from './ConnectionEdge'
 import type { CardNodeType } from './CardNode'
 import type { SectionHeaderNodeType } from './SectionHeaderNode'
-import type { GroupNodeType } from './GroupNode'
+import type { GroupNodeData, GroupNodeType } from './GroupNode'
 import { fitGroupHeights } from './groupFlow'
 import { endpointIds, refOfEdge, withSelection } from './selection'
 
@@ -79,8 +80,43 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     [select, selectConnection],
   )
 
+  // While a group is dragged its cards ride along by the same offset as the frame.
+  const onNodeDrag: OnNodeDrag<FlowNode> = useCallback(
+    (_event, node) => {
+      if (node.type !== 'group') return
+      const home = graph.nodes.find((n) => n.id === node.id)
+      if (!home) return
+      const dx = node.position.x - home.position.x
+      const dy = node.position.y - home.position.y
+      const origins = new Map(
+        graph.nodes
+          .filter((n) => (node.data as GroupNodeData).memberIds.includes(n.id))
+          .map((n) => [n.id, n.position]),
+      )
+      setNodes((current) =>
+        current.map((n) => {
+          const origin = origins.get(n.id)
+          return origin ? { ...n, position: { x: origin.x + dx, y: origin.y + dy } } : n
+        }),
+      )
+    },
+    [graph, setNodes],
+  )
+
   const onNodeDragStop: OnNodeDrag<FlowNode> = useCallback(
     (_event, node) => {
+      if (node.type === 'group') {
+        const home = graph.nodes.find((n) => n.id === node.id)
+        const target = resolveDropTarget(doc, node.position.x + (node.width ?? 0) / 2)
+        const rawDy = home ? node.position.y - home.position.y : 0
+        const deltaY = Math.sign(rawDy) * snapYPosition(Math.abs(rawDy))
+        transform(`move ${node.id}`, (document) =>
+          moveGroup(document, node.id, target.sectionIndex, target.columnIndex, deltaY),
+        )
+        // A drop back in place changes nothing in the store; snap the frame and cards back.
+        if (useToCStore.getState().document === doc) resync()
+        return
+      }
       if (node.type !== 'card') return
       const centerX = node.position.x + (node.width ?? 0) / 2
       const target = resolveDropTarget(doc, centerX)
@@ -105,7 +141,7 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
       // back explicitly.
       if (useToCStore.getState().document === doc) resync()
     },
-    [doc, transform, resync, snap],
+    [doc, graph, transform, resync, snap],
   )
 
   // Card heights arrive after the first render; re-fit group containers whenever they do.
@@ -126,6 +162,7 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     onEdgesChange,
     onSelectionChange,
     onNodeDragStart: snap.onNodeDragStart,
+    onNodeDrag,
     onNodeDragStop,
     onInit: snap.onInit,
     guide: snap.guide,

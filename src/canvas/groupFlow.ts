@@ -34,7 +34,9 @@ export function buildGroupNodes(doc: ToCDocument, positions: PositionById): Grou
       position: { x: Math.min(...boxes.map((b) => b.x)) - GROUP_PAD, y: top },
       width: Math.max(...boxes.map((b) => b.width)) + GROUP_PAD * 2,
       height: bottom - top + GROUP_PAD,
-      draggable: false,
+      // Only the title strip drags the group, so cards inside it keep their own drags.
+      draggable: true,
+      dragHandle: '.toc-group__head',
       zIndex: -1,
       data: {
         title: group.title,

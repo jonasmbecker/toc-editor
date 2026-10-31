@@ -14,6 +14,16 @@
 
 .toc-group__head {
   padding: 8px 14px 0;
+  cursor: grab;
+}
+
+.toc-group__head:active {
+  cursor: grabbing;
+}
+
+/* Hover hint: the frame darkens while the title strip is hovered, marking it as the handle. */
+.toc-group:has(.toc-group__head:hover) {
+  border-color: #8f8a80;
 }
 
 /* Same zoom-compensated size as a card title, so the group name reads at fit-to-screen. */

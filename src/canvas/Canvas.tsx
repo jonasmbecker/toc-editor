@@ -142,6 +142,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           onEdgesChange={flow.onEdgesChange}
           onSelectionChange={flow.onSelectionChange}
           onNodeDragStart={flow.onNodeDragStart}
+          onNodeDrag={flow.onNodeDrag}
           onNodeDragStop={flow.onNodeDragStop}
           onInit={flow.onInit}
           onConnect={connect.onConnect}

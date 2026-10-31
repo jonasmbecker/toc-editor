@@ -164,6 +164,60 @@ export function dissolveGroup(doc: ToCDocument, groupId: string): ToCDocument {
   return mapAllNodes(next, (n) => (n.groupId === groupId ? withoutGroupId(n) : n))
 }
 
+/** Moves a group and all its cards as one unit: to the given column, and `deltaY` up or down.
+ * The delta is clamped so the highest node stays at or below 0, and every node keeps its place
+ * relative to the others. Returns the input by reference when nothing would change, so a drop
+ * back in place costs no undo step. */
+export function moveGroup(
+  doc: ToCDocument,
+  groupId: string,
+  sectionIndex: number,
+  columnIndex: number,
+  deltaY: number,
+): ToCDocument {
+  const group = nodeAt(doc, groupId)
+  const location = findNodeLocation(doc, groupId)
+  if (!group || !location || !isGroupNode(group)) return doc
+  const moving = new Set([groupId, ...membersOf(doc, groupId).map((m) => m.id)])
+  const highest = Math.min(...[...moving].map((id) => nodeAt(doc, id)?.yPosition ?? 0))
+  const delta = Math.max(deltaY, -highest)
+  const sameSpot = location.sectionIndex === sectionIndex && location.columnIndex === columnIndex
+  if (sameSpot && delta === 0) return doc
+
+  const shifted = (n: DocumentNode) => (delta === 0 ? n : { ...n, yPosition: n.yPosition + delta })
+  const carried: DocumentNode[] = []
+  const stripped: ToCDocument = {
+    ...doc,
+    sections: doc.sections.map((section) => ({
+      ...section,
+      columns: section.columns.map((column) => ({
+        ...column,
+        nodes: column.nodes.flatMap((n) => {
+          if (!moving.has(n.id)) return [n]
+          const moved = shifted(n)
+          if (sameSpot) return [moved]
+          carried.push(moved)
+          return []
+        }),
+      })),
+    })),
+  }
+  if (sameSpot) return stripped
+  return normalizeGroups({
+    ...stripped,
+    sections: stripped.sections.map((section, si) => {
+      if (si !== sectionIndex) return section
+      const columns = [...section.columns]
+      while (columns.length <= columnIndex) columns.push({ nodes: [] })
+      columns[columnIndex] = {
+        ...columns[columnIndex],
+        nodes: [...columns[columnIndex].nodes, ...carried],
+      }
+      return { ...section, columns }
+    }),
+  })
+}
+
 /** Takes a card out of its group; a group left with fewer than two cards dissolves. */
 export function removeFromGroup(doc: ToCDocument, nodeId: string): ToCDocument {
   const node = nodeAt(doc, nodeId)

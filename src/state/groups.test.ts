@@ -11,13 +11,14 @@ import {
   dissolveGroup,
   flattenGroups,
   isGroupNode,
+  moveGroup,
   membersOf,
   normalizeGroups,
   removeFromGroup,
 } from './groups'
 import { deleteNode, moveNodeToColumn, updateNode } from './nodes'
 import { useToCStore } from './store'
-import { allNodes, nodeAt } from './tree'
+import { allNodes, findNodeLocation as nodeLocation, nodeAt } from './tree'
 
 const conn = (targetId: string) => ({ targetId, confidence: 50, assumptions: '', evidence: '' })
 
@@ -211,5 +212,55 @@ describe('round trip and ToCB export', () => {
   it('dissolve and flatten agree for a single group', () => {
     const { document, groupId } = grouped()
     expect(flattenGroups(document)).toEqual(dissolveGroup(document, groupId))
+  })
+})
+
+describe('moveGroup', () => {
+  it('moves the group and its cards down together, keeping their order', () => {
+    const { document, groupId } = grouped()
+    const next = moveGroup(document, groupId, 0, 0, 40)
+    expect(membersOf(next, groupId).map((m) => [m.id, m.yPosition])).toEqual([
+      ['race-to-bottom', 40],
+      ['race-to-market', 140],
+      ['arms-race', 240],
+    ])
+    expect(nodeAt(next, groupId)!.yPosition).toBe(40)
+    expect(nodeAt(next, 'solo')!.yPosition).toBe(300)
+  })
+
+  it('clamps so the highest node never goes above 0', () => {
+    const { document, groupId } = grouped()
+    const next = moveGroup(document, groupId, 0, 0, -50)
+    expect(membersOf(next, groupId).map((m) => m.yPosition)).toEqual([0, 100, 200])
+  })
+
+  it('carries the whole group into another column and keeps it a group', () => {
+    const { document, groupId } = grouped()
+    const next = moveGroup(document, groupId, 0, 1, 16)
+    const location = (id: string) => ({ ...nodeLocation(next, id) })
+    for (const id of [groupId, 'race-to-bottom', 'race-to-market', 'arms-race']) {
+      expect(location(id).columnIndex).toBe(1)
+    }
+    expect(membersOf(next, groupId)).toHaveLength(3)
+    expect(nodeAt(next, 'race-to-bottom')!.groupId).toBe(groupId)
+    expect(nodeAt(next, 'arms-race')!.connections.map((c) => c.targetId)).toEqual([
+      'great-power-war',
+    ])
+  })
+
+  it('returns the same document for a drop back in place', () => {
+    const { document, groupId } = grouped()
+    expect(moveGroup(document, groupId, 0, 0, 0)).toBe(document)
+  })
+
+  it('is one store transform, so a single undo reverts it', () => {
+    const { document, groupId } = grouped()
+    useToCStore.getState().load(document)
+    const store = useToCStore.getState()
+    const before = store.document
+    store.transform('move group', (d) => moveGroup(d, groupId, 0, 1, 24))
+    expect(useToCStore.getState().document).not.toBe(before)
+    useToCStore.getState().undo()
+    expect(useToCStore.getState().document).toBe(before)
   })
 })
