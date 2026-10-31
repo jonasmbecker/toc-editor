@@ -306,7 +306,9 @@ function reserveChannels(columns: Unit[][], edges: Edge[]): void {
     for (const y of [...candidates].sort((a, b) => a - b)) {
       let cost = 0
       for (const column of skipped(edge)) cost += cheapestGap(column, y - half, y + half).push
-      const score = cost + Math.abs(y - mid) * 0.05
+      // Pushing cards and detouring the line cost the same per pixel: a band is opened in the
+      // middle when that moves less than the line would have to climb around the column.
+      const score = cost + Math.abs(y - mid)
       if (score < bestScore) {
         bestScore = score
         bestY = y

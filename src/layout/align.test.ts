@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { alignDocument, DEFAULT_CARD_HEIGHT, TIDY_GAP } from './align'
+import { alignDocument, CHANNEL_GAP, DEFAULT_CARD_HEIGHT, TIDY_GAP } from './align'
 import { GROUP_HEAD } from '../canvas/groupFlow'
 import { GROUP_KIND, type Connection, type DocumentNode, type ToCDocument } from '../model/schema'
 import { allNodes, nodeAt } from '../state/tree'
@@ -236,6 +236,25 @@ describe('alignDocument', () => {
     it('stays a fixed point with channels reserved', () => {
       const once = alignDocument(statusQuoMetacrisis(), { heights: heights() })
       expect(alignDocument(once, { heights: heights() })).toBe(once)
+    })
+
+    it('opens a band in the skipped column level with the link instead of a detour', () => {
+      const doc = makeDocument(
+        [makeNode('a', [link('b1'), link('b2'), link('b3'), link('c')])],
+        [makeNode('b1', [link('c')]), makeNode('b2', [link('c')]), makeNode('b3', [link('c')])],
+        [makeNode('c')],
+      )
+      const out = alignDocument(doc)
+      const ys = ['b1', 'b2', 'b3'].map((id) => yOf(out, id)).sort((p, q) => p - q)
+      const gaps = [ys[1] - ys[0], ys[2] - ys[1]].map((d) => d - DEFAULT_CARD_HEIGHT)
+      const level = (yOf(out, 'a') + yOf(out, 'c')) / 2 + CARD_ANCHOR_Y
+      const open = ys.slice(0, 2).some((y, i) => {
+        const top = y + DEFAULT_CARD_HEIGHT
+        return gaps[i] >= CHANNEL_GAP && Math.abs(top + gaps[i] / 2 - level) <= DEFAULT_CARD_HEIGHT
+      })
+      expect(open).toBe(true)
+      expect(Math.min(...gaps)).toBeGreaterThanOrEqual(TIDY_GAP - 8)
+      expect(alignDocument(out)).toBe(out)
     })
   })
 })
