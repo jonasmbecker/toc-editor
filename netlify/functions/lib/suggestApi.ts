@@ -228,7 +228,10 @@ export async function handleSuggest(request: Request, deps: SuggestDeps): Promis
   } catch (error) {
     logFailure(error)
     // TEMP-DIAGNOSTIC: remove after the end-to-end test.
-    const detail = error instanceof GithubError ? error.message : `${error instanceof Error ? error.name : typeof error}`
+    const detail =
+      error instanceof GithubError
+        ? error.message
+        : `${error instanceof Error ? `${error.name}: ${error.message.slice(0, 120)}` : typeof error}`
     return json(502, { error: 'Your suggestion could not be sent right now. Your edits are still here, try again in a few minutes.', detail })
   }
 }
