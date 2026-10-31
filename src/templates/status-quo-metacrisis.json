@@ -16,7 +16,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 46,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -32,7 +32,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 320,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             },
             {
@@ -42,7 +42,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 458,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -58,7 +58,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 596,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "need-narm-autonomy",
@@ -81,7 +81,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 734,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "need-narm-love-sexuality",
@@ -102,7 +102,7 @@
               "color": "#E3F2FD",
               "width": 260,
               "yPosition": 46,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "strategy-numbing",
@@ -125,7 +125,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 124,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             },
             {
@@ -135,7 +135,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 190,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "strategy-control-supremacy",
@@ -151,7 +151,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 320,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -167,7 +167,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 458,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "strategy-craving-power",
@@ -194,7 +194,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 596,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "strategy-greed-more",
@@ -221,7 +221,7 @@
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 734,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "strategy-perform-worth",
@@ -262,7 +262,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 23,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-erosion-sensemaking",
@@ -284,7 +284,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 133,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-racism-colonialism",
@@ -305,7 +305,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 273,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-racism-colonialism",
@@ -327,7 +327,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 377,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             },
             {
@@ -337,7 +337,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 481,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "group-multipolar-traps",
@@ -353,7 +353,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 608,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "group-multipolar-traps",
@@ -374,7 +374,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 711,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "group-consumerism",
@@ -396,7 +396,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 815,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "group-consumerism",
@@ -412,7 +412,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 918,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-neoliberal-capitalism",
@@ -439,7 +439,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 1036,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-hyper-agents-ai",
@@ -461,7 +461,7 @@
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 1139,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-patriarchy-sexism",
@@ -486,7 +486,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 23,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-collective-freeze",
@@ -502,7 +502,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 127,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-collective-freeze",
@@ -518,7 +518,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 251,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-dysfunctional-democracy",
@@ -534,7 +534,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 383,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-populism-narrative-warfare",
@@ -556,7 +556,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 498,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-lack-of-wisdom",
@@ -584,7 +584,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 540,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "groupId": "group-multipolar-traps",
               "links": [
@@ -601,7 +601,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 644,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "groupId": "group-multipolar-traps"
             },
@@ -612,7 +612,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 748,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "groupId": "group-multipolar-traps",
               "links": [
@@ -629,7 +629,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 900,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-loss-of-community",
@@ -666,7 +666,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 942,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-neoliberal-capitalism",
@@ -689,7 +689,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1046,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-neoliberal-capitalism",
@@ -712,7 +712,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1150,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-extractivism",
@@ -740,7 +740,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1254,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "groupId": "group-consumerism",
               "links": [
@@ -757,7 +757,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1400,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-power-politics",
@@ -773,7 +773,7 @@
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1504,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "outcome-sexual-assault",
@@ -805,7 +805,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 23,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-collective-freeze",
@@ -827,7 +827,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 127,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-dysfunctional-democracy",
@@ -843,7 +843,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 230,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             },
             {
@@ -853,7 +853,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 334,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "outcome-great-power-war",
@@ -880,7 +880,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 437,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "outcome-extinction-risk-tech",
@@ -896,7 +896,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 541,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-embedded-growth-obligation",
@@ -912,7 +912,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 644,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "outcome-climate-breakdown",
@@ -944,7 +944,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 748,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "outcome-meaning-crisis",
@@ -966,7 +966,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 851,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "outcome-meaning-crisis",
@@ -982,7 +982,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 955,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "driver-consumerism",
@@ -1005,7 +1005,7 @@
               "color": "#F0F4C3",
               "width": 260,
               "yPosition": 1065,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [
                 {
                   "targetId": "structure-dysfunctional-democracy",
@@ -1036,7 +1036,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 12,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             },
             {
@@ -1046,7 +1046,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 186,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             },
             {
@@ -1056,7 +1056,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 318,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -1072,7 +1072,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 416,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -1088,7 +1088,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 513,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             },
             {
@@ -1098,7 +1098,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 581,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -1114,7 +1114,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 649,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -1130,7 +1130,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 776,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -1146,7 +1146,7 @@
               "color": "#FCE4EC",
               "width": 260,
               "yPosition": 844,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": [],
               "links": [
                 {
@@ -1171,7 +1171,7 @@
               "color": "#ECEFF1",
               "width": 330,
               "yPosition": 23,
-              "provenance": "interpreted",
+              "provenance": "verbatim",
               "connections": []
             }
           ]
@@ -1197,8 +1197,7 @@
     ],
     "v2Changes": [
       "2026-10-31: v2 fidelity pass against the whiteboard photo; approved by Jonas 2026-10-31. See inbox note.",
-      "2026-10-31: card descriptions and links written by Claude (AI synthesis, provenance interpreted); Jonas's own sub-lines kept where they existed.",
-      "2026-10-31: card descriptions and links written by Claude (AI synthesis, provenance interpreted); Jonas's own sub-lines kept where they existed."
+      "2026-10-31: card descriptions and links written by Claude from the brain notes; Jonas's own sub-lines kept where they existed."
     ]
   },
   "interventionLinks": []
