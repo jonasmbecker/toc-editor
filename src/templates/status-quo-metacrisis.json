@@ -11,7 +11,7 @@
           "nodes": [
             {
               "id": "need-brown-felt-safety",
-              "text": "Feeling safe in the caregiver's presence. Without it, the nervous system stays braced for threat. (Brown)",
+              "text": "Feeling safe, not merely being protected: a caregiver whose presence lets the child's body settle instead of staying braced for threat. (Brown)",
               "title": "Felt safety",
               "color": "#E3F2FD",
               "width": 232,
@@ -27,7 +27,7 @@
             },
             {
               "id": "need-brown-attunement",
-              "text": "A caregiver who notices and accurately responds to what the child feels, so the child feels seen. (Brown)",
+              "text": "A caregiver who senses what the child feels and responds in a way that fits it, so the child learns that its inner states are real and can be shared. (Brown)",
               "title": "Attunement",
               "color": "#E3F2FD",
               "width": 232,
@@ -37,7 +37,7 @@
             },
             {
               "id": "need-brown-comfort-soothing",
-              "text": "Help calming down when distressed. This is how a child learns to regulate its own states. (Brown)",
+              "text": "Help with calming down when upset, repeated until the child can do some of it alone. (Brown)",
               "title": "Comfort & Soothing",
               "color": "#E3F2FD",
               "width": 232,
@@ -53,7 +53,7 @@
             },
             {
               "id": "need-brown-support-explore",
-              "text": "Backing to venture out, try things and become a separate person while the caregiver stays available. (Brown)",
+              "text": "Encouragement to venture out, try things and grow independent, while the caregiver remains a safe place to return to. (Brown)",
               "title": "Support to explore",
               "color": "#E3F2FD",
               "width": 232,
@@ -76,7 +76,7 @@
             },
             {
               "id": "need-brown-expressed-delight",
-              "text": "A caregiver visibly enjoying the child, so that simply being is welcome. (Brown)",
+              "text": "A caregiver visibly enjoying the child for who they are, not for what they do. (Brown)",
               "title": "Expressed delight",
               "color": "#E3F2FD",
               "width": 232,
@@ -97,7 +97,7 @@
           "nodes": [
             {
               "id": "need-narm-connection",
-              "text": "Survival style in which contact feels risky, so the person withdraws, goes into the head (\"Thinking\") or escapes (\"Spiritualizing\"). (Heller, NARM)",
+              "text": "Survival style built around the need for contact. When early connection was frightening or absent, the child learns to protect itself by pulling back from contact and from its own feelings. Intellectualizing and spiritual escape are two ways this can show up. (Heller, NARM)",
               "title": "Connection",
               "color": "#E3F2FD",
               "width": 260,
@@ -113,15 +113,15 @@
               ],
               "links": [
                 {
-                  "url": "https://narmtraining.com/about-narm-training/",
-                  "label": "NARM Training Institute"
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
                 }
               ]
             },
             {
               "id": "need-narm-thinking",
               "title": "Thinking",
-              "text": "Intellectualize, rational, emotionally detached. Feelings are kept at arm's length by analysing them. (Heller, NARM)",
+              "text": "Intellectualize, rational, emotionally detached. Retreating into analysis keeps feelings at a distance.",
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 124,
@@ -131,7 +131,7 @@
             {
               "id": "need-narm-spiritualizing",
               "title": "Spiritualizing",
-              "text": "Escaping. Pain is left behind by rising above it instead of feeling it.",
+              "text": "Escaping. Retreating into the spiritual can keep painful feelings out of reach.",
               "color": "#E3F2FD",
               "width": 232,
               "yPosition": 190,
@@ -146,7 +146,7 @@
             },
             {
               "id": "need-narm-attunement",
-              "text": "Survival style of a person whose own needs went unseen: they learn to stop sensing and voicing them. (Heller, NARM)",
+              "text": "Survival style built around the need to have one's own needs sensed and met. When they were not, the child learns to stop noticing and asking for them. (Heller, NARM)",
               "title": "Attunement",
               "color": "#E3F2FD",
               "width": 232,
@@ -155,14 +155,14 @@
               "connections": [],
               "links": [
                 {
-                  "url": "https://narmtraining.com/about-narm-training/",
-                  "label": "NARM Training Institute"
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
                 }
               ]
             },
             {
               "id": "need-narm-trust",
-              "text": "Survival style of a person for whom comfort was unreliable: they learn to rely on control and manipulation instead of other people. (Heller, NARM)",
+              "text": "Survival style built around the need for reliable care. Where care proved unreliable or manipulative, the child learns to rely on control rather than on other people. (Heller, NARM)",
               "title": "Trust",
               "color": "#E3F2FD",
               "width": 232,
@@ -182,14 +182,14 @@
               ],
               "links": [
                 {
-                  "url": "https://narmtraining.com/about-narm-training/",
-                  "label": "NARM Training Institute"
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
                 }
               ]
             },
             {
               "id": "need-narm-autonomy",
-              "text": "Survival style of a person whose independence was met with pressure or guilt: they struggle to set limits and to say what they want. (Heller, NARM)",
+              "text": "Survival style built around the need to become one's own person. When independence met pressure or guilt, the person struggles to set limits and to say what they want. (Heller, NARM)",
               "title": "Autonomy",
               "color": "#E3F2FD",
               "width": 232,
@@ -209,14 +209,14 @@
               ],
               "links": [
                 {
-                  "url": "https://narmtraining.com/about-narm-training/",
-                  "label": "NARM Training Institute"
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
                 }
               ]
             },
             {
               "id": "need-narm-love-sexuality",
-              "text": "Survival style in which love is felt as something to earn, and heart and body are kept divided. (Heller, NARM)",
+              "text": "Survival style built around the need to be loved and to bring heart and body together. When love felt conditional, the person can feel unlovable or keep affection and sexuality apart. (Heller, NARM)",
               "title": "Love-Sexuality",
               "color": "#E3F2FD",
               "width": 232,
@@ -241,8 +241,8 @@
               ],
               "links": [
                 {
-                  "url": "https://narmtraining.com/about-narm-training/",
-                  "label": "NARM Training Institute"
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
                 }
               ]
             }
@@ -257,7 +257,7 @@
           "nodes": [
             {
               "id": "strategy-numbing",
-              "text": "Addiction to substances, entertainment, porn. A way to stop feeling what the unmet need would otherwise make felt. (Maté)",
+              "text": "Addiction to substances, entertainment, porn. Turning to something that dulls what one feels. Maté reads addiction as an attempt to soothe pain rather than only to chase pleasure. (Maté)",
               "title": "Craving for numbing",
               "color": "#FFF3E0",
               "width": 330,
@@ -279,7 +279,7 @@
             },
             {
               "id": "strategy-control-supremacy",
-              "text": "\"Supremacy.\" Safety sought through domination: if I am on top, nobody can hurt me. Collectively, the claim to superiority over others.",
+              "text": "\"Supremacy.\" Seeking safety through dominance: if I rule, nobody can hurt me. Collectively it appears as claims to superiority over others.",
               "title": "Craving for control, safety, immunity",
               "color": "#FFF3E0",
               "width": 330,
@@ -300,7 +300,7 @@
             },
             {
               "id": "strategy-scapegoating",
-              "text": "Unbearable inner states are placed on an outside person or group, who is then blamed and attacked.",
+              "text": "Projecting the blame: a feeling too large to bear, often shame, is placed on another person or group, who is then blamed. Done collectively it can license violence.",
               "title": "Scape goating, projection the blame",
               "color": "#FFF3E0",
               "width": 330,
@@ -332,7 +332,7 @@
             },
             {
               "id": "strategy-craving-power",
-              "text": "Having concluded that nobody can be trusted, the person tries to hold power over the situation instead of depending on others.",
+              "text": "Having concluded that nobody can be trusted, the person seeks power over people and situations so as not to depend on them.",
               "title": "Craving for power: \"nobody can be trusted\"",
               "color": "#FFF3E0",
               "width": 330,
@@ -348,7 +348,7 @@
             },
             {
               "id": "strategy-compulsive-soothing",
-              "text": "Food, work etc. or regulate / shopping. Habits used to calm down in place of the comfort once missing. The need stays unmet, so the habit repeats and grows. (Maté)",
+              "text": "Food, work, shopping etc. used to regulate. Repeated habits that calm the nervous system quickly; because they treat the present state rather than the old unmet need, they repeat. (Maté)",
               "title": "Compulsive soothing",
               "color": "#FFF3E0",
               "width": 330,
@@ -369,7 +369,7 @@
             },
             {
               "id": "strategy-greed-more",
-              "text": "A feeling of never having enough that stays hungry however much arrives.",
+              "text": "Craving for \"more.\" A drive that, on this reading, stays hungry however much arrives, because what is wanted is not what is being acquired.",
               "title": "Greed, craving for \"more\"",
               "color": "#FFF3E0",
               "width": 330,
@@ -407,7 +407,7 @@
             },
             {
               "id": "strategy-perform-worth",
-              "text": "Career, status, money. Worth is felt to depend on results, so the person achieves in order to be loved.",
+              "text": "Career, status, money. Acting to earn love and worth, as if being loved depended on achievement.",
               "title": "Perform (to be loved, worthy)",
               "color": "#FFF3E0",
               "width": 330,
@@ -434,7 +434,7 @@
             },
             {
               "id": "strategy-narcissism",
-              "text": "A grand self-image defends against feeling unworthy and needs constant admiration.",
+              "text": "A grand self-image that defends against feeling unworthy and depends on continued admiration.",
               "title": "Narcissism",
               "color": "#FFF3E0",
               "width": 330,
@@ -456,7 +456,7 @@
             },
             {
               "id": "strategy-hunting-sexual-attraction",
-              "text": "Sexual conquest used as a stand-in for the love that went unmet.",
+              "text": "Pursuing sexual attention as a substitute for the love and recognition that went unmet.",
               "title": "Hunting sexual attraction",
               "color": "#FFF3E0",
               "width": 330,
@@ -481,7 +481,7 @@
           "nodes": [
             {
               "id": "driver-erosion-sensemaking",
-              "text": "A society that cannot agree on what is true or what matters cannot respond to its problems. (Schmachtenberger)",
+              "text": "The weakening of a society's shared ability to tell what is true and what matters, so that it cannot respond well to its problems. Schmachtenberger ties it to an information ecology that rewards outrage and certainty over understanding. (Schmachtenberger)",
               "title": "Erosion of collective sensemaking",
               "color": "#FFE0B2",
               "width": 300,
@@ -497,7 +497,7 @@
             },
             {
               "id": "driver-collective-disempowerment",
-              "text": "(\"Ohnmacht\") lethargy. Many people feel they cannot change anything and stop trying.",
+              "text": "(\"Ohnmacht\") lethargy. Many people feel unable to change anything and stop trying.",
               "title": "Collective disempowerment",
               "color": "#FFE0B2",
               "width": 300,
@@ -519,7 +519,7 @@
             },
             {
               "id": "driver-lacking-willingness-change",
-              "text": "Even where problems are understood, the will to change course or to accept binding rules is missing.",
+              "text": "Even where the problems are understood, the will to change course or to accept binding rules is missing.",
               "title": "Lacking willingness to radical change / regulate",
               "color": "#FFE0B2",
               "width": 300,
@@ -535,7 +535,7 @@
             },
             {
               "id": "driver-racism-colonialism",
-              "text": "Systems of domination and the stories that justify them, still operating after formal colonialism ended.",
+              "text": "Systems of domination, and the stories that justify them, that outlast formal colonial rule.",
               "title": "Racism + (post)colonialism",
               "color": "#FFE0B2",
               "width": 300,
@@ -558,7 +558,7 @@
             {
               "id": "group-multipolar-traps",
               "title": "Multipolar traps",
-              "text": "\"If I don't do it, someone else will / can't compete.\" Each actor does the locally rational thing and the sum is bad for everyone. (Schmachtenberger)",
+              "text": "\"If I don't do it, someone else will / can't compete.\" Each actor does what is locally rational and the combined result is bad for all; escaping it takes agreement, transparency and enforcement together. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 498,
@@ -586,7 +586,7 @@
             {
               "id": "driver-race-to-bottom",
               "title": "Race to the bottom",
-              "text": "\"If we tax / regulate, companies move to the Bahamas.\" Competition pushes standards down.",
+              "text": "\"If we tax / regulate, companies move to the Bahamas.\" Competition between places or firms pushes standards down.",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 540,
@@ -603,7 +603,7 @@
             {
               "id": "driver-race-to-market",
               "title": "Race to market",
-              "text": "Privatize upside, externalize risk. Whoever ships first captures the gains while the costs fall on others.",
+              "text": "Privatize upside, externalize risk. A first-mover race in which whoever ships first captures the gain while others bear the costs. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 644,
@@ -614,7 +614,7 @@
             {
               "id": "driver-arms-race",
               "title": "Arms race",
-              "text": "E.g. nuclear, AI / bioweapons. Each side builds up because the other might.",
+              "text": "E.g. nuclear, AI / bioweapons. Each side builds up because the other might. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 748,
@@ -631,7 +631,7 @@
             {
               "id": "group-consumerism",
               "title": "Consumerism cluster",
-              "text": "Consumerism, individualism, neoliberal capitalism and extractivism, read as one reinforcing chain.",
+              "text": "A reinforcing chain: consumerism and individualism support neoliberal capitalism, which drives extractivism.",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 900,
@@ -668,7 +668,7 @@
             {
               "id": "driver-consumerism",
               "title": "Consumerism",
-              "text": "Buying as the default way to seek satisfaction, encouraged by the economy that sells the goods.",
+              "text": "Buying as the usual route to satisfaction. Schmachtenberger argues that markets sell \"pseudosatisfiers\" that deepen the hunger they promise to fill. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 942,
@@ -691,7 +691,7 @@
             {
               "id": "driver-individualism",
               "title": "Individualism",
-              "text": "The self treated as a stand-alone unit, which loosens ties to community and to what is shared.",
+              "text": "Treating the person as a self-contained unit, which can loosen ties to community and shared responsibility.",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1046,
@@ -714,7 +714,7 @@
             {
               "id": "driver-neoliberal-capitalism",
               "title": "Neoliberal capitalism",
-              "text": "An economy organised around markets, competition and growth.",
+              "text": "An economic order centred on markets, competition and growth.",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1150,
@@ -742,7 +742,7 @@
             {
               "id": "driver-extractivism",
               "title": "Extractivism",
-              "text": "Taking resources and value out of nature and communities faster than they renew.",
+              "text": "Taking resources and value out of nature and communities faster than they can renew.",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 1254,
@@ -758,7 +758,7 @@
             },
             {
               "id": "driver-hyper-agents-ai",
-              "text": "\"Extremely motivated & capable to accrue power.\" Actors, including AI, that pursue power at scale; unbound power tends to win. (Schmachtenberger)",
+              "text": "\"Extremely motivated & capable to accrue power.\" Schmachtenberger's term for the few actors at the top of a power law who maximise their returns on agency at scale and shape the incentives and values of everyone else. Advanced AI could become another such agent. (Schmachtenberger)",
               "title": "Hyper agents / AI",
               "color": "#FFE0B2",
               "width": 300,
@@ -774,7 +774,7 @@
             },
             {
               "id": "driver-patriarchy-sexism",
-              "text": "A system that ranks people by gender and gives men more power.",
+              "text": "A social order in which men hold most power and authority.",
               "title": "Patriarchy / sexism",
               "color": "#FFE0B2",
               "width": 300,
@@ -806,7 +806,7 @@
           "nodes": [
             {
               "id": "structure-intergenerational-war-trauma",
-              "text": "Trauma from war passed on to children and grandchildren through families and culture.",
+              "text": "Trauma from war that is passed on to children and grandchildren, through parents' emotional availability, body tension and family culture.",
               "title": "Intergenerational war trauma",
               "color": "#F0F4C3",
               "width": 260,
@@ -828,7 +828,7 @@
             },
             {
               "id": "structure-collective-freeze",
-              "text": "A society in shock does nothing in the face of danger, the group version of the freeze response.",
+              "text": "A group that is overwhelmed shuts down and fails to act, the group-level version of the freeze response. An analogy for modelling, not an established finding.",
               "title": "Collective 'freeze'",
               "color": "#F0F4C3",
               "width": 260,
@@ -844,7 +844,7 @@
             },
             {
               "id": "structure-dysfunctional-democracy",
-              "text": "Democratic institutions that no longer turn what people want into workable decisions.",
+              "text": "Democratic institutions that no longer turn what citizens want into workable decisions.",
               "title": "Dysfunctional democracy",
               "color": "#F0F4C3",
               "width": 260,
@@ -881,7 +881,7 @@
             },
             {
               "id": "structure-lack-of-wisdom",
-              "text": "Power that has outgrown the wisdom to use it. (Schmachtenberger)",
+              "text": "Power that has outgrown the wisdom to use it. Schmachtenberger holds that wisdom involves restraint, and that restraint keeps losing to rivals who do not practise it. (Schmachtenberger)",
               "title": "Lack of wisdom",
               "color": "#F0F4C3",
               "width": 260,
@@ -897,7 +897,7 @@
             },
             {
               "id": "structure-debt-interest-financial-system",
-              "text": "Money created as interest-bearing debt, so borrowers must keep growing to repay.",
+              "text": "Money created as interest-bearing debt, so the system needs continual growth to be repaid. Hagens argues that debt papers over a widening gap between monetary claims and the energy and materials to honour them. (Hagens)",
               "title": "Debt + interest financial system",
               "color": "#F0F4C3",
               "width": 260,
@@ -913,7 +913,7 @@
             },
             {
               "id": "structure-embedded-growth-obligation",
-              "text": "Economies built so that they must grow to stay stable, whether or not growth is good for people or the planet.",
+              "text": "An economy that must keep growing to stay stable, whether or not growth serves people or the planet. Hagens calls this growth-compelled, energy-dependent system a \"superorganism.\" (Hagens)",
               "title": "Embedded growth obligation",
               "color": "#F0F4C3",
               "width": 260,
@@ -967,7 +967,7 @@
             },
             {
               "id": "structure-loss-of-spirituality",
-              "text": "Loss of shared sources of meaning, awe and belonging.",
+              "text": "Loss of shared practices that gave meaning, awe and belonging. Vervaeke describes this as the loss of an \"ecology of practices.\" (Vervaeke)",
               "title": "Loss of spirituality",
               "color": "#F0F4C3",
               "width": 260,
@@ -1006,7 +1006,7 @@
             },
             {
               "id": "structure-power-politics",
-              "text": "Politics as a contest of strength between states and elites.",
+              "text": "Politics conducted as a contest of strength between states and elites.",
               "title": "Power politics",
               "color": "#F0F4C3",
               "width": 260,
@@ -1047,7 +1047,7 @@
             },
             {
               "id": "outcome-great-power-war",
-              "text": "Direct conflict between major powers, with the violence and genocide that come with war.",
+              "text": "Direct war between major powers, with the violence and genocide that accompany it.",
               "title": "Great power war / violence / genocide",
               "color": "#FCE4EC",
               "width": 260,
@@ -1057,7 +1057,7 @@
             },
             {
               "id": "outcome-extinction-risk-tech",
-              "text": "Technologies, such as engineered pathogens or AI, that could end humanity or its future.",
+              "text": "Technologies, such as engineered pathogens or advanced AI, that could end humanity's future.",
               "title": "Extinction risk tech",
               "color": "#FCE4EC",
               "width": 260,
@@ -1073,7 +1073,7 @@
             },
             {
               "id": "outcome-climate-breakdown",
-              "text": "A destabilised climate caused by greenhouse-gas emissions.",
+              "text": "A destabilised climate driven by greenhouse-gas emissions.",
               "title": "Climate breakdown",
               "color": "#FCE4EC",
               "width": 260,
@@ -1089,7 +1089,7 @@
             },
             {
               "id": "outcome-meaning-crisis",
-              "text": "Widespread loss of purpose and orientation in life.",
+              "text": "Widespread loss of purpose and orientation. Vervaeke uses the term \"meaning crisis.\" (Vervaeke)",
               "title": "Meaning crisis",
               "color": "#FCE4EC",
               "width": 260,
@@ -1147,7 +1147,7 @@
             },
             {
               "id": "outcome-sexual-assault",
-              "text": "Sexual violence against a person without their consent.",
+              "text": "Sexual violence: any sexual act committed against a person without their consent.",
               "title": "Sexual assault",
               "color": "#FCE4EC",
               "width": 260,
@@ -1156,8 +1156,8 @@
               "connections": [],
               "links": [
                 {
-                  "url": "https://www.who.int/news-room/fact-sheets/detail/violence-against-women",
-                  "label": "World Health Organization: Violence against women"
+                  "url": "https://en.wikipedia.org/wiki/Sexual_violence",
+                  "label": "Wikipedia: Sexual violence"
                 }
               ]
             }
@@ -1172,7 +1172,7 @@
           "nodes": [
             {
               "id": "annotation-mate-health-crisis",
-              "text": "Gabor Maté postulates additionally that the same unmet needs also lead to an individual health crisis. (Maté)",
+              "text": "Gabor Maté also argues that the same unmet needs contribute to individual health problems, such as chronic illness. (Maté)",
               "title": "Side note: Maté's health-crisis path",
               "color": "#ECEFF1",
               "width": 330,
