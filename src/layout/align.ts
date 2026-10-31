@@ -1,5 +1,6 @@
 import type { DocumentNode, ToCDocument } from '../model/schema'
 import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from '../canvas/anchors'
+import { CHANNEL_MIN, CLEAR, MAX_STEP } from '../canvas/edgeRouting'
 import { GROUP_HEAD, GROUP_PAD } from '../canvas/groupFlow'
 import { isGroupNode } from '../state/groups'
 import { mapAllNodes } from '../state/tree'
@@ -16,6 +17,9 @@ import { mapAllNodes } from '../state/tree'
 export const DEFAULT_CARD_HEIGHT = 100
 export const TIDY_GAP = 24
 const MEMBER_GAP = 16
+/** Free height a skip link needs between two cards: clearance on both sides plus a band that
+ * holds a few side-by-side lines (see assignChannels in edgeRouting). */
+export const CHANNEL_GAP = 2 * CLEAR + CHANNEL_MIN + 2 * MAX_STEP
 const SWEEPS = 40
 const GRID = 8
 
@@ -195,6 +199,8 @@ interface Edge {
   toAnchor: number
   /** Index of the column pair the edge spans, so only edges between the same two columns can cross. */
   span: string
+  fromColumn: number
+  toColumn: number
 }
 
 function buildEdges(columns: Unit[][], links: Map<Unit, Link[]>): Edge[] {
@@ -211,6 +217,8 @@ function buildEdges(columns: Unit[][], links: Map<Unit, Link[]>): Edge[] {
         to: link.other,
         toAnchor: link.theirs,
         span: `${a}:${b}`,
+        fromColumn: a,
+        toColumn: b,
       })
     }
   }
@@ -247,6 +255,84 @@ function skew(edges: Edge[]): number {
 
 function snapToGrid(value: number): number {
   return Math.round(value / GRID) * GRID
+}
+
+interface Window {
+  /** Cheapest way to open a free band over [lo, hi] in one column: the push-down it costs. */
+  push: number
+  index: number
+}
+
+/** Units of a column in stacking order, with the gap above each (index 0 is above the first unit). */
+function cheapestGap(column: Unit[], lo: number, hi: number): Window {
+  const sorted = [...column].sort((a, b) => a.top - b.top)
+  let best: Window = { push: Infinity, index: sorted.length }
+  for (let i = 0; i <= sorted.length; i++) {
+    const start = i === 0 ? -Infinity : sorted[i - 1].top + sorted[i - 1].height
+    const end = i === sorted.length ? Infinity : sorted[i].top
+    if (start > lo) continue
+    const push = Math.max(0, hi - end)
+    if (push < best.push) best = { push, index: i }
+  }
+  return best
+}
+
+function pushDown(column: Unit[], index: number, by: number): void {
+  const sorted = [...column].sort((a, b) => a.top - b.top)
+  for (let i = index; i < sorted.length; i++) sorted[i].top += by
+}
+
+/** A forward link that skips a column needs a free band of CHANNEL_GAP through every column it
+ * skips, at one common height. Tidy leaves 24px gaps, so for each such link
+ * the cheapest height is picked and the cards below the gap in each skipped column are pushed
+ * down just far enough. Other gaps keep their size. */
+function reserveChannels(columns: Unit[][], edges: Edge[]): void {
+  const half = CHANNEL_GAP / 2
+  const skips = edges.filter((e) => e.toColumn - e.fromColumn >= 2)
+  if (skips.length === 0) return
+  const skipped = (e: Edge) => columns.slice(e.fromColumn + 1, e.toColumn)
+  const heights = new Map<Edge, number>()
+  for (const edge of skips) {
+    const mid = (edge.from.top + edge.fromAnchor + edge.to.top + edge.toAnchor) / 2
+    const candidates = new Set<number>([mid])
+    for (const column of skipped(edge)) {
+      for (const unit of column) {
+        candidates.add(unit.top + unit.height + half)
+        candidates.add(unit.top - half)
+      }
+    }
+    let bestY = mid
+    let bestScore = Infinity
+    for (const y of [...candidates].sort((a, b) => a - b)) {
+      let cost = 0
+      for (const column of skipped(edge)) cost += cheapestGap(column, y - half, y + half).push
+      const score = cost + Math.abs(y - mid) * 0.05
+      if (score < bestScore) {
+        bestScore = score
+        bestY = y
+      }
+    }
+    heights.set(edge, bestY)
+  }
+  // Pushing one column's cards down can move another link's gap, so repeat until nothing is needed.
+  for (let round = 0; round < 10; round++) {
+    let pushed = false
+    for (const edge of skips) {
+      const y = heights.get(edge)!
+      for (const column of skipped(edge)) {
+        const { push, index } = cheapestGap(column, y - half, y + half)
+        if (push > 0) {
+          pushDown(column, index, snapUp(push))
+          pushed = true
+        }
+      }
+    }
+    if (!pushed) break
+  }
+}
+
+function snapUp(value: number): number {
+  return Math.ceil(value / GRID) * GRID
 }
 
 /** Final yPosition per node id, the whole diagram lifted so its highest unit sits at 0. */
@@ -297,6 +383,7 @@ export function alignDocument(doc: ToCDocument, options: AlignOptions = {}): ToC
     }
   }
   units.forEach((unit, i) => (unit.top = best[i]))
+  reserveChannels(columns, edges)
   const positions = collectPositions(columns)
   return mapAllNodes(doc, (node) => {
     const y = positions.get(node.id)

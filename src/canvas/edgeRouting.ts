@@ -62,9 +62,9 @@ export interface Lane {
 
 /** Clearance between a vertical run and the nearest card edge, and the widest spacing between
  * neighbouring lines; the spacing shrinks to fit when a gap is busy. */
-const CLEAR = 11
+export const CLEAR = 11
 const GAP_ROOM = 26
-const MAX_STEP = 7
+export const MAX_STEP = 7
 /** How far outside the cards (or the header bars) the first corridor runs, and the gap between
  * corridors. */
 const CORRIDOR_MARGIN = 24
@@ -211,13 +211,7 @@ function rightEdgeIn(cards: Rect[], from: number, to: number): number {
 /** Control points of the route for a link, orthogonal with corners left for `roundedPath`. For
  * the outer arc `s` is the source's right edge and `t` the target's left edge; for a near loop
  * `s` is the source's left edge and `t` the target's right edge. */
-export function routePoints(
-  s: Pt,
-  t: Pt,
-  scene: RouteScene,
-  lane: Lane,
-  channelY?: number,
-): Pt[] {
+export function routePoints(s: Pt, t: Pt, scene: RouteScene, lane: Lane, channelY?: number): Pt[] {
   const { cards, headers } = scene
   if (lane.near) {
     const gapLeft = rightEdgeIn(cards, t.x, s.x - 2)
@@ -251,7 +245,7 @@ export interface ChannelLink {
 }
 
 /** A free band between card rows must be at least this tall to carry a line. */
-const CHANNEL_MIN = 14
+export const CHANNEL_MIN = 14
 /** A line keeps this far inside its band, off the cards on either side. */
 const CHANNEL_EDGE = 6
 

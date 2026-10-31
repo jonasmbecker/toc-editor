@@ -11,6 +11,8 @@ import { toCompatibleJson, toFullJson } from '../files/export'
 import { parseDocument } from '../model/schema'
 import { layoutDocument } from './columns'
 import { CARD_ANCHOR_Y } from '../canvas/anchors'
+import { buildFlow } from '../canvas/buildFlow'
+import { assignChannels, routePoints, sampleLine, type Rect } from '../canvas/edgeRouting'
 
 const link = (targetId: string): Connection => ({ targetId, assumptions: '', evidence: '' })
 
@@ -183,5 +185,57 @@ describe('alignDocument', () => {
     const out = alignDocument(doc)
     expect(allNodes(out).map((n) => n.id)).toEqual(allNodes(doc).map((n) => n.id))
     expect(allNodes(out).every((n) => n.yPosition >= 0)).toBe(true)
+  })
+
+  describe('channels for skip links', () => {
+    /** Card heights as the browser would measure them: they differ from card to card (48-128px). */
+    const heightOf = (id: string) =>
+      48 + ([...id].reduce((h, c) => h + c.charCodeAt(0), 0) % 6) * 16
+    const heights = () =>
+      new Map(allNodes(statusQuoMetacrisis()).map((n) => [n.id, heightOf(n.id)]))
+    const tidied = () => alignDocument(stacked(statusQuoMetacrisis()), { heights: heights() })
+    const scene = (doc: ToCDocument) => {
+      const graph = buildFlow(doc)
+      const cards: Rect[] = graph.nodes
+        .filter((n) => n.type === 'card')
+        .map((n) => ({ x: n.position.x, y: n.position.y, w: n.width ?? 0, h: heightOf(n.id) }))
+      const forward = graph.edges.filter((e) => e.type === 'routed' && e.data?.lane?.above)
+      const links = forward.map((e) => ({ id: e.id, ...e.data!.lane!.ends! }))
+      return { cards, forward, channels: assignChannels(links, cards) }
+    }
+
+    it('every forward skip link finds a channel after Tidy', () => {
+      const { forward, channels } = scene(tidied())
+      expect(forward.length).toBeGreaterThan(0)
+      expect(forward.filter((e) => !channels.has(e.id)).map((e) => e.id)).toEqual([])
+    })
+
+    it('no routed channel runs through or squeezed against a card', () => {
+      const { cards, forward, channels } = scene(tidied())
+      const problems: string[] = []
+      for (const edge of forward) {
+        const lane = edge.data!.lane!
+        const { sx, sy, tx, ty } = lane.ends!
+        const points = routePoints(
+          { x: sx, y: sy },
+          { x: tx, y: ty },
+          { cards, headers: [] },
+          lane,
+          channels.get(edge.id),
+        )
+        const middle = points.slice(1, -1)
+        for (let i = 1; i < middle.length; i++)
+          for (const p of sampleLine([middle[i - 1], middle[i]]))
+            for (const c of cards)
+              if (p.x > c.x - 10 && p.x < c.x + c.w + 10 && p.y > c.y - 10 && p.y < c.y + c.h + 10)
+                problems.push(`${edge.id} at ${p.x},${p.y}`)
+      }
+      expect(problems).toEqual([])
+    })
+
+    it('stays a fixed point with channels reserved', () => {
+      const once = alignDocument(statusQuoMetacrisis(), { heights: heights() })
+      expect(alignDocument(once, { heights: heights() })).toBe(once)
+    })
   })
 })
