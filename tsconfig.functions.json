@@ -20,5 +20,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["netlify", "src/model"]
+  "include": ["netlify", "src/model", "src/files/split.ts", "src/files/changeSummary.ts"]
 }
