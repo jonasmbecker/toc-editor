@@ -222,9 +222,14 @@ export function routePoints(s: Pt, t: Pt, scene: RouteScene, lane: Lane, channel
       (lane.sourceSlot - (lane.sourceCount - 1) / 2) * Math.min(step(lane.sourceCount), room / 4)
     return [s, { x: gx, y: s.y }, { x: gx, y: t.y }, t]
   }
+  // The fan of lanes beside a column shrinks to the gap that is really there: a group frame
+  // overhangs its column, and a busy gap (five links leaving the Drivers column since the 2026-10-31
+  // map) would otherwise push the outermost lane against the next column's cards.
   const sourceRight = widestRightInColumn(cards, s.x)
-  const sx = sourceRight + CLEAR + lane.sourceSlot * step(lane.sourceCount)
-  const tx = t.x - CLEAR - lane.targetSlot * step(lane.targetCount)
+  const sourceRoom = leftEdgeAfter(cards, sourceRight) - sourceRight - 2 * CLEAR
+  const sx = sourceRight + CLEAR + lane.sourceSlot * stepWithin(lane.sourceCount, sourceRoom)
+  const targetRoom = t.x - rightEdgeBefore(cards, t.x) - 2 * CLEAR
+  const tx = t.x - CLEAR - lane.targetSlot * stepWithin(lane.targetCount, targetRoom)
   const top = Math.min(...cards.map((c) => c.y), ...headers.map((h) => h.y))
   const bottom = Math.max(...cards.map((c) => c.y + c.h))
   const y =
@@ -298,6 +303,26 @@ export function assignChannels(
     members.forEach((m, i) => channels.set(m.link.id, first + i * spacing))
   }
   return channels
+}
+
+/** Lane spacing that also fits `room`, the free width of the gap beyond the clearances. */
+function stepWithin(count: number, room: number): number {
+  if (count <= 1) return 0
+  return Math.min(MAX_STEP, Math.max(0, Math.min(GAP_ROOM, room)) / (count - 1))
+}
+
+/** Left edge of the nearest card to the right of `x`: the far side of the gap a line leaves into. */
+function leftEdgeAfter(cards: Rect[], x: number): number {
+  let left = Infinity
+  for (const c of cards) if (c.x > x + 1) left = Math.min(left, c.x)
+  return Number.isFinite(left) ? left : x + 2 * CLEAR + GAP_ROOM
+}
+
+/** Right edge of the nearest card to the left of `x`: the near side of the gap a line drops into. */
+function rightEdgeBefore(cards: Rect[], x: number): number {
+  let right = -Infinity
+  for (const c of cards) if (c.x + c.w < x - 1) right = Math.max(right, c.x + c.w)
+  return Number.isFinite(right) ? right : x - 2 * CLEAR - GAP_ROOM
 }
 
 /** Right edge of the column a source card sits in (the widest card sharing its left edge), so a
