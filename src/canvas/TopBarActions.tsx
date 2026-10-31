@@ -13,6 +13,9 @@ import '../share/share.css'
  * returns focus to the button. On a view link the button is "Make your own copy" instead. */
 function ShareAction() {
   const role = useShareStore((state) => state.role)
+  // A read-only document with no share role is a suggestion preview: sharing it would store a
+  // read-only document as an edit link, so it offers the same copy button a view link does.
+  const isReadOnly = useToCStore((state) => state.isReadOnly)
   const [phase, setPhase] = useState<SharePhase | null>(null)
   const button = useRef<HTMLButtonElement>(null)
 
@@ -24,7 +27,7 @@ function ShareAction() {
     )
   }
 
-  if (role === 'view') {
+  if (role === 'view' || isReadOnly) {
     return (
       <button
         type="button"

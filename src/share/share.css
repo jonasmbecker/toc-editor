@@ -97,6 +97,11 @@
   flex: 1;
 }
 
+/* A link styled as a bar button (the suggestion banner's "View on GitHub"). */
+a.toc-topbar__btn {
+  text-decoration: none;
+}
+
 @keyframes toc-bar-in {
   from {
     opacity: 0;

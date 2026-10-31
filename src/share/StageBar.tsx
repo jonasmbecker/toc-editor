@@ -1,5 +1,7 @@
 import { useToCStore } from '../state/store'
 import { downloadDocument } from '../files/export'
+import { SuggestionBanner } from '../repo/SuggestionBanner'
+import { useSuggestionStore } from '../repo/suggestionStore'
 import { useShareStore } from './shareStore'
 import { makeOwnCopy, reloadShared } from './actions'
 import { AlertIcon, CopyIcon, EyeIcon } from './icons'
@@ -12,7 +14,11 @@ import { AlertIcon, CopyIcon, EyeIcon } from './icons'
 export function StageBar() {
   const role = useShareStore((state) => state.role)
   const isConflict = useShareStore((state) => state.status === 'conflict')
+  const suggestion = useSuggestionStore((state) => state.suggestion)
+  const isReadOnly = useToCStore((state) => state.isReadOnly)
   if (role === 'view') return <ViewBanner />
+  // Only while the preview itself is open: "Make your own copy" loads an editable document.
+  if (suggestion && isReadOnly) return <SuggestionBanner suggestion={suggestion} />
   if (isConflict) return <ConflictBar />
   return null
 }

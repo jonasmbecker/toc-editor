@@ -8,6 +8,9 @@ import { Home } from './home/Home'
 import { clearDraft, loadDraft, saveDraft, type Draft } from './files/draft'
 import { useAutosave } from './files/useAutosave'
 import { useBlockWindowDrop } from './files/useBlockWindowDrop'
+import { OpeningSuggestion } from './repo/OpeningSuggestion'
+import { suggestionParam } from './repo/suggestion'
+import { useSuggestionStore } from './repo/suggestionStore'
 import { OpeningShared } from './share/OpeningShared'
 import { parseShareRoute, setPath } from './share/route'
 import { useServerSave } from './share/serverSave'
@@ -41,9 +44,38 @@ function leaveEditor(): { draft: Draft | null } | null {
   return window.confirm(LEAVE_UNSAVED_PROMPT) ? { draft: loadDraft() } : null
 }
 
+/** What the address asks for. A share link wins over `?suggestion=`: the address names one
+ * document, and a link to a stored diagram is the more specific one. */
+function readAddress() {
+  const route = parseShareRoute(window.location.pathname)
+  return { route, suggestion: route ? null : suggestionParam(window.location.search) }
+}
+
+type Address = ReturnType<typeof readAddress>
+
+/** Nothing about the document being left (its share link, its suggestion) carries over to the
+ * next one. */
+function forgetOrigin(): void {
+  useShareStore.getState().reset()
+  useSuggestionStore.getState().clear()
+}
+
+/** What an address with a document behind it shows while that document loads. */
+function Opening({ address, onOpened, onHome }: OpeningProps) {
+  if (address.route)
+    return <OpeningShared route={address.route} onOpened={onOpened} onHome={onHome} />
+  return <OpeningSuggestion raw={address.suggestion ?? ''} onOpened={onOpened} />
+}
+
+interface OpeningProps {
+  address: Address
+  onOpened: () => void
+  onHome: () => void
+}
+
 function App() {
-  const [route] = useState(() => parseShareRoute(window.location.pathname))
-  const [view, setView] = useState<View>(route ? 'opening' : 'home')
+  const [address] = useState(readAddress)
+  const [view, setView] = useState<View>(address.route || address.suggestion ? 'opening' : 'home')
   const [draft, setDraft] = useState<Draft | null>(() => loadDraft())
   const isEditing = view === 'editor'
   const isShared = useShareStore((state) => state.role !== null)
@@ -59,7 +91,7 @@ function App() {
   /** The one way the home screen opens a document: load it, then show the editor. A share
    * link opens through `OpeningShared` instead. */
   function open(document: ToCDocument) {
-    useShareStore.getState().reset()
+    forgetOrigin()
     useToCStore.getState().load(document)
     setView('editor')
   }
@@ -67,15 +99,13 @@ function App() {
   function goHome() {
     const left = leaveEditor()
     if (!left) return
-    useShareStore.getState().reset()
+    forgetOrigin()
     setPath('/')
     setDraft(left.draft)
     setView('home')
   }
 
-  if (view === 'opening' && route) {
-    return <OpeningShared route={route} onOpened={onOpened} onHome={goHome} />
-  }
+  if (view === 'opening') return <Opening address={address} onOpened={onOpened} onHome={goHome} />
 
   if (!isEditing) {
     return (

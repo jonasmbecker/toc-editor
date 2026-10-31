@@ -31,7 +31,8 @@ export function absoluteUrl(path: string): string {
 /** Changes the address bar without a reload. `replace` for "this tab is now that link",
  * push for a move the back button should undo. */
 export function setPath(path: string, { replace = false } = {}): void {
-  if (window.location.pathname === path) return
+  // The query counts: leaving `/?suggestion=3` for `/` must clear it, or a reload reopens it.
+  if (window.location.pathname + window.location.search === path) return
   if (replace) window.history.replaceState(null, '', path)
   else window.history.pushState(null, '', path)
 }
