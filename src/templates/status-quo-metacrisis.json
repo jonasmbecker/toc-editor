@@ -15,9 +15,15 @@
               "title": "Felt safety",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 46,
+              "yPosition": 176,
               "provenance": "verbatim",
-              "connections": [],
+              "connections": [
+                {
+                  "targetId": "need-narm-connection",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
               "links": [
                 {
                   "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
@@ -31,9 +37,15 @@
               "title": "Attunement",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 320,
+              "yPosition": 656,
               "provenance": "verbatim",
-              "connections": [],
+              "connections": [
+                {
+                  "targetId": "need-narm-attunement",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
               "links": [
                 {
                   "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
@@ -47,9 +59,15 @@
               "title": "Comfort & Soothing",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 458,
+              "yPosition": 784,
               "provenance": "verbatim",
-              "connections": [],
+              "connections": [
+                {
+                  "targetId": "need-narm-trust",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
               "links": [
                 {
                   "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
@@ -63,7 +81,7 @@
               "title": "Support to explore",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 596,
+              "yPosition": 1040,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -86,7 +104,7 @@
               "title": "Expressed delight",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 734,
+              "yPosition": 1752,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -113,7 +131,7 @@
               "title": "Connection",
               "color": "#E3F2FD",
               "width": 260,
-              "yPosition": 46,
+              "yPosition": 176,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -121,6 +139,11 @@
                   "evidence": "Arrow visible from this cluster to \"craving for numbing\" strategy.",
                   "provenance": "interpreted",
                   "assumptions": "Medium confidence on exact source node for this arrow — could originate from Connection or from Felt-safety more broadly; see open questions."
+                },
+                {
+                  "targetId": "group-connection-substrategies",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
                 }
               ],
               "links": [
@@ -131,14 +154,32 @@
               ]
             },
             {
+              "id": "group-connection-substrategies",
+              "title": "Connection: sub-strategies",
+              "text": "Two ways of staying out of contact with feeling: retreating into analysis, and escaping into the spiritual.",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 408,
+              "provenance": "verbatim",
+              "connections": [
+                {
+                  "targetId": "strategy-control-supremacy",
+                  "evidence": "Arrow from the Connection sub-strategies towards \"craving for control, safety, immunity / supremacy\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "kind": "group"
+            },
+            {
               "id": "need-narm-thinking",
               "title": "Thinking",
               "text": "Retreating into analysis and abstraction to keep feeling at a distance, so that the person stays rational and emotionally detached.",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 124,
+              "yPosition": 408,
               "provenance": "verbatim",
-              "connections": []
+              "connections": [],
+              "groupId": "group-connection-substrategies"
             },
             {
               "id": "need-narm-spiritualizing",
@@ -146,15 +187,10 @@
               "text": "Using spiritual ideas or practice as an escape, so that painful feelings are avoided rather than felt.",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 190,
+              "yPosition": 528,
               "provenance": "verbatim",
-              "connections": [
-                {
-                  "targetId": "strategy-control-supremacy",
-                  "evidence": "Arrow from Spiritualizing to \"craving for control, safety, immunity / supremacy\".",
-                  "provenance": "interpreted"
-                }
-              ]
+              "connections": [],
+              "groupId": "group-connection-substrategies"
             },
             {
               "id": "need-narm-attunement",
@@ -162,7 +198,7 @@
               "title": "Attunement",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 320,
+              "yPosition": 656,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -178,7 +214,7 @@
               "title": "Trust",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 458,
+              "yPosition": 784,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -205,7 +241,7 @@
               "title": "Autonomy",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 596,
+              "yPosition": 1040,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -232,7 +268,7 @@
               "title": "Love-Sexuality",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 734,
+              "yPosition": 1752,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -269,11 +305,11 @@
           "nodes": [
             {
               "id": "strategy-numbing",
-              "text": "Using substances, entertainment, pornography or similar to dull what one feels. Maté reads addiction as an attempt to relieve pain, so the question becomes not why the addiction but why the pain. (Maté)",
+              "text": "Addiction to substances, entertainment, ADHD. Tuning out what one feels: addiction is read as an attempt to relieve pain, and ADHD as a tuning-out rooted in early stress rather than simple pleasure-seeking. (Maté)",
               "title": "Craving for numbing",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 23,
+              "yPosition": 176,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -295,7 +331,7 @@
               "title": "Craving for control, safety, immunity",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 133,
+              "yPosition": 344,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -316,7 +352,7 @@
               "title": "Scape goating, projection the blame",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 273,
+              "yPosition": 464,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -338,7 +374,7 @@
               "title": "Craving to be seen?",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 377,
+              "yPosition": 592,
               "provenance": "verbatim",
               "connections": []
             },
@@ -348,7 +384,7 @@
               "title": "Craving for power: \"nobody can be trusted\"",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 481,
+              "yPosition": 712,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -364,7 +400,7 @@
               "title": "Compulsive soothing",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 608,
+              "yPosition": 840,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -385,7 +421,7 @@
               "title": "Greed, craving for \"more\"",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 711,
+              "yPosition": 1040,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -407,7 +443,7 @@
               "title": "Fear of dependence, urge towards \"separation\"",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 815,
+              "yPosition": 1160,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -423,7 +459,7 @@
               "title": "Perform (to be loved, worthy)",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 945,
+              "yPosition": 1632,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -450,7 +486,7 @@
               "title": "Narcissism",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 1062,
+              "yPosition": 1752,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -472,7 +508,7 @@
               "title": "Hunting sexual attraction",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 1165,
+              "yPosition": 1880,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -497,7 +533,7 @@
               "title": "Erosion of collective sensemaking",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 23,
+              "yPosition": 104,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -519,7 +555,7 @@
               "title": "Collective disempowerment",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 127,
+              "yPosition": 224,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -535,7 +571,7 @@
               "title": "Lacking willingness to radical change / regulate",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 251,
+              "yPosition": 352,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -551,7 +587,7 @@
               "title": "Racism + (post)colonialism",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 383,
+              "yPosition": 472,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -567,7 +603,7 @@
               "text": "\"If I don't do it, someone else will; I can't compete.\" Each actor does what is locally rational and the combined result is bad for all; escaping it takes agreement, transparency and enforcement together. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 498,
+              "yPosition": 800,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -595,7 +631,7 @@
               "text": "\"If we tax or regulate, companies move to the Bahamas.\" Competition between places or firms pushes standards down.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 540,
+              "yPosition": 800,
               "provenance": "verbatim",
               "connections": [],
               "groupId": "group-multipolar-traps",
@@ -612,7 +648,7 @@
               "text": "Privatise the upside, externalise the risk: in a first-mover race, whoever ships first captures the gain while others bear the costs. Schmachtenberger counts market races among the main forms of multipolar trap. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 644,
+              "yPosition": 920,
               "provenance": "verbatim",
               "connections": [],
               "groupId": "group-multipolar-traps",
@@ -629,7 +665,7 @@
               "text": "For example nuclear weapons, AI and bioweapons: each side builds up because the other might. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 748,
+              "yPosition": 1032,
               "provenance": "verbatim",
               "connections": [],
               "groupId": "group-multipolar-traps",
@@ -646,7 +682,7 @@
               "text": "Four mutually reinforcing features of modern economic life: consumerism, individualism, neoliberal capitalism and extractivism.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 900,
+              "yPosition": 1232,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -683,7 +719,7 @@
               "text": "Buying as the usual route to satisfaction. Markets sell \"pseudosatisfiers\" that deepen the hunger they promise to fill. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 942,
+              "yPosition": 1232,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -706,7 +742,7 @@
               "text": "Treating the person as a self-contained unit, which can loosen ties to community and shared responsibility.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 1046,
+              "yPosition": 1352,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -729,7 +765,7 @@
               "text": "An economic order centred on markets, competition and growth.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 1150,
+              "yPosition": 1464,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -757,7 +793,7 @@
               "text": "Taking resources and value out of nature and communities faster than they can renew.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 1254,
+              "yPosition": 1584,
               "provenance": "verbatim",
               "connections": [],
               "groupId": "group-consumerism",
@@ -774,7 +810,7 @@
               "title": "Hyper agents / AI",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 1400,
+              "yPosition": 1720,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -796,7 +832,7 @@
               "title": "Patriarchy / sexism",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 1504,
+              "yPosition": 1872,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -828,7 +864,7 @@
               "title": "Intergenerational war trauma",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 23,
+              "yPosition": 0,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -850,7 +886,7 @@
               "title": "Collective 'freeze'",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 127,
+              "yPosition": 168,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -866,7 +902,7 @@
               "title": "Dysfunctional democracy",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 230,
+              "yPosition": 352,
               "provenance": "verbatim",
               "connections": []
             },
@@ -876,7 +912,7 @@
               "title": "Populism, narrative warfare",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 334,
+              "yPosition": 472,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -903,7 +939,7 @@
               "title": "Lack of wisdom",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 437,
+              "yPosition": 648,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -921,11 +957,11 @@
             },
             {
               "id": "structure-debt-interest-financial-system",
-              "text": "Money created as interest-bearing debt, so the system needs continual growth to be repaid. Hagens argues that debt papers over a widening gap between monetary claims and the energy and materials needed to honour them. (Hagens, Schmachtenberger)",
+              "text": "Money created as interest-bearing debt, so the system needs continual growth to be repaid. Debt papers over a widening gap between monetary claims and the energy and materials needed to honour them. (Hagens)",
               "title": "Debt + interest financial system",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 541,
+              "yPosition": 776,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -937,11 +973,11 @@
             },
             {
               "id": "structure-embedded-growth-obligation",
-              "text": "An economy that must keep growing to stay stable, whether or not growth serves people or the planet. Hagens describes humanity as a growth-compelled, energy-hungry \"superorganism\". (Schmachtenberger, Hagens)",
+              "text": "An economy that must keep growing to stay stable, whether or not growth serves people or the planet: humanity as a growth-compelled, energy-hungry \"superorganism\". (Hagens)",
               "title": "Embedded growth obligation",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 644,
+              "yPosition": 1040,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -973,7 +1009,7 @@
               "title": "Loss of community",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 748,
+              "yPosition": 1160,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -995,7 +1031,7 @@
               "title": "Loss of spirituality",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 851,
+              "yPosition": 1288,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -1011,7 +1047,7 @@
               "title": "Marketing",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 955,
+              "yPosition": 1408,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -1034,7 +1070,7 @@
               "title": "Power politics",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 1065,
+              "yPosition": 1712,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -1055,37 +1091,27 @@
       ]
     },
     {
-      "title": "Polycrisis Outcomes",
+      "title": "Polycrisis outcomes (civilizational health)",
       "columns": [
         {
           "nodes": [
-            {
-              "id": "annotation-civilizational-health",
-              "text": "The overall health of civilisation as a whole, which the polycrisis puts at risk.",
-              "title": "'Civilizational health' (column heading)",
-              "color": "#FCE4EC",
-              "width": 260,
-              "yPosition": 12,
-              "provenance": "verbatim",
-              "connections": []
-            },
             {
               "id": "outcome-great-power-war",
               "text": "Direct war between major powers, with the violence and genocide that accompany it.",
               "title": "Great power war / violence / genocide",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 186,
+              "yPosition": 472,
               "provenance": "verbatim",
               "connections": []
             },
             {
               "id": "outcome-extinction-risk-tech",
               "text": "Technologies, such as engineered pathogens or advanced AI, that could end humanity's future.",
-              "title": "Extinction risk tech",
+              "title": "Extinction risk from tech",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 318,
+              "yPosition": 648,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -1101,7 +1127,7 @@
               "title": "Climate breakdown",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 416,
+              "yPosition": 944,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -1117,7 +1143,7 @@
               "title": "Meaning crisis",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 513,
+              "yPosition": 1312,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -1133,7 +1159,7 @@
               "title": "Pollution",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 581,
+              "yPosition": 1064,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -1149,7 +1175,7 @@
               "title": "Resource & hydrocarbon depletion",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 649,
+              "yPosition": 1192,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -1165,7 +1191,7 @@
               "title": "Ecocide",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 776,
+              "yPosition": 1440,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -1181,7 +1207,7 @@
               "title": "Sexual assault",
               "color": "#FCE4EC",
               "width": 260,
-              "yPosition": 844,
+              "yPosition": 1872,
               "provenance": "verbatim",
               "connections": [],
               "links": [
@@ -1206,7 +1232,7 @@
               "title": "Side note: Maté's health-crisis path",
               "color": "#ECEFF1",
               "width": 330,
-              "yPosition": 23,
+              "yPosition": 216,
               "provenance": "verbatim",
               "connections": []
             }
