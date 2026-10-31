@@ -66,6 +66,13 @@ describe('loading the theory map from the repo', () => {
     expect(fetchMock).toHaveBeenCalledTimes(4)
   })
 
+  it('lets a click that lands during the fetch-ahead join that request', async () => {
+    const fetchMock = serveMap()
+    const [ahead, click] = await Promise.all([loadTheoryMap(), loadTheoryMap()])
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(serializeMapFile(click)).toBe(serializeMapFile(ahead))
+  })
+
   it('never caches files that fail to merge', async () => {
     serveMap({ layout: serializeMapFile({ cards: {} }) })
     await expect(loadTheoryMap()).rejects.toBeInstanceOf(RepoFetchError)

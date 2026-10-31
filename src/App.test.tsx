@@ -4,6 +4,9 @@ import App, { LEAVE_UNSAVED_PROMPT } from './App'
 import { useToCStore } from './state/store'
 import { clearDraft, loadDraft } from './files/draft'
 import { renameSection } from './state/sections'
+import { statusQuoMetacrisis } from './templates'
+import { splitDocument } from './files/split'
+import { useSuggestionStore } from './repo/suggestionStore'
 
 /** React Flow needs a real layout engine; the editor itself is covered elsewhere, so here it
  * is only a stub carrying the Home button the flow under test needs. */
@@ -72,5 +75,55 @@ describe('App: home and editor', () => {
     confirm.mockReturnValue(true)
     fireEvent.click(screen.getByRole('button', { name: 'Home' }))
     expect(screen.getByRole('button', { name: /Blank theory of change/ })).toBeInTheDocument()
+  })
+})
+
+describe('App: a ?suggestion= address', () => {
+  const SHA = 'b'.repeat(40)
+  const { content, layout } = splitDocument(statusQuoMetacrisis())
+
+  function serveSuggestion() {
+    const fetchMock = vi.fn((url: string) => {
+      const reply = (body: unknown) => Promise.resolve(new Response(JSON.stringify(body)))
+      if (url.endsWith('/pulls/12')) {
+        const repo = { full_name: 'jonasmbecker/theory-of-metacrisis' }
+        return reply({ state: 'open', title: 'A proposal', head: { sha: SHA, repo } })
+      }
+      if (url.endsWith('content.json')) return reply({ ...content, title: 'As proposed' })
+      return reply(layout)
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    return fetchMock
+  }
+
+  beforeEach(() => {
+    localStorage.clear()
+    clearDraft()
+    useSuggestionStore.getState().clear()
+  })
+  afterEach(() => window.history.replaceState(null, '', '/'))
+
+  it('opens the proposed map read-only, and Home clears the address so a reload cannot reopen it', async () => {
+    window.history.replaceState(null, '', '/?suggestion=12')
+    serveSuggestion()
+    render(<App />)
+    const home = await screen.findByRole('button', { name: 'Home' })
+    expect(useToCStore.getState().document.title).toBe('As proposed')
+    expect(useToCStore.getState().isReadOnly).toBe(true)
+    expect(useSuggestionStore.getState().suggestion).toMatchObject({ number: 12 })
+
+    fireEvent.click(home)
+    expect(await screen.findByRole('button', { name: /Blank theory of change/ })).toBeVisible()
+    expect(window.location.pathname + window.location.search).toBe('/')
+    expect(useSuggestionStore.getState().suggestion).toBeNull()
+  })
+
+  it('leaves a share link alone: its address names the document, no GitHub call is made', async () => {
+    window.history.replaceState(null, '', `/d/${'E'.repeat(22)}?suggestion=12`)
+    const fetchMock = vi.fn((url: string) => Promise.reject(new TypeError(`offline: ${url}`)))
+    vi.stubGlobal('fetch', fetchMock)
+    render(<App />)
+    expect(await screen.findByText(/No connection/)).toBeVisible()
+    expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([`/api/diagrams/${'E'.repeat(22)}`])
   })
 })

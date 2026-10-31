@@ -124,6 +124,16 @@ function writeCache(files: MapFiles, now: number): void {
   }
 }
 
+/** One request at a time: a click that lands while the fetch-ahead is still running joins it. */
+let pendingFetch: Promise<MapFiles> | null = null
+
+function fetchMain(): Promise<MapFiles> {
+  pendingFetch ??= fetchMapFiles(THEORY_REPO, 'main').finally(() => {
+    pendingFetch = null
+  })
+  return pendingFetch
+}
+
 /**
  * The theory's `main` branch as a document. Served from sessionStorage for 5 minutes (so a
  * home screen that fetched ahead opens instantly, and a reload does not hit GitHub again);
@@ -138,7 +148,7 @@ export async function loadTheoryMap(now: () => number = Date.now): Promise<ToCDo
       // A stale or damaged entry: fall through to a fresh fetch.
     }
   }
-  const files = await fetchMapFiles(THEORY_REPO, 'main')
+  const files = await fetchMain()
   const document = documentFromFiles(files)
   writeCache(files, now())
   return document
