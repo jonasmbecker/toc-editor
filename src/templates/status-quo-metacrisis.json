@@ -25,7 +25,7 @@
               "title": "Attunement",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 230,
+              "yPosition": 320,
               "provenance": "verbatim",
               "connections": []
             },
@@ -35,7 +35,7 @@
               "title": "Comfort & Soothing",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 368,
+              "yPosition": 458,
               "provenance": "verbatim",
               "connections": []
             },
@@ -45,7 +45,7 @@
               "title": "Support to explore",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 506,
+              "yPosition": 596,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -62,7 +62,7 @@
               "title": "Expressed delight",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 644,
+              "yPosition": 734,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -95,12 +95,38 @@
               ]
             },
             {
+              "id": "need-narm-thinking",
+              "title": "Thinking",
+              "text": "Sub-line on the board: \"intellectualize, rational, emotionally detached\".",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 124,
+              "provenance": "verbatim",
+              "connections": []
+            },
+            {
+              "id": "need-narm-spiritualizing",
+              "title": "Spiritualizing",
+              "text": "Sub-line on the board: \"escaping\".",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 190,
+              "provenance": "verbatim",
+              "connections": [
+                {
+                  "targetId": "strategy-control-supremacy",
+                  "evidence": "Arrow from Spiritualizing to \"craving for control, safety, immunity / supremacy\".",
+                  "provenance": "interpreted"
+                }
+              ]
+            },
+            {
               "id": "need-narm-attunement",
               "text": "",
               "title": "Attunement (NARM survival style)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 230,
+              "yPosition": 320,
               "provenance": "verbatim",
               "connections": []
             },
@@ -110,7 +136,7 @@
               "title": "Trust (NARM survival style)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 368,
+              "yPosition": 458,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -131,7 +157,7 @@
               "title": "Autonomy (NARM survival style)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 506,
+              "yPosition": 596,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -152,7 +178,7 @@
               "title": "Love-Sexuality (NARM survival style)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 644,
+              "yPosition": 734,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -195,13 +221,18 @@
                   "evidence": "Arrow drawn from this strategy cluster into the metacrisis-drivers column, landing near \"erosion of collective sensemaking\".",
                   "provenance": "interpreted",
                   "assumptions": "Several strategy boxes converge on this area of the drivers column; exact 1:1 source→target pairing not fully resolvable from the photo."
+                },
+                {
+                  "targetId": "driver-collective-disempowerment",
+                  "evidence": "Short arrows from numbing into the first drivers (open question 5).",
+                  "provenance": "interpreted"
                 }
               ]
             },
             {
               "id": "strategy-control-supremacy",
               "text": "Full label as drawn: Craving for control, safety, immunity → \"supremacy\"",
-              "title": "Craving for control and safety",
+              "title": "Craving for control, safety, immunity",
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 133,
@@ -211,13 +242,18 @@
                   "targetId": "driver-racism-colonialism",
                   "evidence": "Arrow from this strategy toward \"racism + (post)colonialism\".",
                   "provenance": "interpreted"
+                },
+                {
+                  "targetId": "driver-lacking-willingness-change",
+                  "evidence": "Short arrow from control/supremacy into the first drivers.",
+                  "provenance": "interpreted"
                 }
               ]
             },
             {
               "id": "strategy-scapegoating",
               "text": "",
-              "title": "Scapegoating, projecting the blame",
+              "title": "Scape goating, projection the blame",
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 273,
@@ -250,7 +286,7 @@
               "provenance": "verbatim",
               "connections": [
                 {
-                  "targetId": "driver-multipolar-dynamics",
+                  "targetId": "group-multipolar-traps",
                   "evidence": "Arrow into the bracketed multipolar-traps/race-to-bottom/race-to-market/arms-race cluster.",
                   "provenance": "interpreted"
                 }
@@ -264,7 +300,18 @@
               "width": 330,
               "yPosition": 608,
               "provenance": "verbatim",
-              "connections": []
+              "connections": [
+                {
+                  "targetId": "group-multipolar-traps",
+                  "evidence": "Crossing arrows from compulsive soothing on the board.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "group-consumerism",
+                  "evidence": "Crossing arrows from compulsive soothing on the board.",
+                  "provenance": "interpreted"
+                }
+              ]
             },
             {
               "id": "strategy-greed-more",
@@ -276,7 +323,7 @@
               "provenance": "verbatim",
               "connections": [
                 {
-                  "targetId": "driver-consumerism-cluster",
+                  "targetId": "group-consumerism",
                   "evidence": "Arrow into the bracketed consumerism/individualism/neoliberal-capitalism/extractivism cluster.",
                   "provenance": "interpreted"
                 }
@@ -285,14 +332,14 @@
             {
               "id": "strategy-fear-dependence-separation",
               "text": "urge towards \"separation\"",
-              "title": "Fear of dependence",
+              "title": "Fear of dependence, urge towards \"separation\"",
               "color": "#FFF3E0",
               "width": 330,
               "yPosition": 815,
               "provenance": "verbatim",
               "connections": [
                 {
-                  "targetId": "driver-consumerism-cluster",
+                  "targetId": "group-consumerism",
                   "evidence": "Arrow into the consumerism/individualism cluster.",
                   "provenance": "interpreted"
                 }
@@ -308,8 +355,13 @@
               "provenance": "verbatim",
               "connections": [
                 {
-                  "targetId": "driver-consumerism-cluster",
-                  "evidence": "Arrow into the consumerism cluster.",
+                  "targetId": "driver-neoliberal-capitalism",
+                  "evidence": "One of two arrows leaving Perform on the board.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "driver-hyper-agents-ai",
+                  "evidence": "Second arrow leaving Perform on the board.",
                   "provenance": "interpreted"
                 }
               ]
@@ -390,7 +442,7 @@
             {
               "id": "driver-lacking-willingness-change",
               "text": "",
-              "title": "Lacking willingness to radical change/regulate",
+              "title": "Lacking willingness to radical change / regulate",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 251,
@@ -420,9 +472,9 @@
               ]
             },
             {
-              "id": "driver-multipolar-dynamics",
-              "text": "Full label as drawn: Multipolar traps / race-to-bottom / race-to-market / arms race. Drawn as one bracketed cluster of four related dynamics, not four separately-connected boxes: multipolar traps (\"if I don't do it, someone else will / can't compete\"); race-to-bottom (\"if we tax/regulate, companies move to the Bahamas\"); race-to-market (privatize upside, externalize risk); arms race (e.g. nuclear, AI/bioweapons).",
-              "title": "Multipolar traps / arms race",
+              "id": "group-multipolar-traps",
+              "title": "Multipolar traps",
+              "text": "\"If I don't do it, someone else will / can't compete\". Group name as drawn above the three bracketed cards.",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 498,
@@ -438,16 +490,50 @@
                   "evidence": "Arrow toward \"debt + interest financial system\".",
                   "provenance": "interpreted"
                 }
-              ]
+              ],
+              "kind": "group"
             },
             {
-              "id": "driver-consumerism-cluster",
-              "text": "Full label as drawn: Consumerism / individualism / neoliberal capitalism / extractivism. Drawn as one bracketed cluster, not four separately-connected boxes: consumerism; individualism; neoliberal capitalism; extractivism.",
-              "title": "Consumerism / neoliberal capitalism",
+              "id": "driver-race-to-bottom",
+              "title": "Race to the bottom",
+              "text": "\"If we tax / regulate, companies move to the Bahamas.\"",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 647,
+              "yPosition": 540,
               "provenance": "verbatim",
+              "connections": [],
+              "groupId": "group-multipolar-traps"
+            },
+            {
+              "id": "driver-race-to-market",
+              "title": "Race to market",
+              "text": "Privatize upside, externalize risk.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 644,
+              "provenance": "verbatim",
+              "connections": [],
+              "groupId": "group-multipolar-traps"
+            },
+            {
+              "id": "driver-arms-race",
+              "title": "Arms race",
+              "text": "E.g. nuclear, AI / bioweapons.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 748,
+              "provenance": "verbatim",
+              "connections": [],
+              "groupId": "group-multipolar-traps"
+            },
+            {
+              "id": "group-consumerism",
+              "title": "Consumerism cluster",
+              "text": "Group name is not on the board (the four cards are bracketed together); working label, Claude, 2026-10-31.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 900,
+              "provenance": "interpreted",
               "connections": [
                 {
                   "targetId": "structure-loss-of-community",
@@ -464,8 +550,86 @@
                   "evidence": "Drawing shows a bidirectional (two-headed) arrow between this cluster and \"marketing\" — read here as a feedback loop: marketing drives consumption, consumption sustains the business case for more marketing.\n\nOther half of the bidirectional arrow with the consumerism cluster — see that node's feedback-loop connection.",
                   "provenance": "interpreted",
                   "isFeedbackLoop": true
+                },
+                {
+                  "targetId": "outcome-climate-breakdown",
+                  "evidence": "Arrow drawn past the structure cards to Climate breakdown.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "outcome-pollution",
+                  "evidence": "Arrow drawn past the structure cards to Pollution.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "outcome-resource-depletion",
+                  "evidence": "Arrow drawn past the structure cards to Resource & hydrocarbon depletion.",
+                  "provenance": "interpreted"
                 }
-              ]
+              ],
+              "kind": "group"
+            },
+            {
+              "id": "driver-consumerism",
+              "title": "Consumerism",
+              "text": "",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 942,
+              "provenance": "verbatim",
+              "connections": [
+                {
+                  "targetId": "driver-neoliberal-capitalism",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "groupId": "group-consumerism"
+            },
+            {
+              "id": "driver-individualism",
+              "title": "Individualism",
+              "text": "",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 1046,
+              "provenance": "verbatim",
+              "connections": [
+                {
+                  "targetId": "driver-neoliberal-capitalism",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "groupId": "group-consumerism"
+            },
+            {
+              "id": "driver-neoliberal-capitalism",
+              "title": "Neoliberal capitalism",
+              "text": "",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 1150,
+              "provenance": "verbatim",
+              "connections": [
+                {
+                  "targetId": "driver-extractivism",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "groupId": "group-consumerism"
+            },
+            {
+              "id": "driver-extractivism",
+              "title": "Extractivism",
+              "text": "",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 1254,
+              "provenance": "verbatim",
+              "connections": [],
+              "groupId": "group-consumerism"
             },
             {
               "id": "driver-hyper-agents-ai",
@@ -473,7 +637,7 @@
               "title": "Hyper agents / AI",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 797,
+              "yPosition": 1400,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -489,7 +653,7 @@
               "title": "Patriarchy / sexism",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 900,
+              "yPosition": 1504,
               "provenance": "verbatim",
               "connections": [
                 {
@@ -517,7 +681,13 @@
               "width": 260,
               "yPosition": 23,
               "provenance": "verbatim",
-              "connections": []
+              "connections": [
+                {
+                  "targetId": "structure-collective-freeze",
+                  "evidence": "Arrow on the board (approved row).",
+                  "provenance": "interpreted"
+                }
+              ]
             },
             {
               "id": "structure-collective-freeze",
@@ -543,13 +713,7 @@
               "width": 260,
               "yPosition": 230,
               "provenance": "verbatim",
-              "connections": [
-                {
-                  "targetId": "structure-populism-narrative-warfare",
-                  "evidence": "Arrow toward \"populism, narrative warfare\".",
-                  "provenance": "interpreted"
-                }
-              ]
+              "connections": []
             },
             {
               "id": "structure-populism-narrative-warfare",
@@ -563,6 +727,11 @@
                 {
                   "targetId": "outcome-great-power-war",
                   "evidence": "Arrow toward \"great power war / violence / genocide\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "structure-dysfunctional-democracy",
+                  "evidence": "Arrow points up from populism to dysfunctional democracy on the board.",
                   "provenance": "interpreted"
                 }
               ]
@@ -622,11 +791,6 @@
                   "targetId": "outcome-pollution",
                   "evidence": "Arrow fanning out into the polycrisis column.",
                   "provenance": "interpreted"
-                },
-                {
-                  "targetId": "outcome-ecocide",
-                  "evidence": "Arrow fanning out into the polycrisis column.",
-                  "provenance": "interpreted"
                 }
               ]
             },
@@ -680,7 +844,13 @@
               "width": 260,
               "yPosition": 1065,
               "provenance": "verbatim",
-              "connections": []
+              "connections": [
+                {
+                  "targetId": "structure-dysfunctional-democracy",
+                  "evidence": "Jonas: his \"deficient democracy\" card; Jonas, 2026-10-31.",
+                  "provenance": "interpreted"
+                }
+              ]
             }
           ]
         }
@@ -820,6 +990,9 @@
       "No change to the existing `connections[].targetId` mechanism — it already allows any node to point at any other node, which is what makes feedback loops representable without a schema change.",
       "Reserved (currently empty) top-level field `interventionLinks: []` for the later feature: an intervention theory of change will add entries here of the shape {interventionTocId, targetsNodeIds: [...], note}, linking back to specific node ids in this status-quo map without modifying this file's own nodes.",
       "These are additive, optional fields — a file with none of them (e.g. a plain theoryofchangebuilder.com export) remains fully valid, and a file using them should still open correctly in theoryofchangebuilder.com with the extra fields simply ignored."
+    ],
+    "v2Changes": [
+      "2026-10-31: v2 fidelity pass against the whiteboard photo; approved by Jonas 2026-10-31. See inbox note."
     ]
   },
   "interventionLinks": []

@@ -17,7 +17,8 @@ function loadFixture(file: string): ToCDocument {
 
 function countInFile(doc: ToCDocument) {
   const nodes = doc.sections.flatMap((s) => s.columns.flatMap((c) => c.nodes))
-  return { nodes: nodes.length, connections: nodes.flatMap((n) => n.connections).length }
+  // A group node is a frame around cards, not a card of its own.
+  return { nodes: nodes.filter((n) => n.kind !== 'group').length, connections: nodes.flatMap((n) => n.connections).length }
 }
 
 describe('buildFlow fixture parity', () => {
@@ -67,7 +68,8 @@ describe('buildFlow fixture parity', () => {
     })
 
     it('resolves every edge to two nodes that exist', () => {
-      const ids = new Set(cards.map((c) => c.id))
+      // An edge may also point at a whole group frame.
+      const ids = new Set(nodes.map((n) => n.id))
       for (const edge of edges) {
         expect(ids.has(edge.source)).toBe(true)
         expect(ids.has(edge.target)).toBe(true)

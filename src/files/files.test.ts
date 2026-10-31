@@ -109,10 +109,10 @@ describe('templates and filenames', () => {
     ])
   })
   it('bundles the status-quo fixture plus the two extension keys', () => {
-    const fixture = importFromText(readFixtureText('theory-of-metacrisis-status-quo_v1.json'))
+    const fixture = importFromText(readFixtureText('theory-of-metacrisis-status-quo_v2.json'))
     if (!fixture.ok) throw new Error('fixture failed')
     // The bundled template keeps the fixture's structure but carries readability edits (wider
-    // columns, shorter card titles, no row pairings), so compare shape, not bytes.
+    // columns, no row pairings), so compare shape, not bytes.
     const ids = (doc: ToCDocument) =>
       doc.sections.map((s) => s.columns.map((c) => c.nodes.map((n) => n.id)))
     const template = statusQuoMetacrisis()
