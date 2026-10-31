@@ -97,7 +97,7 @@
           "nodes": [
             {
               "id": "need-narm-connection",
-              "text": "Survival style built around the need for contact. When early connection was frightening or absent, the child learns to protect itself by pulling back from contact and from its own feelings. Intellectualizing and spiritual escape are two ways this can show up. (Heller, NARM)",
+              "text": "Survival style built around the need for contact. When early connection was frightening or absent, the child learns to protect itself by pulling back from contact and from its own feelings. (Heller, NARM)",
               "title": "Connection",
               "color": "#E3F2FD",
               "width": 260,
@@ -257,7 +257,7 @@
           "nodes": [
             {
               "id": "strategy-numbing",
-              "text": "Addiction to substances, entertainment, porn. Turning to something that dulls what one feels. Maté reads addiction as an attempt to soothe pain rather than only to chase pleasure. (Maté)",
+              "text": "Addiction to substances, entertainment, porn. Turning to something that dulls what one feels; addiction read as an attempt to soothe pain rather than only to chase pleasure. (Maté)",
               "title": "Craving for numbing",
               "color": "#FFF3E0",
               "width": 330,
@@ -369,7 +369,7 @@
             },
             {
               "id": "strategy-greed-more",
-              "text": "Craving for \"more.\" A drive that, on this reading, stays hungry however much arrives, because what is wanted is not what is being acquired.",
+              "text": "Craving for \"more.\" A drive that can stay hungry however much arrives, because what is wanted is not what is being acquired.",
               "title": "Greed, craving for \"more\"",
               "color": "#FFF3E0",
               "width": 330,
@@ -481,7 +481,7 @@
           "nodes": [
             {
               "id": "driver-erosion-sensemaking",
-              "text": "The weakening of a society's shared ability to tell what is true and what matters, so that it cannot respond well to its problems. Schmachtenberger ties it to an information ecology that rewards outrage and certainty over understanding. (Schmachtenberger)",
+              "text": "The weakening of a society's shared ability to tell what is true and what matters, so that it cannot respond well to its problems. Fed by an information ecology that rewards outrage and certainty over understanding. (Schmachtenberger)",
               "title": "Erosion of collective sensemaking",
               "color": "#FFE0B2",
               "width": 300,
@@ -508,12 +508,6 @@
                   "targetId": "structure-collective-freeze",
                   "evidence": "Arrow toward \"collective 'freeze'\".",
                   "provenance": "interpreted"
-                }
-              ],
-              "links": [
-                {
-                  "url": "https://en.wikipedia.org/wiki/Learned_helplessness",
-                  "label": "Wikipedia: Learned helplessness"
                 }
               ]
             },
@@ -668,7 +662,7 @@
             {
               "id": "driver-consumerism",
               "title": "Consumerism",
-              "text": "Buying as the usual route to satisfaction. Schmachtenberger argues that markets sell \"pseudosatisfiers\" that deepen the hunger they promise to fill. (Schmachtenberger)",
+              "text": "Buying as the usual route to satisfaction. Markets sell \"pseudosatisfiers\" that deepen the hunger they promise to fill. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
               "yPosition": 942,
@@ -758,7 +752,7 @@
             },
             {
               "id": "driver-hyper-agents-ai",
-              "text": "\"Extremely motivated & capable to accrue power.\" Schmachtenberger's term for the few actors at the top of a power law who maximise their returns on agency at scale and shape the incentives and values of everyone else. Advanced AI could become another such agent. (Schmachtenberger)",
+              "text": "\"Extremely motivated & capable to accrue power.\" The few actors at the top of a power law who maximise their returns on agency at scale and shape the incentives and values of everyone else. Advanced AI could become another such agent. (Schmachtenberger)",
               "title": "Hyper agents / AI",
               "color": "#FFE0B2",
               "width": 300,
@@ -881,7 +875,7 @@
             },
             {
               "id": "structure-lack-of-wisdom",
-              "text": "Power that has outgrown the wisdom to use it. Schmachtenberger holds that wisdom involves restraint, and that restraint keeps losing to rivals who do not practise it. (Schmachtenberger)",
+              "text": "Power that has outgrown the wisdom to use it. Wisdom involves restraint, and restraint keeps losing to rivals who do not practise it. (Schmachtenberger)",
               "title": "Lack of wisdom",
               "color": "#F0F4C3",
               "width": 260,
@@ -897,7 +891,7 @@
             },
             {
               "id": "structure-debt-interest-financial-system",
-              "text": "Money created as interest-bearing debt, so the system needs continual growth to be repaid. Hagens argues that debt papers over a widening gap between monetary claims and the energy and materials to honour them. (Hagens)",
+              "text": "Money created as interest-bearing debt, so the system needs continual growth to be repaid. Debt papers over a widening gap between monetary claims and the energy and materials to honour them. (Hagens)",
               "title": "Debt + interest financial system",
               "color": "#F0F4C3",
               "width": 260,
@@ -913,7 +907,7 @@
             },
             {
               "id": "structure-embedded-growth-obligation",
-              "text": "An economy that must keep growing to stay stable, whether or not growth serves people or the planet. Hagens calls this growth-compelled, energy-dependent system a \"superorganism.\" (Hagens)",
+              "text": "An economy that must keep growing to stay stable, whether or not growth serves people or the planet; a growth-compelled, energy-dependent \"superorganism.\" (Hagens)",
               "title": "Embedded growth obligation",
               "color": "#F0F4C3",
               "width": 260,
@@ -967,7 +961,7 @@
             },
             {
               "id": "structure-loss-of-spirituality",
-              "text": "Loss of shared practices that gave meaning, awe and belonging. Vervaeke describes this as the loss of an \"ecology of practices.\" (Vervaeke)",
+              "text": "Loss of shared practices that gave meaning, awe and belonging: an \"ecology of practices\" that has been lost. (Vervaeke)",
               "title": "Loss of spirituality",
               "color": "#F0F4C3",
               "width": 260,
@@ -1089,7 +1083,7 @@
             },
             {
               "id": "outcome-meaning-crisis",
-              "text": "Widespread loss of purpose and orientation. Vervaeke uses the term \"meaning crisis.\" (Vervaeke)",
+              "text": "Widespread loss of purpose and orientation, the \"meaning crisis.\" (Vervaeke)",
               "title": "Meaning crisis",
               "color": "#FCE4EC",
               "width": 260,
@@ -1147,7 +1141,7 @@
             },
             {
               "id": "outcome-sexual-assault",
-              "text": "Sexual violence: any sexual act committed against a person without their consent.",
+              "text": "Sexual violence: any sexual act, or attempt of one, committed against a person without their consent.",
               "title": "Sexual assault",
               "color": "#FCE4EC",
               "width": 260,
