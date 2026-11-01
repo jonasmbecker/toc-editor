@@ -98,10 +98,30 @@ export const columnSchema = z
   })
   .passthrough()
 
+/** The format version this editor reads and writes. Older files are migrated on import
+ * (`model/migrate.ts`); a newer one is refused rather than half-read. */
+export const MAP_FORMAT_VERSION = 2
+
+/** One layer of a matrix map (version 2): declared once on the document, and a section names it
+ * in `row`. A card's layer follows from its section, so the two can never disagree. */
+export const rowSchema = z
+  .object({
+    id: z.string().min(1),
+    title: z.string(),
+    /** The plain question the row answers, shown in its header ("What people can do"). */
+    question: z.string().optional(),
+  })
+  .passthrough()
+
 export const sectionSchema = z
   .object({
     title: z.string(),
     columns: z.array(columnSchema),
+    // Extensions (version 2):
+    /** Id of the row this section sits in. Absent: the section is on the shared spine. */
+    row: z.string().optional(),
+    /** A short remark shown on the section header, e.g. a disputed placement. */
+    note: z.string().optional(),
   })
   .passthrough()
 
@@ -129,12 +149,16 @@ export const documentSchema = z
     sectionPadding: z.number().finite().optional(),
     _metadata: z.record(z.string(), z.unknown()).optional(),
     // Extensions:
+    /** Version 1 files carry `schemaVersion: 1` or nothing; import migrates them to `version`. */
     schemaVersion: z.literal(1).optional(),
+    version: z.literal(MAP_FORMAT_VERSION).optional(),
     diagramType: diagramTypeSchema.optional(),
     interventionLinks: z.array(interventionLinkSchema).optional(),
+    rows: z.array(rowSchema).optional(),
   })
   .passthrough()
   .superRefine((doc, ctx) => {
+    checkRows(doc, ctx)
     // Two nodes sharing an id would silently collapse in the canvas's position lookup (the
     // second overwrites the first) and misattribute every edge pointing at either one. A
     // dangling connection targetId is left to buildFlow, which can report it per-connection
@@ -160,12 +184,73 @@ export const documentSchema = z
     })
   })
 
+type RefineContext = Parameters<Parameters<z.ZodType['superRefine']>[0]>[1]
+
+/** Version 2 matrix rules: row ids are unique, a section names only a declared row, every row
+ * section comes before the shared spine, and no card carries its own `layer` (its section's row
+ * says it). */
+function checkRows(
+  doc: {
+    rows?: { id: string }[]
+    sections: { row?: string; columns: { nodes: Record<string, unknown>[] }[] }[]
+  },
+  ctx: RefineContext,
+): void {
+  const declared = new Set<string>()
+  doc.rows?.forEach((row, ri) => {
+    if (declared.has(row.id)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['rows', ri, 'id'],
+        message: `row "${row.id}" is declared twice`,
+      })
+    }
+    declared.add(row.id)
+  })
+  let spineSeen = false
+  doc.sections.forEach((section, si) => {
+    if (section.row === undefined) {
+      spineSeen = true
+    } else if (!declared.has(section.row)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['sections', si, 'row'],
+        message: `names row "${section.row}", which the document does not declare`,
+      })
+    } else if (spineSeen) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['sections', si, 'row'],
+        message: 'a row section must come before the shared sections',
+      })
+    }
+    section.columns.forEach((column, ci) =>
+      column.nodes.forEach((node, ni) => {
+        if ('layer' in node) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['sections', si, 'columns', ci, 'nodes', ni, 'layer'],
+            message: "a card's layer is its section's row in version 2",
+          })
+        }
+      }),
+    )
+  })
+}
+
 /**
  * The keys this tool adds on top of the theoryofchangebuilder.com format, per level. The one
  * list the compatible export strips from, kept next to the schema so a new extension field
  * cannot be added above without being named here.
  */
-export const DOCUMENT_EXTENSION_KEYS = ['schemaVersion', 'diagramType', 'interventionLinks']
+export const DOCUMENT_EXTENSION_KEYS = [
+  'schemaVersion',
+  'version',
+  'diagramType',
+  'interventionLinks',
+  'rows',
+]
+export const SECTION_EXTENSION_KEYS = ['row', 'note']
 export const NODE_EXTENSION_KEYS = ['provenance', 'kind', 'groupId', 'links']
 export const CONNECTION_EXTENSION_KEYS = ['id', 'provenance', 'isFeedbackLoop', 'evidenceBlocks']
 
@@ -175,6 +260,7 @@ export type Connection = z.infer<typeof connectionSchema>
 export type DocumentNode = z.infer<typeof nodeSchema>
 export type Column = z.infer<typeof columnSchema>
 export type Section = z.infer<typeof sectionSchema>
+export type MapRow = z.infer<typeof rowSchema>
 export type InterventionLink = z.infer<typeof interventionLinkSchema>
 export type ToCDocument = z.infer<typeof documentSchema>
 export type ConnectionProvenance = z.infer<typeof connectionProvenanceSchema>

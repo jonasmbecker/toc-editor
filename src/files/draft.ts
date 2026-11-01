@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { migrateDocument } from '../model/migrate'
 import { documentSchema, type ToCDocument } from '../model/schema'
 
 /**
@@ -38,7 +39,11 @@ export function loadDraft(): Draft | null {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return null
-    const result = draftSchema.safeParse(JSON.parse(raw))
+    const parsed = JSON.parse(raw)
+    // A draft an older editor saved is brought up to the current format like any other file.
+    const migrated = migrateDocument(parsed?.document)
+    if (!migrated.ok) return null
+    const result = draftSchema.safeParse({ ...parsed, document: migrated.value })
     return result.success ? result.data : null
   } catch {
     return null

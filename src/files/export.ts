@@ -2,6 +2,7 @@ import {
   CONNECTION_EXTENSION_KEYS,
   DOCUMENT_EXTENSION_KEYS,
   NODE_EXTENSION_KEYS,
+  SECTION_EXTENSION_KEYS,
   type ToCDocument,
 } from '../model/schema'
 import { flattenEvidence, linkLine } from '../model/evidence'
@@ -10,9 +11,10 @@ import { mapAllNodes } from '../state/nodes'
 import { flattenGroups } from '../state/groups'
 
 /**
- * Two downloads. "Full" keeps this tool's extension fields. "Compatible" is for
- * theoryofchangebuilder.com: both-ways connections become mutual pairs and every extension
- * key (the lists in `model/schema.ts`) is removed; unknown keys a file brought along survive.
+ * Two downloads. "Full" is the current map format (version 2), every field kept. "Compatible"
+ * is for theoryofchangebuilder.com: both-ways connections become mutual pairs, matrix rows
+ * become plain sections and every extension key (the lists in `model/schema.ts`) is removed;
+ * unknown keys a file brought along survive.
  */
 
 function without<T extends object>(value: T, keys: string[]): T {
@@ -44,7 +46,9 @@ export function toCompatibleJson(doc: ToCDocument, now = new Date()): ToCDocumen
       return without(flat, CONNECTION_EXTENSION_KEYS)
     }),
   }))
-  return withExportedAt(without(expanded, DOCUMENT_EXTENSION_KEYS), now)
+  // ToCB has no matrix: row sections become ordinary sections, in the order they are stored.
+  const sections = expanded.sections.map((section) => without(section, SECTION_EXTENSION_KEYS))
+  return withExportedAt(without({ ...expanded, sections }, DOCUMENT_EXTENSION_KEYS), now)
 }
 
 /** Lowercase ASCII slug of the title (accents stripped), so the name is safe for any browser's

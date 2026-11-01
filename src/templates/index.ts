@@ -1,5 +1,5 @@
 import statusQuoJson from './status-quo-metacrisis.json'
-import type { ToCDocument } from '../model/schema'
+import { MAP_FORMAT_VERSION, type ToCDocument } from '../model/schema'
 import { importFromJson } from '../files/import'
 import { loadTheoryMap } from '../repo/mapSource'
 
@@ -13,7 +13,7 @@ function blank(
   return {
     color: '#2F2D2E',
     title,
-    schemaVersion: 1,
+    version: MAP_FORMAT_VERSION,
     diagramType,
     textSize: 1,
     curvature: 0.5,

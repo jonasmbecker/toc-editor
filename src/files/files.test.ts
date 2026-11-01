@@ -120,7 +120,7 @@ describe('templates and filenames', () => {
     expect(template.sections.map((s) => s.title)).toEqual(
       fixture.document.sections.map((s) => s.title),
     )
-    expect(template.schemaVersion).toBe(1)
+    expect(template.version).toBe(2)
     expect(template.diagramType).toBe('status-quo')
     const pairings = template.sections
       .flatMap((s) => s.columns.flatMap((c) => c.nodes))
