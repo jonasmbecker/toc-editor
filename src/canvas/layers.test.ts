@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { buildFlow } from './buildFlow'
 import { pathHighlight } from './selection'
 import { ROW_COLORS, rowOfNode } from './layers'
-import { withLayerFirst } from '../layout/layerFirst'
+import { cachedLayerFirst, withLayerFirst } from '../layout/layerFirst'
 import { layoutDocument, ROW_GAP } from '../layout/columns'
 import { alignDocument } from '../layout/align'
 import { comBMatrixDraft, statusQuoMetacrisis } from '../templates'
@@ -107,7 +107,7 @@ describe('path highlight (any map)', () => {
   const { edges } = buildFlow(doc)
 
   it('lights everything a card feeds and everything that feeds it, not side branches', () => {
-    const path = pathHighlight(edges, 'b')
+    const path = pathHighlight(edges, ['b'])
     expect([...path.nodes].sort()).toEqual(['a', 'b', 'c'])
     expect(
       edges
@@ -120,16 +120,50 @@ describe('path highlight (any map)', () => {
   it('does not walk through a link back: it is lit only when both ends are on the path', () => {
     const back = edges.find((e) => e.source === 'c')!
     expect(back.data?.backward).toBe(true)
-    const fromA = pathHighlight(edges, 'x')
+    const fromA = pathHighlight(edges, ['x'])
     expect([...fromA.nodes].sort()).toEqual(['x', 'y'])
     expect(fromA.edges.has(back.id)).toBe(false)
   })
 
   it('works on the live status-quo map, which has no rows', () => {
     const live = buildFlow(statusQuoMetacrisis())
-    const path = pathHighlight(live.edges, 'outcome-climate-breakdown')
+    const path = pathHighlight(live.edges, ['outcome-climate-breakdown'])
     expect(path.nodes.size).toBeGreaterThan(3)
     expect(path.edges.size).toBeGreaterThan(2)
     expect(live.nodes.some((n) => n.type === 'rowBand')).toBe(false)
+  })
+})
+
+describe('layer view cache', () => {
+  it('re-tidies on a structural change only: a title edit keeps the positions', () => {
+    const doc = comBMatrixDraft()
+    const first = cachedLayerFirst(doc, 'opportunity')
+    const renamed = {
+      ...doc,
+      sections: doc.sections.map((s, si) =>
+        si !== 0
+          ? s
+          : {
+              ...s,
+              columns: s.columns.map((c) => ({
+                ...c,
+                nodes: c.nodes.map((n) => ({ ...n, title: `${n.title}!` })),
+              })),
+            },
+      ),
+    }
+    const again = cachedLayerFirst(renamed, 'opportunity')
+    const ys = (d: typeof doc) => allNodes(d).map((n) => n.yPosition)
+    expect(ys(again)).toEqual(ys(first))
+    expect(allNodes(again)[0].title.endsWith('!')).toBe(true)
+    expect(ys(first)).toEqual(ys(withLayerFirst(doc, 'opportunity')))
+  })
+})
+
+describe('path highlight from a card in a group', () => {
+  it('follows the links that point at its group', () => {
+    const { edges } = buildFlow(statusQuoMetacrisis())
+    const path = pathHighlight(edges, ['driver-race-to-bottom', 'group-multipolar-traps'])
+    expect(path.nodes.has('strategy-craving-power')).toBe(true)
   })
 })

@@ -64,6 +64,8 @@ function keyOf(ref: ConnectionRef | null): string {
 
 function minimapColor(node: Node): string {
   if (node.type === 'sectionHeader') return CANVAS_COLORS.primary
+  // A row band is a background: drawn faint, so the cards in front of it stay visible.
+  if (node.type === 'rowBand') return 'rgba(201, 196, 186, 0.15)'
   return node.type === 'group' ? 'rgba(201, 196, 186, 0.35)' : '#C9C4BA'
 }
 

@@ -56,7 +56,12 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
   const resync = useCallback(() => {
     const endpoints = endpointIds(graph.edges, selectedConnection)
     // A selected card lights every path through it; the cards and links off them fade.
-    const path = selectedNodeId ? pathHighlight(graph.edges, selectedNodeId) : null
+    const home = graph.nodes.find(
+      (node) => node.type === 'group' && node.data.memberIds.includes(selectedNodeId ?? ''),
+    )
+    const path = selectedNodeId
+      ? pathHighlight(graph.edges, home ? [selectedNodeId, home.id] : [selectedNodeId])
+      : null
     // A link to a group reaches every card in it, so a lit group keeps its cards lit.
     const lit = new Set(path?.nodes)
     for (const node of graph.nodes) {

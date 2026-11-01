@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { serializeMapFile } from '../../../src/files/split'
+import { migrateDocument } from '../../../src/model/migrate'
 import { GithubError } from './githubApp'
 import { handleSuggest, type SuggestDeps } from './suggestApi'
 import {
@@ -54,8 +55,23 @@ describe('a valid suggestion', () => {
     await post(request)
     const [spec] = opened
     expect(spec.files.map((file) => file.path)).toEqual(['map/content.json'])
-    expect(spec.files[0].text).toBe(serializeMapFile(request.content))
+    // Written in the current format: a version 1 map on main is upgraded by its first suggestion.
+    const migrated = migrateDocument(request.content)
+    if (!migrated.ok) throw new Error(migrated.errors.join('; '))
+    expect(spec.files[0].text).toBe(serializeMapFile(migrated.value))
+    expect(spec.files[0].text).toContain('"version": 2')
     expect(spec.files[0].text).not.toBe(serializeMapFile(baseFiles.content))
+  })
+
+  it('does not list the format upgrade as a change when main still holds a version 1 map', async () => {
+    // The editor migrates on load, so what it sends is version 2 while main is still version 1.
+    const request = suggestion(addLink)
+    const migrated = migrateDocument(request.content)
+    if (!migrated.ok) throw new Error(migrated.errors.join('; '))
+    expect(await post({ ...request, content: migrated.value })).toHaveProperty('status', 201)
+    const [spec] = opened
+    expect(spec.body(12)).not.toMatch(/schemaVersion|version/)
+    expect(spec.title).not.toMatch(/version/i)
   })
 
   it('commits layout.json only when only positions changed', async () => {

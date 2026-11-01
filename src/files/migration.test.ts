@@ -5,6 +5,8 @@ import { importFromJson } from './import'
 import { toCompatibleJson, toFullJson } from './export'
 import { mergeDocument, splitDocument } from './split'
 import { allNodes } from '../state/tree'
+import { addNode, updateNode } from '../state/nodes'
+import { addConnection } from '../state/connections'
 import {
   COM_B_DRAFT_FIXTURE,
   extensionKeysIn,
@@ -120,6 +122,31 @@ describe('version 1 → 2 migration', () => {
       expect(allNodes(doc).map((n) => n.yPosition)).toEqual(allNodes(again).map((n) => n.yPosition))
     })
 
+    it('survives edits (text, a new card in a row, a new link) through export, reimport, split and merge', () => {
+      let doc = updateNode(imported(input), 'motivation-meaning-purpose', { title: 'Meaning' })
+      const opportunity = doc.sections.findIndex((s) => s.row === 'opportunity')
+      const added = addNode(doc, opportunity, 0)
+      const linked = addConnection(added.document, added.nodeId, 'driver-erosion-sensemaking')
+      if (!linked.ok) throw new Error(linked.refused)
+      doc = linked.document
+      const back = imported(JSON.parse(JSON.stringify(toFullJson(doc, NOW))))
+      expect(toFullJson(back, NOW)).toEqual(toFullJson(doc, NOW))
+      const { content, layout } = splitDocument(back)
+      const merged = mergeDocument(
+        JSON.parse(JSON.stringify(content)),
+        JSON.parse(JSON.stringify(layout)),
+      )
+      if (!merged.ok) throw new Error(merged.errors.join('; '))
+      const again = imported(merged.document)
+      // Export stamps _metadata.exportedAt; compare both sides with the same stamp.
+      expect(toFullJson(again, NOW)).toEqual(toFullJson(doc, NOW))
+      const rowOf = (d: ToCDocument, id: string) =>
+        d.sections.find((s) => s.columns.some((c) => c.nodes.some((n) => n.id === id)))?.row
+      expect(rowOf(again, added.nodeId)).toBe('opportunity')
+      expect(again.rows).toEqual(COM_B_ROWS)
+      expect(again.sections.map((s) => s.note)).toEqual(doc.sections.map((s) => s.note))
+    })
+
     it('compatible export flattens the matrix: no row, rows, version, note or layer', () => {
       const out = toCompatibleJson(imported(input), NOW)
       expect(extensionKeysIn(out)).toEqual([])
@@ -150,6 +177,33 @@ describe('version 1 → 2 migration', () => {
     const member = { ...makeNode('m'), groupId: 'g', layer: 'opportunity' }
     const result = migrateDocument(makeDocument([group, member] as never))
     expect(result.ok).toBe(false)
+  })
+
+  it('keeps an empty section and an empty column of a layered map on the spine', () => {
+    const doc = makeDocument([{ ...makeNode('a'), layer: 'capability' } as never], [makeNode('d')])
+    const raw = {
+      ...doc,
+      sections: [
+        ...doc.sections,
+        { title: 'Later', columns: [{ nodes: [] }] },
+        { title: 'Wide', columns: [{ nodes: [makeNode('e')] }, { nodes: [] }] },
+      ],
+    }
+    const sections = migrated(raw).sections as { title: string; row?: string; columns: unknown[] }[]
+    expect(sections.map((s) => [s.row ?? 'spine', s.title, s.columns.length])).toEqual([
+      ['capability', 'S1', 1],
+      ['spine', 'S2', 1],
+      ['spine', 'Later', 1],
+      ['spine', 'Wide', 2],
+    ])
+  })
+
+  it('places version 2 and the rows even when the file already has stray ones', () => {
+    const doc = makeDocument([{ ...makeNode('a'), layer: 'capability' } as never])
+    const out = migrated({ ...doc, schemaVersion: 1, version: 1, rows: [{ id: 'x', title: 'X' }] })
+    expect(out.version).toBe(2)
+    expect(out.rows).toEqual(COM_B_ROWS)
+    expect(importFromJson(out).ok).toBe(true)
   })
 
   it('passes something that is not a map through, so the schema can describe it', () => {

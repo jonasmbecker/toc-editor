@@ -72,14 +72,19 @@ function splitSection(
       }
     }
   }
+  // A row part keeps the columns that hold that layer's cards. The shared part also keeps every
+  // column that was empty to begin with, and a section with no cards at all stays whole, so a
+  // placeholder heading or an empty column is never lost.
   const part = (layer: string | undefined): Json | null => {
     const kept = columns
       .map((column) => ({
         ...column,
         nodes: column.nodes.filter((n) => layerById.get(n.id) === layer).map(withoutLayer),
       }))
-      .filter((column) => column.nodes.length > 0)
-    return kept.length > 0 ? { ...section, columns: kept } : null
+      .filter((column, i) => column.nodes.length > 0 || (!layer && columns[i].nodes.length === 0))
+    const hasCards = kept.some((column) => column.nodes.length > 0)
+    if (layer) return hasCards ? { ...section, columns: kept } : null
+    return hasCards || all.length === 0 ? { ...section, columns: kept } : null
   }
   const rows = new Map<string, Json>()
   for (const { id } of COM_B_ROWS) {
@@ -95,6 +100,8 @@ function versioned(doc: Json, extra: Json): Json {
   const out: Json = {}
   let placed = false
   for (const [key, value] of Object.entries(doc)) {
+    // A stray `version` or `rows` the file already carries must not overwrite what is placed.
+    if (key === 'version' || key in extra) continue
     if (key === 'schemaVersion') {
       Object.assign(out, { version: MAP_FORMAT_VERSION }, extra)
       placed = true

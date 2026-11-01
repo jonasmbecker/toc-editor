@@ -189,7 +189,8 @@ export function layoutDocument(doc: ToCDocument): DocumentLayout {
       bottom: (range ? range[1] : top) + HEADER_CLEARANCE + LAST_ROW_ALLOWANCE,
       right,
     })
-    nextTop = (range ? range[1] : top) + ROW_GAP
+    // An empty row's header bars go below the lowest card of the row above, not over it.
+    nextTop = range ? range[1] + LAST_ROW_ALLOWANCE : top + ROW_GAP
   }
   const spine = all.filter((i) => doc.sections[i].row === undefined)
   const sectionPadding = doc.sectionPadding ?? 0

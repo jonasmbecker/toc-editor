@@ -47,10 +47,10 @@ export interface PathHighlight {
   edges: Set<string>
 }
 
-/** Cards a breadth-first walk reaches from `start` over `next`. */
-function reach(start: string, next: Map<string, string[]>): Set<string> {
-  const seen = new Set([start])
-  const queue = [start]
+/** Cards a walk reaches from `starts` over `next`. */
+function reach(starts: string[], next: Map<string, string[]>): Set<string> {
+  const seen = new Set(starts)
+  const queue = [...starts]
   while (queue.length > 0) {
     for (const id of next.get(queue.pop()!) ?? []) {
       if (!seen.has(id)) {
@@ -66,18 +66,24 @@ function reach(start: string, next: Map<string, string[]>): Set<string> {
  * Every path a card is part of: all it feeds, downstream, and all that feeds it, upstream,
  * following forward links only, so a loop or a link back cannot pull the whole map in. A loop or
  * back link is still lit when both its ends are on the paths. Works on any map (Jonas,
- * 2026-11-01: "super useful in general").
+ * 2026-11-01: "super useful in general"). `selected` is the card, plus the group it sits in when
+ * it has one, because a link to a group reaches every card in it.
  */
-export function pathHighlight(edges: ConnectionEdgeType[], selectedId: string): PathHighlight {
+export function pathHighlight(edges: ConnectionEdgeType[], selected: string[]): PathHighlight {
   const forward = new Map<string, string[]>()
   const backward = new Map<string, string[]>()
+  const add = (map: Map<string, string[]>, from: string, to: string) => {
+    const list = map.get(from)
+    if (list) list.push(to)
+    else map.set(from, [to])
+  }
   for (const edge of edges) {
     if (edge.data?.backward || edge.data?.isFeedbackLoop) continue
-    forward.set(edge.source, [...(forward.get(edge.source) ?? []), edge.target])
-    backward.set(edge.target, [...(backward.get(edge.target) ?? []), edge.source])
+    add(forward, edge.source, edge.target)
+    add(backward, edge.target, edge.source)
   }
-  const down = reach(selectedId, forward)
-  const up = reach(selectedId, backward)
+  const down = reach(selected, forward)
+  const up = reach(selected, backward)
   const nodes = new Set([...down, ...up])
   const onPath = (edge: ConnectionEdgeType) => {
     if (edge.data?.backward || edge.data?.isFeedbackLoop) {

@@ -53,21 +53,55 @@ function checkRows(content, nodes, fail) {
       else if (declared.has(row.id)) fail(`row "${row.id}" is declared twice`)
       else declared.add(row.id)
       if (isObject(row) && !isString(row.title)) fail(`row ${ri + 1}: "title" must be text`)
+      if (isObject(row) && row.question !== undefined && !isString(row.question)) {
+        fail(`row ${ri + 1}: "question" must be text`)
+      }
     }
   }
   let spineSeen = false
   for (const [si, section] of (Array.isArray(content.sections) ? content.sections : []).entries()) {
+    if (section?.note !== undefined && !isString(section.note)) {
+      fail(`section ${si + 1}: "note" must be text`)
+    }
     if (section?.row === undefined) spineSeen = true
     else if (!declared.has(section.row))
       fail(`section ${si + 1}: row "${section.row}" is not declared`)
     else if (spineSeen)
       fail(`section ${si + 1}: a row section must come before the shared sections`)
   }
+  if (v2) {
+    for (const { node, where } of nodes) {
+      if (isObject(node) && 'layer' in node) {
+        fail(`${where}: a card's layer is its section's row in version 2`)
+      }
+    }
+  } else checkVersion1Layers(nodes, fail)
+}
+
+const COM_B_LAYERS = new Set(['capability', 'opportunity', 'motivation'])
+
+// A version 1 file may carry `layer` on its cards (the first COM-B draft); the editor turns it
+// into rows on import, and refuses a layer it does not know or a group split across layers.
+function checkVersion1Layers(nodes, fail) {
+  const layerOf = new Map()
+  for (const { node } of nodes) if (isObject(node)) layerOf.set(node.id, node.layer)
   for (const { node, where } of nodes) {
-    if (v2 && isObject(node) && 'layer' in node) {
-      fail(`${where}: a card's layer is its section's row in version 2`)
+    if (!isObject(node) || node.layer === undefined) continue
+    if (!COM_B_LAYERS.has(node.layer)) {
+      fail(`${where}: layer "${node.layer}" must be capability, opportunity or motivation`)
     }
   }
+  for (const { node, where } of nodes) {
+    if (!isObject(node) || node.groupId === undefined || !layerOf.has(node.groupId)) continue
+    const group = layerOf.get(node.groupId) ?? groupLayer(nodes, node.groupId)
+    if (group !== node.layer) fail(`${where}: card is in a different layer from its group`)
+  }
+}
+
+/** A group card without its own layer takes its first member's, as the editor does. */
+function groupLayer(nodes, groupId) {
+  return nodes.find(({ node }) => isObject(node) && node.groupId === groupId && node.layer)?.node
+    .layer
 }
 
 function checkCards(nodes, fail) {

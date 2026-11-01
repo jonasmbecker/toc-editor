@@ -70,7 +70,42 @@ describe('the map check agrees with the editor', () => {
     ],
     ['a card without a title', (p) => delete firstCard(p).title],
     ['a confidence above 100', (p) => ((firstCard(p).connections as Json[])[0].confidence = 150)],
+    ['a section note that is not text', (p) => ((sectionsOf(p)[0] as Json).note = 5)],
+    ['a row question that is not text', (p) => ((p.content.rows as Json[])[0].question = 5)],
   ]
+
+  /** The draft as stored before format 2: cards carry `layer`. */
+  const v1Pair = (): Pair =>
+    JSON.parse(
+      JSON.stringify(
+        splitDocument(JSON.parse(readFixtureText(COM_B_DRAFT_FIXTURE)) as ToCDocument),
+      ),
+    ) as Pair
+  const v1Card = (p: Pair, id: string) =>
+    sectionsOf(p)
+      .flatMap((s) => s.columns.flatMap((c) => c.nodes))
+      .find((n) => n.id === id)!
+
+  it('both accept the version 1 draft with its layers', () => {
+    const pair = v1Pair()
+    expect(validateMap(pair.content, pair.layout)).toEqual([])
+    expect(editorOpens(pair)).toBe(true)
+  })
+
+  const brokenV1: [string, (pair: Pair) => void][] = [
+    ['an unknown layer', (p) => (v1Card(p, 'need-brown-felt-safety').layer = 'volition')],
+    [
+      'a group member in another layer',
+      (p) => (v1Card(p, 'need-narm-thinking').layer = 'opportunity'),
+    ],
+  ]
+
+  it.each(brokenV1)('both refuse a version 1 file with %s', (_, breakIt) => {
+    const pair = v1Pair()
+    breakIt(pair)
+    expect(validateMap(pair.content, pair.layout)).not.toEqual([])
+    expect(editorOpens(pair)).toBe(false)
+  })
 
   it.each(broken)('both refuse %s', (_, breakIt) => {
     const pair = pairOf(COM_B_DRAFT_FIXTURE)

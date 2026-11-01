@@ -159,12 +159,19 @@ function separateRows(columns: Unit[][], meta: ColumnMeta[]): void {
   const byRow = new Map<number, Unit[]>()
   columns.forEach((units, index) => {
     const row = meta[index].row
-    if (row !== SPINE) byRow.set(row, [...(byRow.get(row) ?? []), ...units])
+    if (row === SPINE) return
+    const list = byRow.get(row)
+    if (list) list.push(...units)
+    else byRow.set(row, [...units])
   })
   let floor = -Infinity
   for (const row of [...byRow.keys()].sort((a, b) => a - b)) {
     const units = byRow.get(row)!
-    if (units.length === 0) continue
+    if (units.length === 0) {
+      // An empty row still shows its header bars (see layoutDocument): keep a band for them.
+      if (Number.isFinite(floor)) floor += ROW_GAP
+      continue
+    }
     const top = Math.min(...units.map((u) => u.top))
     const shift = snapUp(Math.max(0, floor - top))
     for (const unit of units) unit.top += shift

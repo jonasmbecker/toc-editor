@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import type { NodeChange } from '@xyflow/react'
 import type { ToCDocument } from '../model/schema'
-import { withLayerFirst } from '../layout/layerFirst'
+import { cachedLayerFirst } from '../layout/layerFirst'
 import { ALL_LAYERS } from './LayerTabs'
 
 /** The layer a matrix map shows: the one chosen, else its first row; undefined for All layers
@@ -22,7 +22,7 @@ export function useLayerView(doc: ToCDocument) {
   const [heights, setHeights] = useState<ReadonlyMap<string, number>>(() => new Map())
   const layer = shownLayer(doc, choice)
   const shown = useMemo(
-    () => (layer ? withLayerFirst(doc, layer, heights) : doc),
+    () => (layer ? cachedLayerFirst(doc, layer, heights) : doc),
     [doc, layer, heights],
   )
   /** Feed React Flow's node changes through here: the view is tidied with each card's first

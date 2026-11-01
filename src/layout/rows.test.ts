@@ -137,3 +137,39 @@ describe('matrix layout', () => {
     expect(doc.sections[top.sectionIndex].row).toBe('capability')
   })
 })
+
+describe('an empty row', () => {
+  it('keeps its header band clear of the rows above and below after Tidy', () => {
+    const doc = draft()
+    const emptied = {
+      ...doc,
+      sections: doc.sections.map((s) =>
+        s.row === 'opportunity' ? { ...s, columns: [{ nodes: [] }] } : s,
+      ),
+    }
+    // Links into the removed cards would dangle; drop them so the map stays valid.
+    const ids = new Set(allNodes(emptied).map((n) => n.id))
+    const clean = {
+      ...emptied,
+      sections: emptied.sections.map((s) => ({
+        ...s,
+        columns: s.columns.map((c) => ({
+          ...c,
+          nodes: c.nodes.map((n) => ({
+            ...n,
+            connections: n.connections.filter((x) => ids.has(x.targetId)),
+          })),
+        })),
+      })),
+    }
+    const tidied = tidy(clean)
+    const bands = layoutDocument(tidied).rowBands
+    const capabilityBottom = Math.max(
+      ...rowCards(tidied, 'capability').map((n) => HEADER_CLEARANCE + n.yPosition + heightOf(n.id)),
+    )
+    const motivationTop = Math.min(...rowCards(tidied, 'motivation').map((n) => n.yPosition))
+    expect(bands[1].top).toBeGreaterThan(capabilityBottom - HEADER_CLEARANCE)
+    expect(motivationTop).toBeGreaterThanOrEqual(bands[1].top + ROW_GAP)
+    expect(tidy(tidied)).toBe(tidied)
+  })
+})
