@@ -3,7 +3,7 @@ import { buildFlow } from './buildFlow'
 import { pathHighlight } from './selection'
 import { ROW_COLORS, rowOfNode } from './layers'
 import { withLayerFirst } from '../layout/layerFirst'
-import { layoutDocument } from '../layout/columns'
+import { layoutDocument, ROW_GAP } from '../layout/columns'
 import { alignDocument } from '../layout/align'
 import { comBMatrixDraft, statusQuoMetacrisis } from '../templates'
 import { makeDocument, makeNode } from '../test/fixtures'
@@ -18,7 +18,15 @@ describe('matrix view', () => {
   it('opens the bundled draft as a version 2 matrix with three rows', () => {
     expect(doc.version).toBe(2)
     expect(doc.rows?.map((r) => r.id)).toEqual(['capability', 'opportunity', 'motivation'])
-    expect(alignDocument(doc)).toBe(doc)
+    // Baked with heights measured in the browser: each row starts below the one above it.
+    const tops = (doc.rows ?? []).map((row) =>
+      allNodes({ ...doc, sections: doc.sections.filter((s) => s.row === row.id) }).map(
+        (n) => n.yPosition,
+      ),
+    )
+    for (let r = 1; r < tops.length; r++) {
+      expect(Math.min(...tops[r])).toBeGreaterThan(Math.max(...tops[r - 1]) + ROW_GAP)
+    }
   })
 
   it('draws one band per row and colours forward links by the layer they leave', () => {

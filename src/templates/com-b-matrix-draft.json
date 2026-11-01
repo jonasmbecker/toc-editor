@@ -37,7 +37,7 @@
               "text": "Feeling seen and known: a caregiver who responds accurately to the child's behaviour, to its inner states and to what it is ready for at its stage. It supports self-esteem and the child's growing understanding of its own mind. (Brown)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 320,
+              "yPosition": 232,
               "connections": [
                 {
                   "targetId": "need-narm-attunement",
@@ -59,7 +59,7 @@
               "text": "Felt comfort: a caregiver who soothes and reassures the child when it is distressed. Repeated over time, this supports the child's ability to regulate its own emotions. (Brown)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 584,
+              "yPosition": 496,
               "connections": [
                 {
                   "targetId": "need-narm-trust",
@@ -81,7 +81,7 @@
               "text": "Felt support for the child's best self: a caregiver who encourages it to explore, both outwardly in the world and inwardly in its own interests and abilities. It supports the development of the child's own self. (Brown)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 912,
+              "yPosition": 712,
               "connections": [
                 {
                   "targetId": "need-narm-autonomy",
@@ -104,7 +104,7 @@
               "text": "Feeling valued: a caregiver who visibly delights in the child. It supports the child's self-esteem and its awareness of its own mind. (Brown)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 1216,
+              "yPosition": 1008,
               "connections": [
                 {
                   "targetId": "need-narm-love-sexuality",
@@ -142,7 +142,7 @@
               "text": "Retreating into analysis and abstraction to keep feeling at a distance, so that the person stays rational and emotionally detached.",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 192,
+              "yPosition": 144,
               "connections": [
                 {
                   "targetId": "strategy-control-supremacy",
@@ -180,7 +180,7 @@
               "text": "Survival style built around the need to have one's own needs recognised and met. Where caregivers did not sense them, a person may learn to stop noticing, or asking for, what they need. (Heller, NARM)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 320,
+              "yPosition": 232,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -196,7 +196,7 @@
               "text": "Survival style built around the need to rely on others. Where care proved unreliable or manipulative, a person may come to depend on control and self-sufficiency instead. (Heller, NARM)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 584,
+              "yPosition": 496,
               "connections": [
                 {
                   "targetId": "strategy-craving-power",
@@ -223,7 +223,7 @@
               "text": "Survival style built around the need to become one's own person. Where independence met pressure or guilt, a person may struggle to set limits and to say what they want. (Heller, NARM)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 912,
+              "yPosition": 712,
               "connections": [
                 {
                   "targetId": "strategy-greed-more",
@@ -250,7 +250,7 @@
               "text": "Survival style built around the need to be loved and to bring heart and body together. Where love felt conditional, a person may feel unlovable or keep affection and sexuality apart. (Heller, NARM)",
               "color": "#E3F2FD",
               "width": 232,
-              "yPosition": 1216,
+              "yPosition": 1008,
               "connections": [
                 {
                   "targetId": "strategy-perform-worth",
@@ -293,7 +293,7 @@
               "text": "Addiction to substances, entertainment, ADHD. Tuning out what one feels: addiction is read as an attempt to relieve pain, and ADHD as a tuning-out rooted in early stress rather than simple pleasure-seeking. (Maté)",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 8,
+              "yPosition": 24,
               "connections": [
                 {
                   "targetId": "driver-erosion-sensemaking",
@@ -315,7 +315,7 @@
               "text": "Seeking safety through dominance: if I rule, nobody can hurt me. Collectively it can appear as claims of superiority over others.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 192,
+              "yPosition": 280,
               "connections": [
                 {
                   "targetId": "driver-racism-colonialism",
@@ -336,7 +336,7 @@
               "text": "Placing a feeling too large to bear, often shame, onto another person or group and blaming them for it. Done collectively it can license hostility and violence.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 312,
+              "yPosition": 384,
               "connections": [
                 {
                   "targetId": "driver-racism-colonialism",
@@ -358,7 +358,7 @@
               "text": "A hunger for attention and recognition, which may trace back to not having been sufficiently seen as a child.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 440,
+              "yPosition": 200,
               "connections": [],
               "provenance": "verbatim"
             },
@@ -368,7 +368,7 @@
               "text": "Having concluded that nobody can be trusted, a person seeks power over people and situations so as not to depend on them.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 584,
+              "yPosition": 496,
               "connections": [
                 {
                   "targetId": "group-multipolar-traps",
@@ -411,7 +411,7 @@
               "text": "Food, work, shopping or similar habits used to calm the nervous system. Maté reads such habits as short-term relief from pain rather than a cure for it, which is why they tend to repeat. (Maté)",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 704,
+              "yPosition": 640,
               "connections": [
                 {
                   "targetId": "group-multipolar-traps",
@@ -432,7 +432,7 @@
               "text": "A craving for more that can stay hungry however much arrives, because what is being sought is not what is being acquired.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 912,
+              "yPosition": 712,
               "connections": [
                 {
                   "targetId": "group-consumerism",
@@ -454,7 +454,7 @@
               "text": "Needing others feels dangerous, so closeness is avoided and distance is treated as safety.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 1032,
+              "yPosition": 824,
               "connections": [
                 {
                   "targetId": "group-consumerism",
@@ -470,7 +470,7 @@
               "text": "Pursuing career, status or money to earn love and worth, as if being loved depended on achievement.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 1408,
+              "yPosition": 1040,
               "connections": [
                 {
                   "targetId": "driver-neoliberal-capitalism",
@@ -497,7 +497,7 @@
               "text": "A grand self-image that defends against feeling unworthy and depends on continued admiration. Maté describes it as arrested development from unmet early needs rather than a fixed trait. (Maté)",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 1160,
+              "yPosition": 968,
               "connections": [
                 {
                   "targetId": "driver-hyper-agents-ai",
@@ -519,7 +519,7 @@
               "text": "Pursuing sexual attention, possibly as a substitute for love and recognition that went unmet.",
               "color": "#FFF3E0",
               "width": 330,
-              "yPosition": 1280,
+              "yPosition": 1152,
               "connections": [
                 {
                   "targetId": "driver-patriarchy-sexism",
@@ -546,7 +546,7 @@
               "text": "Trauma from war that can be passed on to children and grandchildren through parents' emotional availability, bodily tension and family culture.",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 0,
+              "yPosition": 16,
               "connections": [
                 {
                   "targetId": "structure-collective-freeze",
@@ -568,7 +568,7 @@
               "text": "A group that is overwhelmed shuts down and fails to act, like the freeze response in an individual. This is an analogy used for modelling, not an established finding.",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 432,
+              "yPosition": 152,
               "connections": [
                 {
                   "targetId": "structure-dysfunctional-democracy",
@@ -584,7 +584,7 @@
               "text": "Power that has outgrown the wisdom to use it. Schmachtenberger argues that wisdom involves restraint, and that restraint keeps losing to rivals who do not practise it. (Schmachtenberger)",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 904,
+              "yPosition": 480,
               "connections": [
                 {
                   "targetId": "outcome-extinction-risk-tech",
@@ -617,7 +617,7 @@
               "text": "Politics driven by simple us-versus-them stories and deliberate manipulation of what people believe.",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 2024,
+              "yPosition": 1584,
               "connections": [
                 {
                   "targetId": "outcome-great-power-war",
@@ -644,7 +644,7 @@
               "text": "Money created as interest-bearing debt, so the system needs continual growth to be repaid. Debt papers over a widening gap between monetary claims and the energy and materials needed to honour them. (Hagens)",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 1656,
+              "yPosition": 1384,
               "connections": [
                 {
                   "targetId": "structure-embedded-growth-obligation",
@@ -660,7 +660,7 @@
               "text": "An economy that must keep growing to stay stable, whether or not growth serves people or the planet: humanity as a growth-compelled, energy-hungry \"superorganism\". (Hagens)",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 2360,
+              "yPosition": 1856,
               "connections": [
                 {
                   "targetId": "outcome-climate-breakdown",
@@ -692,7 +692,7 @@
               "text": "Fewer lasting ties between people, with less mutual care and fewer shared places.",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 2480,
+              "yPosition": 1960,
               "connections": [
                 {
                   "targetId": "outcome-meaning-crisis",
@@ -748,7 +748,7 @@
               "text": "The loss of shared practices that gave people meaning, awe and belonging. Vervaeke describes it as the loss of an \"ecology of practices\" that religion once supplied. (Vervaeke)",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 2728,
+              "yPosition": 2216,
               "connections": [
                 {
                   "targetId": "outcome-meaning-crisis",
@@ -764,7 +764,7 @@
               "text": "Deliberately triggering and shaping desire in order to raise consumption.",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 2608,
+              "yPosition": 2072,
               "connections": [
                 {
                   "targetId": "driver-consumerism",
@@ -787,7 +787,7 @@
               "text": "Politics conducted as a contest of strength between states and elites.",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 2152,
+              "yPosition": 1696,
               "connections": [
                 {
                   "targetId": "structure-dysfunctional-democracy",
@@ -819,7 +819,7 @@
               "text": "Principles a person or group treats as worth acting on, together with plans to put them into practice. COM-B calls evaluations and plans reflective motivation; competitive environments can also shape which values spread. (Michie et al.; Schmachtenberger)",
               "color": "#E8EAF6",
               "width": 360,
-              "yPosition": 2976,
+              "yPosition": 2416,
               "connections": [],
               "provenance": "interpreted",
               "links": [
@@ -835,7 +835,7 @@
               "text": "A value becomes part of identity when it is examined, accepted as personally important and brought into line with the rest of the self. Self-Determination Theory distinguishes this from acting mainly for reward, approval or to avoid guilt. (Ryan & Deci)",
               "color": "#E8EAF6",
               "width": 360,
-              "yPosition": 3104,
+              "yPosition": 2496,
               "connections": [],
               "provenance": "interpreted",
               "links": [
@@ -851,7 +851,7 @@
               "text": "A sense that life and action matter within a larger orientation. Vervaeke argues that practices, community and a shared worldview once supported this orientation, and that their erosion contributes to a meaning crisis. (Vervaeke)",
               "color": "#E8EAF6",
               "width": 360,
-              "yPosition": 3224,
+              "yPosition": 2576,
               "connections": [],
               "provenance": "interpreted",
               "links": [
@@ -878,7 +878,7 @@
               "text": "The weakening of a society's shared ability to agree on what is true and what matters, so that it cannot respond well to its problems. Schmachtenberger ties it to an information environment that rewards outrage and certainty over understanding. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 8,
+              "yPosition": 24,
               "connections": [
                 {
                   "targetId": "structure-collective-freeze",
@@ -937,7 +937,7 @@
               "text": "Even where the problems are understood, the will to change course radically or to accept binding rules is missing.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 576,
+              "yPosition": 472,
               "connections": [
                 {
                   "targetId": "structure-dysfunctional-democracy",
@@ -953,7 +953,7 @@
               "text": "Racism, together with the structures and stories of domination that colonial rule left behind and that persist after it formally ended.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 272,
+              "yPosition": 336,
               "connections": [
                 {
                   "targetId": "structure-populism-narrative-warfare",
@@ -969,7 +969,7 @@
               "text": "\"If I don't do it, someone else will; I can't compete.\" Each actor does what is locally rational and the combined result is bad for all; escaping it takes agreement, transparency and enforcement together. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 760,
+              "yPosition": 680,
               "connections": [
                 {
                   "targetId": "structure-lack-of-wisdom",
@@ -997,7 +997,7 @@
               "text": "\"If we tax or regulate, companies move to the Bahamas.\" Competition between places or firms pushes standards down.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 760,
+              "yPosition": 680,
               "connections": [],
               "provenance": "verbatim",
               "groupId": "group-multipolar-traps",
@@ -1014,7 +1014,7 @@
               "text": "Privatise the upside, externalise the risk: in a first-mover race, whoever ships first captures the gain while others bear the costs. Schmachtenberger counts market races among the main forms of multipolar trap. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 880,
+              "yPosition": 752,
               "connections": [],
               "provenance": "verbatim",
               "groupId": "group-multipolar-traps",
@@ -1031,7 +1031,7 @@
               "text": "For example nuclear weapons, AI and bioweapons: each side builds up because the other might. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 992,
+              "yPosition": 824,
               "connections": [],
               "provenance": "verbatim",
               "groupId": "group-multipolar-traps",
@@ -1048,7 +1048,7 @@
               "text": "Four mutually reinforcing features of modern economic life: consumerism, individualism, neoliberal capitalism and extractivism.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 2488,
+              "yPosition": 2088,
               "connections": [
                 {
                   "targetId": "structure-loss-of-community",
@@ -1085,7 +1085,7 @@
               "text": "Buying as the usual route to satisfaction. Markets sell \"pseudosatisfiers\" that deepen the hunger they promise to fill. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 2488,
+              "yPosition": 2088,
               "connections": [
                 {
                   "targetId": "driver-neoliberal-capitalism",
@@ -1108,7 +1108,7 @@
               "text": "Treating the person as a self-contained unit, which can loosen ties to community and shared responsibility.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 2608,
+              "yPosition": 2160,
               "connections": [
                 {
                   "targetId": "driver-neoliberal-capitalism",
@@ -1131,7 +1131,7 @@
               "text": "An economic order centred on markets, competition and growth.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 2720,
+              "yPosition": 2232,
               "connections": [
                 {
                   "targetId": "driver-extractivism",
@@ -1159,7 +1159,7 @@
               "text": "Taking resources and value out of nature and communities faster than they can renew.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 2840,
+              "yPosition": 2296,
               "connections": [],
               "provenance": "verbatim",
               "groupId": "group-consumerism",
@@ -1176,7 +1176,7 @@
               "text": "\"Extremely motivated and capable to accrue power.\" The few actors at the top of a power law who maximise their returns on agency at scale and shape the incentives and values of everyone else. Whether advanced AI becomes another such agent is a live concern. (Schmachtenberger)",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 1224,
+              "yPosition": 992,
               "connections": [
                 {
                   "targetId": "structure-power-politics",
@@ -1198,7 +1198,7 @@
               "text": "A social order in which men hold most power and authority.",
               "color": "#FFE0B2",
               "width": 300,
-              "yPosition": 1352,
+              "yPosition": 1168,
               "connections": [
                 {
                   "targetId": "outcome-sexual-assault",
@@ -1230,7 +1230,7 @@
               "text": "Direct war between major powers, with the violence and genocide that accompany it.",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 1712,
+              "yPosition": 1344,
               "connections": [],
               "provenance": "verbatim"
             },
@@ -1240,7 +1240,7 @@
               "text": "Technologies, such as engineered pathogens or advanced AI, that could end humanity's future.",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 312,
+              "yPosition": 304,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -1256,7 +1256,7 @@
               "text": "A destabilised climate driven by greenhouse-gas emissions.",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 1344,
+              "yPosition": 1040,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -1272,7 +1272,7 @@
               "text": "A widespread loss of purpose, belonging and orientation. Vervaeke argues that it has deep cultural and historical roots and underlies other crises. (Vervaeke)",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 2024,
+              "yPosition": 1728,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -1288,7 +1288,7 @@
               "text": "Waste and toxins released into air, water and soil.",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 1464,
+              "yPosition": 1120,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -1304,7 +1304,7 @@
               "text": "Running down finite stocks, such as fossil fuels, that the economy depends on.",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 1592,
+              "yPosition": 1200,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -1320,7 +1320,7 @@
               "text": "Destruction of ecosystems on a large scale.",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 968,
+              "yPosition": 720,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -1336,7 +1336,7 @@
               "text": "Sexual violence: any sexual act, or attempt of one, committed against a person without their consent.",
               "color": "#FCE4EC",
               "width": 300,
-              "yPosition": 1216,
+              "yPosition": 968,
               "connections": [],
               "provenance": "verbatim",
               "links": [
@@ -1352,7 +1352,7 @@
               "text": "Democratic institutions that no longer turn what citizens want into workable decisions.",
               "color": "#F0F4C3",
               "width": 260,
-              "yPosition": 1096,
+              "yPosition": 816,
               "connections": [],
               "provenance": "verbatim"
             }
@@ -1371,7 +1371,7 @@
               "text": "Maté argues that the same unmet needs also contribute to individual illness, including chronic and autoimmune disease. (Maté)",
               "color": "#ECEFF1",
               "width": 330,
-              "yPosition": 0,
+              "yPosition": 16,
               "connections": [],
               "provenance": "verbatim"
             }
