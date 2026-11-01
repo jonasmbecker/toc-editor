@@ -47,7 +47,7 @@ function buildHeaderNodes(doc: ToCDocument, layout: DocumentLayout): SectionHead
     return {
       id: `section-${header.sectionIndex}`,
       type: 'sectionHeader',
-      position: { x: header.x, y: 0 },
+      position: { x: header.x, y: header.y },
       width: header.width,
       height: SECTION_HEADER_HEIGHT,
       draggable: false,
@@ -221,7 +221,7 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
   ]
   const headerBoxes = layout.sectionHeaders.map((h) => ({
     x: h.x,
-    y: 0,
+    y: h.y,
     w: h.width,
     h: SECTION_HEADER_HEIGHT,
   }))

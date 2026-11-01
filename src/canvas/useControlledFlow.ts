@@ -107,7 +107,11 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     (_event, node) => {
       if (node.type === 'group') {
         const home = graph.nodes.find((n) => n.id === node.id)
-        const target = resolveDropTarget(doc, node.position.x + (node.width ?? 0) / 2)
+        const target = resolveDropTarget(
+          doc,
+          node.position.x + (node.width ?? 0) / 2,
+          node.position.y,
+        )
         const rawDy = home ? node.position.y - home.position.y : 0
         const deltaY = Math.sign(rawDy) * snapYPosition(Math.abs(rawDy))
         transform(`move ${node.id}`, (document) =>
@@ -119,7 +123,7 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
       }
       if (node.type !== 'card') return
       const centerX = node.position.x + (node.width ?? 0) / 2
-      const target = resolveDropTarget(doc, centerX)
+      const target = resolveDropTarget(doc, centerX, node.position.y)
       const location = findNodeLocation(doc, node.id)
       const kept = snap.finish(node.id)
       const staysPut =

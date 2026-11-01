@@ -4,6 +4,7 @@ import { CHANNEL_MIN, CLEAR, MAX_STEP } from '../canvas/edgeRouting'
 import { GROUP_HEAD, GROUP_PAD } from '../canvas/groupFlow'
 import { isGroupNode } from '../state/groups'
 import { mapAllNodes } from '../state/tree'
+import { ROW_GAP } from './columns'
 
 /**
  * "Tidy layout": moves cards vertically inside their columns so connections run nearly straight.
@@ -99,6 +100,53 @@ function columnUnits(nodes: DocumentNode[], opts: AlignOptions): Unit[] {
 function buildColumns(doc: ToCDocument, opts: AlignOptions): Unit[][] {
   const columns = doc.sections.flatMap((section) => section.columns)
   return columns.map((column) => columnUnits(column.nodes, opts))
+}
+
+/** Where a document column sits on the canvas: its left-to-right slot (columns of different rows
+ * share slots) and its row, SPINE for the shared spine (every column of a flat map). */
+interface ColumnMeta {
+  slot: number
+  row: number
+}
+
+const SPINE = -1
+
+/** Slot and row of every document column, in document order (see `layoutDocument`). */
+function columnMeta(doc: ToCDocument): ColumnMeta[] {
+  const rowIndex = new Map((doc.rows ?? []).map((row, i) => [row.id, i]))
+  const nextSlot = new Map<number, number>()
+  const meta: ColumnMeta[] = []
+  for (const section of doc.sections) {
+    const row = section.row === undefined ? SPINE : (rowIndex.get(section.row) ?? SPINE)
+    for (let i = 0; i < section.columns.length; i++) {
+      const slot = nextSlot.get(row) ?? 0
+      nextSlot.set(row, slot + 1)
+      meta.push({ slot, row })
+    }
+  }
+  // The spine starts right of the widest row.
+  let rowSlots = 0
+  for (const [row, count] of nextSlot) if (row !== SPINE) rowSlots = Math.max(rowSlots, count)
+  return meta.map((m) => (m.row === SPINE ? { ...m, slot: m.slot + rowSlots } : m))
+}
+
+/** Pushes each row of a matrix down until it clears the row above by ROW_GAP, the room its
+ * header bars need. A flat map has no rows and is left alone. */
+function separateRows(columns: Unit[][], meta: ColumnMeta[]): void {
+  const byRow = new Map<number, Unit[]>()
+  columns.forEach((units, index) => {
+    const row = meta[index].row
+    if (row !== SPINE) byRow.set(row, [...(byRow.get(row) ?? []), ...units])
+  })
+  let floor = -Infinity
+  for (const row of [...byRow.keys()].sort((a, b) => a - b)) {
+    const units = byRow.get(row)!
+    if (units.length === 0) continue
+    const top = Math.min(...units.map((u) => u.top))
+    const shift = snapUp(Math.max(0, floor - top))
+    for (const unit of units) unit.top += shift
+    floor = Math.max(...units.map((u) => u.top + u.height)) + ROW_GAP
+  }
 }
 
 /** For every unit, the connections that tie it to a card in another column (both directions). */
@@ -199,13 +247,22 @@ interface Edge {
   toAnchor: number
   /** Index of the column pair the edge spans, so only edges between the same two columns can cross. */
   span: string
+  /** Left-to-right slots of the two ends (see `ColumnMeta`). */
   fromColumn: number
   toColumn: number
+  /** Row of the left end: a skip link only passes through its own row and the spine. */
+  fromRow: number
 }
 
-function buildEdges(columns: Unit[][], links: Map<Unit, Link[]>): Edge[] {
+function buildEdges(columns: Unit[][], meta: ColumnMeta[], links: Map<Unit, Link[]>): Edge[] {
   const columnOf = new Map<Unit, number>()
-  columns.forEach((units, index) => units.forEach((unit) => columnOf.set(unit, index)))
+  const rowOf = new Map<Unit, number>()
+  columns.forEach((units, index) =>
+    units.forEach((unit) => {
+      columnOf.set(unit, meta[index].slot)
+      rowOf.set(unit, meta[index].row)
+    }),
+  )
   const edges: Edge[] = []
   for (const [unit, list] of links) {
     for (const link of list) {
@@ -219,6 +276,7 @@ function buildEdges(columns: Unit[][], links: Map<Unit, Link[]>): Edge[] {
         span: `${a}:${b}`,
         fromColumn: a,
         toColumn: b,
+        fromRow: rowOf.get(unit)!,
       })
     }
   }
@@ -286,11 +344,15 @@ function pushDown(column: Unit[], index: number, by: number): void {
  * skips, at one common height. Tidy leaves 24px gaps, so for each such link
  * the cheapest height is picked and the cards below the gap in each skipped column are pushed
  * down just far enough. Other gaps keep their size. */
-function reserveChannels(columns: Unit[][], edges: Edge[]): void {
+function reserveChannels(columns: Unit[][], meta: ColumnMeta[], edges: Edge[]): void {
   const half = CHANNEL_GAP / 2
   const skips = edges.filter((e) => e.toColumn - e.fromColumn >= 2)
   if (skips.length === 0) return
-  const skipped = (e: Edge) => columns.slice(e.fromColumn + 1, e.toColumn)
+  const skipped = (e: Edge) =>
+    columns.filter((_, i) => {
+      const { slot, row } = meta[i]
+      return slot > e.fromColumn && slot < e.toColumn && (row === e.fromRow || row === SPINE)
+    })
   const heights = new Map<Edge, number>()
   for (const edge of skips) {
     const mid = (edge.from.top + edge.fromAnchor + edge.to.top + edge.toAnchor) / 2
@@ -359,9 +421,10 @@ function collectPositions(columns: Unit[][]): Map<string, number> {
 export function alignDocument(doc: ToCDocument, options: AlignOptions = {}): ToCDocument {
   const gap = options.gap ?? TIDY_GAP
   const columns = buildColumns(doc, options)
+  const meta = columnMeta(doc)
   const links = buildLinks(doc, columns)
   const units = columns.flat()
-  const edges = buildEdges(columns, links)
+  const edges = buildEdges(columns, meta, links)
   // Start from a canonical stack (document order, no gaps beyond TIDY_GAP) so the result depends
   // only on the diagram's structure, never on where the cards happen to sit: pressing Tidy again
   // gives the same layout. The sweeps can swing between neighbouring orders, so the least skewed
@@ -373,11 +436,13 @@ export function alignDocument(doc: ToCDocument, options: AlignOptions = {}): ToC
       cursor += unit.height + gap
     }
   }
+  separateRows(columns, meta)
   let best = units.map((unit) => unit.top)
   let bestCost = skew(edges)
   for (let pass = 0; pass < SWEEPS; pass++) {
     sweep(columns, links, gap, pass)
     for (const unit of units) unit.top = snapToGrid(unit.top)
+    separateRows(columns, meta)
     const cost = skew(edges)
     if (cost < bestCost) {
       bestCost = cost
@@ -385,7 +450,9 @@ export function alignDocument(doc: ToCDocument, options: AlignOptions = {}): ToC
     }
   }
   units.forEach((unit, i) => (unit.top = best[i]))
-  reserveChannels(columns, edges)
+  reserveChannels(columns, meta, edges)
+  // A channel can push a row's cards down into the row below: open the gap again.
+  separateRows(columns, meta)
   const positions = collectPositions(columns)
   return mapAllNodes(doc, (node) => {
     const y = positions.get(node.id)

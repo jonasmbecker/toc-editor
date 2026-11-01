@@ -12,8 +12,18 @@ interface Span {
   right: number
 }
 
-function sectionSpans(doc: ToCDocument): (Span & { sectionIndex: number })[] {
-  return layoutDocument(doc).sectionHeaders.map((h) => ({
+/** The sections a drop at height `y` can land in: in a matrix, the sections of the row whose band
+ * holds `y` plus the shared spine; in a flat map, all of them. */
+function sectionSpans(doc: ToCDocument, y?: number): (Span & { sectionIndex: number })[] {
+  const layout = layoutDocument(doc)
+  const band =
+    y === undefined
+      ? undefined
+      : (layout.rowBands.find((b) => y < b.bottom) ?? layout.rowBands[layout.rowBands.length - 1])
+  const headers = band
+    ? layout.sectionHeaders.filter((h) => h.row === undefined || h.row === band.rowId)
+    : layout.sectionHeaders
+  return headers.map((h) => ({
     sectionIndex: h.sectionIndex,
     left: h.x,
     right: h.x + h.width,
@@ -49,9 +59,10 @@ function nearestSpan<T extends Span>(spans: T[], x: number): T {
 /** Picks the section and column a card was dropped over, from its post-drag centre x. A column
  * with no nodes has no visual footprint (`layoutDocument` gives it zero width), so a drop over
  * one resolves to "append a new column" rather than guessing which invisible column was meant —
- * placing a node into a specific empty column is the node panel's job, not drag's. */
-export function resolveDropTarget(doc: ToCDocument, centerX: number): DropTarget {
-  const sections = sectionSpans(doc)
+ * placing a node into a specific empty column is the node panel's job, not drag's. In a matrix
+ * map `top`, the card's top edge, picks the row: a card stays in or moves to the row it is over. */
+export function resolveDropTarget(doc: ToCDocument, centerX: number, top?: number): DropTarget {
+  const sections = sectionSpans(doc, top)
   if (sections.length === 0) return { sectionIndex: 0, columnIndex: 0 }
   const section = nearestSpan(sections, centerX)
 

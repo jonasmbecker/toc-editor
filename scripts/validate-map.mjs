@@ -3,9 +3,10 @@
 //   node validate-map.mjs [path/to/content.json] [path/to/layout.json]
 // (defaults: map/content.json and map/layout.json in the working directory).
 //
-// This is the one copy. The editor's tests (src/files/validateMap.test.ts) run it against every
-// fixture and a set of broken maps and require it to agree with the editor's own schema, so the
-// two cannot drift; the theory repo's workflow checks out this repository and runs this file.
+// This is the master copy. The editor's tests (src/files/validateMap.test.ts) run it against
+// every fixture and a set of broken maps and require it to agree with the editor's own schema.
+// The theory repo keeps an identical copy at scripts/validate-map.mjs, so contributors can run
+// it without the editor; its workflow fails when that copy differs from this one.
 import { readFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
