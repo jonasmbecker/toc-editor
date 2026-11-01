@@ -41,12 +41,13 @@ describe('buildFlow routing and heads', () => {
   const { edges } = buildFlow(doc)
   const byId = (prefix: string) => edges.find((e) => e.id.startsWith(prefix))!
 
-  it('a one-way arrow pointing left takes the compact loop between adjacent columns in the normal colour with one head', () => {
+  it('a one-way arrow pointing left takes the compact loop between adjacent columns in the backward colour with one head', () => {
     const back = byId('b->a')
     expect(back.type).toBe('routed')
     expect(back.sourceHandle).toBe(LOOP_OUT_HANDLE)
     expect(back.targetHandle).toBe(LOOP_IN_HANDLE)
-    expect(back.markerEnd).toMatchObject({ color: '#5B5A5E' })
+    expect(back.markerEnd).toMatchObject({ color: '#8A8580' })
+    expect(back.data?.backward).toBe(true)
     expect(back.markerStart).toBeUndefined()
   })
 

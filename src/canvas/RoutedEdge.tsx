@@ -1,6 +1,5 @@
 import { BaseEdge, useStore, type EdgeProps, type ReactFlowState } from '@xyflow/react'
-import { useToCStore } from '../state/store'
-import { CANVAS_COLORS, edgeAppearance } from './config'
+import { edgeAppearance, edgeStroke } from './config'
 import {
   assignChannels,
   roundedPath,
@@ -60,12 +59,10 @@ function channelOf(s: ReactFlowState, id: string): number | undefined {
 /** A connection that skips columns or points back. A forward link threads through a free channel
  * between card rows in the columns it skips; a loop, or a link with no free channel, runs along a
  * corridor outside the cards (see `edgeRouting`). Either way it never passes through or behind a
- * card. Each skip link has its own colour, and with a card selected the links that touch it stay
- * bold while the other skip links fade back. */
+ * card. Each skip link has its own colour; with a card selected, links on its paths are drawn
+ * heavier and the rest fade back (see `pathHighlight`). */
 export function RoutedEdge({
   id,
-  source,
-  target,
   sourceX,
   sourceY,
   targetX,
@@ -75,7 +72,6 @@ export function RoutedEdge({
   markerEnd,
   markerStart,
 }: EdgeProps<ConnectionEdgeType>) {
-  const selectedNodeId = useToCStore((s) => s.selectedNodeId)
   const scene = useStore(readScene, sameScene)
   const channelY = useStore((s) => channelOf(s, id))
   const points = routePoints(
@@ -85,12 +81,8 @@ export function RoutedEdge({
     data?.lane ?? FALLBACK_LANE,
     channelY,
   )
-  const { stroke, dashArray, lineCap, width } = edgeAppearance(data ?? {})
-  const tinted = Boolean(data?.tint)
-  const color = selected ? CANVAS_COLORS.select : (data?.tint ?? stroke)
-  const touches = selectedNodeId === source || selectedNodeId === target
-  const faded = tinted && selectedNodeId != null && !touches
-  const drawn = tinted ? 2 : width
+  const appearance = edgeAppearance(data ?? {})
+  const { stroke, width, opacity } = edgeStroke(data, appearance, selected)
 
   return (
     <BaseEdge
@@ -99,11 +91,11 @@ export function RoutedEdge({
       markerEnd={markerEnd}
       markerStart={markerStart}
       style={{
-        stroke: color,
-        strokeWidth: selected || (tinted && touches) ? drawn + 1 : drawn,
-        strokeDasharray: dashArray,
-        strokeLinecap: lineCap,
-        opacity: faded ? 0.15 : 1,
+        stroke,
+        strokeWidth: width,
+        strokeDasharray: appearance.dashArray,
+        strokeLinecap: appearance.lineCap,
+        opacity,
       }}
     />
   )

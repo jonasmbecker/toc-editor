@@ -72,7 +72,12 @@ export const CANVAS_COLORS = {
   secondary: '#6B6966',
   primary: '#2F2D2E',
   background: '#F7F5F0',
+  /** A one-way link back to an earlier column. */
+  backward: '#8A8580',
 } as const
+
+/** Long dashes for loops and links pointing back, distinct from the confidence dashes. */
+export const BACKWARD_DASH = '10 5'
 
 export interface EdgeAppearance {
   stroke: string
@@ -97,11 +102,17 @@ export function edgeAppearance(data: {
   confidence?: number
   provenance?: ConnectionProvenance
   isFeedbackLoop?: boolean
+  backward?: boolean
 }): EdgeAppearance {
   const { dashArray, lineCap } = CONFIDENCE_BANDS[bandForConfidence(data.confidence)]
+  // Loops and links pointing back are long-dashed (a confidence dash still wins) and lighter,
+  // so what feeds what reads from the solid forward lines (Jonas, 2026-11-01).
+  const back = { dashArray: dashArray ?? BACKWARD_DASH, lineCap, width: 1.4 }
   if (data.isFeedbackLoop) {
-    const loop = { stroke: CANVAS_COLORS.accent, dashArray, lineCap, width: 2 }
-    return { ...loop, showArrow: true, bothWays: true }
+    return { ...back, stroke: CANVAS_COLORS.accent, showArrow: true, bothWays: true }
+  }
+  if (data.backward) {
+    return { ...back, stroke: CANVAS_COLORS.backward, showArrow: true, bothWays: false }
   }
   return {
     stroke: CANVAS_COLORS.edge,
@@ -110,6 +121,25 @@ export function edgeAppearance(data: {
     width: 1.6,
     showArrow: true,
     bothWays: false,
+  }
+}
+
+/** Opacity of a link off every path through the selected card. */
+export const OFF_PATH_OPACITY = 0.12
+
+/** Stroke colour, width and opacity of a drawn link: the selection colour when picked, the
+ * tint (skip-link or layer colour) otherwise; with a card selected, links on its paths are drawn
+ * heavier and the rest fade back. Shared by both edge components. */
+export function edgeStroke(
+  data: { tint?: string; emphasis?: 'on' | 'off' } | undefined,
+  appearance: EdgeAppearance,
+  selected: boolean | undefined,
+): { stroke: string; width: number; opacity: number } {
+  const width = data?.tint ? 2 : appearance.width
+  return {
+    stroke: selected ? CANVAS_COLORS.select : (data?.tint ?? appearance.stroke),
+    width: selected || data?.emphasis === 'on' ? width + 1 : width,
+    opacity: data?.emphasis === 'off' ? OFF_PATH_OPACITY : 1,
   }
 }
 

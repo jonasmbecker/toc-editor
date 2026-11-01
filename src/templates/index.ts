@@ -1,5 +1,6 @@
 import statusQuoJson from './status-quo-metacrisis.json'
-import type { ToCDocument } from '../model/schema'
+import comBMatrixJson from './com-b-matrix-draft.json'
+import { MAP_FORMAT_VERSION, type ToCDocument } from '../model/schema'
 import { importFromJson } from '../files/import'
 import { loadTheoryMap } from '../repo/mapSource'
 
@@ -13,7 +14,7 @@ function blank(
   return {
     color: '#2F2D2E',
     title,
-    schemaVersion: 1,
+    version: MAP_FORMAT_VERSION,
     diagramType,
     textSize: 1,
     curvature: 0.5,
@@ -49,6 +50,16 @@ export function statusQuoMetacrisis(): ToCDocument {
   return result.document
 }
 
+/** The f009 COM-B draft as a matrix (format version 2): a separate map, so the default map stays
+ * exactly as it is until Jonas decides at the publish checkpoint. */
+export function comBMatrixDraft(): ToCDocument {
+  const result = importFromJson(comBMatrixJson)
+  if (!result.ok) {
+    throw new Error(`Bundled COM-B matrix draft failed to parse: ${result.errors.join('; ')}`)
+  }
+  return result.document
+}
+
 /** The default map: the theory repo's `main`, or the bundled copy when GitHub cannot give a
  * map the editor can open (offline, blocked, rate-limited, a 404, a file that fails the
  * schema). Never rejects and never says why: opening the map must not depend on GitHub. */
@@ -80,6 +91,13 @@ export const TEMPLATES: TemplateInfo[] = [
     isFeatured: true,
     create: statusQuoMetacrisis,
     load: loadDefaultMap,
+  },
+  {
+    id: 'com-b-matrix',
+    name: 'COM-B matrix (draft)',
+    description:
+      'The same theory in three layers: what people can do, what the world lets them do, what they want.',
+    create: comBMatrixDraft,
   },
   {
     id: 'blank-toc',

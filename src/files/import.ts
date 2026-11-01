@@ -1,4 +1,5 @@
 import { parseDocument, type ParseIssue, type ToCDocument } from '../model/schema'
+import { migrateDocument } from '../model/migrate'
 import { collapseMutualLoops } from '../model/normalize'
 import { normalizeGroups } from '../state/groups'
 
@@ -56,7 +57,10 @@ function describeIssues(issues: ParseIssue[]): string[] {
 }
 
 export function importFromJson(raw: unknown): ImportResult {
-  const result = parseDocument(raw)
+  // Older formats are brought up to date first, so validation only ever sees the current one.
+  const migrated = migrateDocument(raw)
+  if (!migrated.ok) return { ok: false, errors: migrated.errors }
+  const result = parseDocument(migrated.value)
   if (!result.ok) return { ok: false, errors: describeIssues(result.issues) }
   // Older files store a both-ways arrow as two flagged connections; the tool keeps one.
   return { ok: true, document: normalizeGroups(collapseMutualLoops(result.document)) }

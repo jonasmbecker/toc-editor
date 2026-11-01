@@ -19,9 +19,15 @@ import type { CardNodeType } from './CardNode'
 import type { SectionHeaderNodeType } from './SectionHeaderNode'
 import type { GroupNodeData, GroupNodeType } from './GroupNode'
 import { fitGroupHeights } from './groupFlow'
-import { endpointIds, refOfEdge, withSelection } from './selection'
+import { endpointIds, pathHighlight, refOfEdge, withSelection } from './selection'
+import type { RowBandNodeType } from './RowBandNode'
 
-type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType
+type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType | RowBandNodeType
+
+/** Space-separated class names, the empty ones left out. */
+function classes(...names: (string | false | undefined)[]): string | undefined {
+  return names.filter(Boolean).join(' ') || undefined
+}
 
 /**
  * Wires a derived `FlowGraph` into React Flow's controlled node/edge state. Selection is driven
@@ -49,6 +55,21 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
   // keystroke in a panel.
   const resync = useCallback(() => {
     const endpoints = endpointIds(graph.edges, selectedConnection)
+    // A selected card lights every path through it; the cards and links off them fade.
+    const home = graph.nodes.find(
+      (node) => node.type === 'group' && node.data.memberIds.includes(selectedNodeId ?? ''),
+    )
+    const path = selectedNodeId
+      ? pathHighlight(graph.edges, home ? [selectedNodeId, home.id] : [selectedNodeId])
+      : null
+    // A link to a group reaches every card in it, so a lit group keeps its cards lit.
+    const lit = new Set(path?.nodes)
+    for (const node of graph.nodes) {
+      if (node.type === 'group' && lit.has(node.id))
+        node.data.memberIds.forEach((id) => lit.add(id))
+    }
+    const dims = (node: FlowNode) =>
+      path !== null && (node.type === 'card' || node.type === 'group') && !lit.has(node.id)
     setNodes((previous) => {
       const measuredById = new Map(previous.map((node) => [node.id, node.measured]))
       return fitGroupHeights(
@@ -58,12 +79,23 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
             ...node,
             ...(measured ? { measured } : {}),
             selected: node.id === selectedNodeId,
-            className: endpoints.has(node.id) ? 'toc-endpoint' : undefined,
+            className: classes(
+              node.className,
+              endpoints.has(node.id) && 'toc-endpoint',
+              dims(node) && 'toc-off-path',
+            ),
           }
         }),
       )
     })
-    setEdges(graph.edges.map((edge) => withSelection(edge, selectedConnection)))
+    setEdges(
+      graph.edges.map((edge) => {
+        const shown = withSelection(edge, selectedConnection)
+        if (!path) return shown
+        const emphasis = path.edges.has(edge.id) ? ('on' as const) : ('off' as const)
+        return { ...shown, data: { ...shown.data!, emphasis } }
+      }),
+    )
   }, [graph, selectedNodeId, selectedConnection, setNodes, setEdges])
 
   useEffect(resync, [resync])
@@ -107,7 +139,11 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     (_event, node) => {
       if (node.type === 'group') {
         const home = graph.nodes.find((n) => n.id === node.id)
-        const target = resolveDropTarget(doc, node.position.x + (node.width ?? 0) / 2)
+        const target = resolveDropTarget(
+          doc,
+          node.position.x + (node.width ?? 0) / 2,
+          node.position.y,
+        )
         const rawDy = home ? node.position.y - home.position.y : 0
         const deltaY = Math.sign(rawDy) * snapYPosition(Math.abs(rawDy))
         transform(`move ${node.id}`, (document) =>
@@ -119,7 +155,7 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
       }
       if (node.type !== 'card') return
       const centerX = node.position.x + (node.width ?? 0) / 2
-      const target = resolveDropTarget(doc, centerX)
+      const target = resolveDropTarget(doc, centerX, node.position.y)
       const location = findNodeLocation(doc, node.id)
       const kept = snap.finish(node.id)
       const staysPut =

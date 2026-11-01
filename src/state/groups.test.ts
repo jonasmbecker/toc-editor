@@ -193,7 +193,10 @@ describe('round trip and ToCB export', () => {
     if (!parsed.ok) throw new Error(parsed.errors.join('; '))
     const again = importFromJson(json)
     if (!again.ok) throw new Error('import failed')
-    expect(toFullJson(again.document, new Date(0))).toEqual(toFullJson(document, new Date(0)))
+    // Import stamps the current format version; nothing else changes.
+    expect(toFullJson(again.document, new Date(0))).toEqual(
+      toFullJson({ ...document, version: 2 }, new Date(0)),
+    )
   })
 
   it('compatible export flattens groups: no group node, no group keys, arrows land on a card', () => {

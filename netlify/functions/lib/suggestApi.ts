@@ -6,6 +6,7 @@ import {
   type MapContent,
   type MapLayout,
 } from '../../../src/files/split'
+import { migrateDocument } from '../../../src/model/migrate'
 import { parseDocument, type ToCDocument } from '../../../src/model/schema'
 import { GithubError } from './githubApp'
 import { failure, json, readJsonBody, type BodyLimit } from './http'
@@ -104,8 +105,10 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-/** Merges the two files and checks the result with the editor's own schema. The returned
- * document is the merged input, not zod's copy, so key order stays as the contributor sent it. */
+/** Merges the two files, brings them up to the current format as the editor does on import, and
+ * checks the result with the editor's own schema. The returned document is the migrated input,
+ * not zod's copy, so key order stays as the contributor sent it. Migrating both sides is what
+ * keeps a version 1 map on main from reading as a "version" change in every suggestion. */
 function documentFrom(content: unknown, layout: unknown): Checked<ToCDocument> {
   if (!isObject(content) || !isObject(layout) || !isObject(layout.cards)) {
     return bad('The map files have the wrong shape.')
@@ -117,9 +120,11 @@ function documentFrom(content: unknown, layout: unknown): Checked<ToCDocument> {
     return bad('The map files have the wrong shape.')
   }
   if (!merged.ok) return bad(merged.errors.slice(0, 3).join(' '))
-  const parsed = parseDocument(merged.document)
+  const migrated = migrateDocument(merged.document)
+  if (!migrated.ok) return bad(`The map is not valid: ${migrated.errors.slice(0, 3).join('; ')}`)
+  const parsed = parseDocument(migrated.value)
   if (!parsed.ok) return bad(`The map is not valid: ${parsed.errors.slice(0, 3).join('; ')}`)
-  return { ok: true, value: merged.document }
+  return { ok: true, value: migrated.value as ToCDocument }
 }
 
 function parseJson(value: string): unknown {

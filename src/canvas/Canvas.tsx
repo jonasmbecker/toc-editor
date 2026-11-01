@@ -30,9 +30,19 @@ import { NodeReadPanel } from '../panels/NodeReadPanel'
 import { ConnectionDetails } from '../panels/ConnectionDetails'
 import { StageBar } from '../share/StageBar'
 import { CANVAS_COLORS } from './config'
+import { RowBandNode } from './RowBandNode'
+import { ALL_LAYERS, LayerTabs } from './LayerTabs'
+import { rowColor } from './layers'
+import { useLayerView } from './useLayerView'
 import './canvas.css'
+import './layers.css'
 
-const nodeTypes = { card: CardNode, sectionHeader: SectionHeaderNode, group: GroupNode }
+const nodeTypes = {
+  card: CardNode,
+  sectionHeader: SectionHeaderNode,
+  group: GroupNode,
+  rowBand: RowBandNode,
+}
 const edgeTypes = { connection: ConnectionEdge, routed: RoutedEdge }
 
 /** The in-progress line while dragging from a handle: dashed, in the selection colour. */
@@ -54,6 +64,8 @@ function keyOf(ref: ConnectionRef | null): string {
 
 function minimapColor(node: Node): string {
   if (node.type === 'sectionHeader') return CANVAS_COLORS.primary
+  // A row band is a background: drawn faint, so the cards in front of it stay visible.
+  if (node.type === 'rowBand') return 'rgba(201, 196, 186, 0.15)'
   return node.type === 'group' ? 'rgba(201, 196, 186, 0.35)' : '#C9C4BA'
 }
 
@@ -116,7 +128,9 @@ function SelectionPanels() {
 export function Canvas({ onHome }: { onHome: () => void }) {
   const doc = useToCStore((state) => state.document)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
-  const graph = useMemo(() => buildFlow(doc), [doc])
+  // In a matrix map one layer is drawn on top and re-tidied for the view; edits go to `doc`.
+  const { layer, shown, choose, trackHeights } = useLayerView(doc)
+  const graph = useMemo(() => buildFlow(shown, { activeRow: layer }), [shown, layer])
   const needs = useMemo(() => computeNeedMixes(doc).needs, [doc])
   const flow = useControlledFlow(doc, graph)
   const connect = useConnectFlow()
@@ -138,7 +152,10 @@ export function Canvas({ onHome }: { onHome: () => void }) {
         <ReactFlow
           nodes={flow.nodes}
           edges={flow.edges}
-          onNodesChange={flow.onNodesChange}
+          onNodesChange={(changes) => {
+            flow.onNodesChange(changes)
+            trackHeights(changes)
+          }}
           onEdgesChange={flow.onEdgesChange}
           onSelectionChange={flow.onSelectionChange}
           onNodeDragStart={flow.onNodeDragStart}
@@ -152,7 +169,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           edgeTypes={edgeTypes}
           connectionLineStyle={connectionLineStyle}
           connectionRadius={CONNECTION_SNAP_RADIUS}
-          nodesDraggable={!isReadOnly}
+          nodesDraggable={!isReadOnly && layer === undefined}
           nodesConnectable={!isReadOnly}
           deleteKeyCode={null}
           // Default elevation lifts a selected node above the rest, which would draw a selected
@@ -171,6 +188,14 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           <ZoomMarker />
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
+        {doc.rows?.length ? (
+          <LayerTabs
+            rows={doc.rows}
+            active={layer ?? ALL_LAYERS}
+            colorOf={(rowId) => rowColor(doc, rowId)}
+            onChange={choose}
+          />
+        ) : null}
         <Legend needs={needs} />
         <NeedColoursSwitch />
         <button

@@ -79,7 +79,7 @@ describe('server autosave', () => {
     fetchMock.mockImplementationOnce(() => reply(200, { revision: 6 }))
     rename('Mine again')
     await afterDelay()
-    expect(sentBody(2)).toEqual({ data: { ...theirs, title: 'Mine again' }, revision: 5 })
+    expect(sentBody(2)).toEqual({ data: { ...theirs, title: 'Mine again', version: 2 }, revision: 5 })
     expect(useShareStore.getState()).toMatchObject({ revision: 6, status: 'saved' })
   })
 

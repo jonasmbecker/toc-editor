@@ -104,6 +104,7 @@ describe('templates and filenames', () => {
     for (const t of TEMPLATES) expect(t.create()).not.toBe(t.create())
     expect(TEMPLATES.map((t) => t.id)).toEqual([
       'status-quo-metacrisis',
+      'com-b-matrix',
       'blank-toc',
       'blank-status-quo',
     ])
@@ -120,7 +121,7 @@ describe('templates and filenames', () => {
     expect(template.sections.map((s) => s.title)).toEqual(
       fixture.document.sections.map((s) => s.title),
     )
-    expect(template.schemaVersion).toBe(1)
+    expect(template.version).toBe(2)
     expect(template.diagramType).toBe('status-quo')
     const pairings = template.sections
       .flatMap((s) => s.columns.flatMap((c) => c.nodes))

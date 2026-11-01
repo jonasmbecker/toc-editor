@@ -1,0 +1,1431 @@
+{
+  "color": "#2F2D2E",
+  "title": "Theory of the Status Quo: From Unmet Childhood Needs to the Metacrisis",
+  "sections": [
+    {
+      "title": "Unmet Needs (Brown & NARM)",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "need-brown-felt-safety",
+              "title": "Felt safety",
+              "text": "The child's experience of being safe, created by a caregiver who protects it. Brown counts it among five conditions for secure attachment, and it supports every area of development. (Brown)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 0,
+              "connections": [
+                {
+                  "targetId": "group-connection-substrategies",
+                  "confidence": 50,
+                  "assumptions": "",
+                  "evidence": "",
+                  "id": "c-trhp"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
+                  "label": "Brown & Elliott: The Five Primary Conditions that Promote Secure Attachment (handout)"
+                }
+              ]
+            },
+            {
+              "id": "need-brown-attunement",
+              "title": "Attunement",
+              "text": "Feeling seen and known: a caregiver who responds accurately to the child's behaviour, to its inner states and to what it is ready for at its stage. It supports self-esteem and the child's growing understanding of its own mind. (Brown)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 232,
+              "connections": [
+                {
+                  "targetId": "need-narm-attunement",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
+                  "label": "Brown & Elliott: The Five Primary Conditions that Promote Secure Attachment (handout)"
+                }
+              ]
+            },
+            {
+              "id": "need-brown-comfort-soothing",
+              "title": "Comfort & Soothing",
+              "text": "Felt comfort: a caregiver who soothes and reassures the child when it is distressed. Repeated over time, this supports the child's ability to regulate its own emotions. (Brown)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 496,
+              "connections": [
+                {
+                  "targetId": "need-narm-trust",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
+                  "label": "Brown & Elliott: The Five Primary Conditions that Promote Secure Attachment (handout)"
+                }
+              ]
+            },
+            {
+              "id": "need-brown-support-explore",
+              "title": "Support to explore",
+              "text": "Felt support for the child's best self: a caregiver who encourages it to explore, both outwardly in the world and inwardly in its own interests and abilities. It supports the development of the child's own self. (Brown)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 712,
+              "connections": [
+                {
+                  "targetId": "need-narm-autonomy",
+                  "assumptions": "No visible linking symbol for this row (unlike the rows above) — pairing inferred from position only.",
+                  "evidence": "Same-row pairing in the drawing.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
+                  "label": "Brown & Elliott: The Five Primary Conditions that Promote Secure Attachment (handout)"
+                }
+              ]
+            },
+            {
+              "id": "need-brown-expressed-delight",
+              "title": "Expressed delight",
+              "text": "Feeling valued: a caregiver who visibly delights in the child. It supports the child's self-esteem and its awareness of its own mind. (Brown)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 1008,
+              "connections": [
+                {
+                  "targetId": "need-narm-love-sexuality",
+                  "assumptions": "No visible linking symbol for this row — pairing inferred from position only.",
+                  "evidence": "Same-row pairing in the drawing.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://therapistuncensored.com/wp-content/uploads/2017/06/BrownElliott.5Conditions-1.pdf",
+                  "label": "Brown & Elliott: The Five Primary Conditions that Promote Secure Attachment (handout)"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "nodes": [
+            {
+              "id": "group-connection-substrategies",
+              "title": "Connection",
+              "text": "Survival style built around the need for contact. Where early connection was frightening or absent, a person may protect themselves by withdrawing from contact and from their own body and feelings. (Heller, NARM)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 72,
+              "connections": [],
+              "provenance": "verbatim",
+              "kind": "group"
+            },
+            {
+              "id": "need-narm-thinking",
+              "title": "Thinking",
+              "text": "Retreating into analysis and abstraction to keep feeling at a distance, so that the person stays rational and emotionally detached.",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 144,
+              "connections": [
+                {
+                  "targetId": "strategy-control-supremacy",
+                  "confidence": 50,
+                  "assumptions": "",
+                  "evidence": "",
+                  "id": "c-vdkl"
+                }
+              ],
+              "provenance": "verbatim",
+              "groupId": "group-connection-substrategies"
+            },
+            {
+              "id": "need-narm-spiritualizing",
+              "title": "Spiritualizing",
+              "text": "Using spiritual ideas or practice as an escape, so that painful feelings are avoided rather than felt.",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 72,
+              "connections": [
+                {
+                  "targetId": "strategy-numbing",
+                  "confidence": 50,
+                  "assumptions": "",
+                  "evidence": "",
+                  "id": "c-u4g8"
+                }
+              ],
+              "provenance": "verbatim",
+              "groupId": "group-connection-substrategies"
+            },
+            {
+              "id": "need-narm-attunement",
+              "title": "Attunement",
+              "text": "Survival style built around the need to have one's own needs recognised and met. Where caregivers did not sense them, a person may learn to stop noticing, or asking for, what they need. (Heller, NARM)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 232,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
+                }
+              ]
+            },
+            {
+              "id": "need-narm-trust",
+              "title": "Trust",
+              "text": "Survival style built around the need to rely on others. Where care proved unreliable or manipulative, a person may come to depend on control and self-sufficiency instead. (Heller, NARM)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 496,
+              "connections": [
+                {
+                  "targetId": "strategy-craving-power",
+                  "evidence": "Arrow from Trust box to \"craving for power / 'nobody can be trusted'\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "strategy-compulsive-soothing",
+                  "evidence": "Arrow from Trust box to \"compulsive soothing\" strategy.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
+                }
+              ]
+            },
+            {
+              "id": "need-narm-autonomy",
+              "title": "Autonomy",
+              "text": "Survival style built around the need to become one's own person. Where independence met pressure or guilt, a person may struggle to set limits and to say what they want. (Heller, NARM)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 712,
+              "connections": [
+                {
+                  "targetId": "strategy-greed-more",
+                  "evidence": "Arrow from Autonomy box to \"greed, craving for more\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "strategy-fear-dependence-separation",
+                  "evidence": "Arrow from Autonomy box to \"fear of dependence, urge towards separation\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
+                }
+              ]
+            },
+            {
+              "id": "need-narm-love-sexuality",
+              "title": "Love-Sexuality",
+              "text": "Survival style built around the need to be loved and to bring heart and body together. Where love felt conditional, a person may feel unlovable or keep affection and sexuality apart. (Heller, NARM)",
+              "color": "#E3F2FD",
+              "width": 232,
+              "yPosition": 1008,
+              "connections": [
+                {
+                  "targetId": "strategy-perform-worth",
+                  "evidence": "Arrow from Love-Sexuality box to \"perform (to be loved, worthy): career, status, money\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "strategy-narcissism",
+                  "evidence": "Arrow from Love-Sexuality box to \"narcissism\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "strategy-hunting-sexual-attraction",
+                  "evidence": "Arrow from Love-Sexuality box to \"hunting sexual attraction\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://narmtraining.com/what-is-narm/",
+                  "label": "NARM Training Institute: What is NARM?"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "row": "capability",
+      "note": "Placement disputed: COM-B would put unmet needs in automatic Motivation (Michie et al. 2011). This map follows the capability thesis (Jonas Becker)."
+    },
+    {
+      "title": "Survival Strategies (Coping Mechanisms)",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "strategy-numbing",
+              "title": "Craving for numbing",
+              "text": "Addiction to substances, entertainment, ADHD. Tuning out what one feels: addiction is read as an attempt to relieve pain, and ADHD as a tuning-out rooted in early stress rather than simple pleasure-seeking. (Maté)",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 24,
+              "connections": [
+                {
+                  "targetId": "driver-erosion-sensemaking",
+                  "assumptions": "Several strategy boxes converge on this area of the drivers column; exact 1:1 source→target pairing not fully resolvable from the photo.",
+                  "evidence": "Arrow drawn from this strategy cluster into the metacrisis-drivers column, landing near \"erosion of collective sensemaking\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "driver-collective-disempowerment",
+                  "evidence": "Short arrows from numbing into the first drivers (open question 5).",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "strategy-control-supremacy",
+              "title": "Craving for control, safety, immunity",
+              "text": "Seeking safety through dominance: if I rule, nobody can hurt me. Collectively it can appear as claims of superiority over others.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 280,
+              "connections": [
+                {
+                  "targetId": "driver-racism-colonialism",
+                  "evidence": "Arrow from this strategy toward \"racism + (post)colonialism\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "driver-lacking-willingness-change",
+                  "evidence": "Short arrow from control/supremacy into the first drivers.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "strategy-scapegoating",
+              "title": "Scape goating, projection the blame",
+              "text": "Placing a feeling too large to bear, often shame, onto another person or group and blaming them for it. Done collectively it can license hostility and violence.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 384,
+              "connections": [
+                {
+                  "targetId": "driver-racism-colonialism",
+                  "evidence": "Arrow from this strategy toward \"racism + (post)colonialism\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Scapegoating",
+                  "label": "Wikipedia: Scapegoating"
+                }
+              ]
+            },
+            {
+              "id": "strategy-craving-seen",
+              "title": "Craving to be seen?",
+              "text": "A hunger for attention and recognition, which may trace back to not having been sufficiently seen as a child.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 200,
+              "connections": [],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "strategy-craving-power",
+              "title": "Craving for power: \"nobody can be trusted\"",
+              "text": "Having concluded that nobody can be trusted, a person seeks power over people and situations so as not to depend on them.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 496,
+              "connections": [
+                {
+                  "targetId": "group-multipolar-traps",
+                  "assumptions": "Where people expect others to defect, each defects first, and the race locks in. Nobody can afford to hold back while the others do not.\n\nPeople do escape such dilemmas. Trust, reciprocity and a good reputation let groups hold together even when each member could gain by defecting (Ostrom). These work together with institutions, not instead of them: members who monitor each other, sanctions that start mild and grow with repeated offences, and rules made by the people they govern (Ostrom).",
+                  "evidence": "",
+                  "provenance": "interpreted",
+                  "evidenceBlocks": [
+                    {
+                      "text": "Ostrom's 1998 presidential address to the American Political Science Association reviews experiments and field studies in which people in social dilemmas cooperate far more than the textbook prediction of universal defection. She argues that trust, reciprocity and reputation explain this, and that they are strengthened by institutions that let people see what others do and respond to it.",
+                      "supports": [
+                        2
+                      ],
+                      "links": [
+                        {
+                          "url": "https://doi.org/10.2307/2585925",
+                          "label": "Elinor Ostrom, \"A Behavioral Approach to the Rational Choice Theory of Collective Action\", American Political Science Review 92(1), 1998"
+                        }
+                      ]
+                    },
+                    {
+                      "text": "Her 2009 Nobel lecture gives an accessible account of the same argument: communities have governed shared resources through rules they made themselves, without relying only on a central state or on markets.",
+                      "supports": [
+                        2
+                      ],
+                      "links": [
+                        {
+                          "url": "https://www.nobelprize.org/prizes/economic-sciences/2009/ostrom/lecture/",
+                          "label": "Elinor Ostrom, \"Beyond Markets and States: Polycentric Governance of Complex Economic Systems\", Nobel Prize lecture, 2009"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "strategy-compulsive-soothing",
+              "title": "Compulsive soothing",
+              "text": "Food, work, shopping or similar habits used to calm the nervous system. Maté reads such habits as short-term relief from pain rather than a cure for it, which is why they tend to repeat. (Maté)",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 640,
+              "connections": [
+                {
+                  "targetId": "group-multipolar-traps",
+                  "evidence": "Crossing arrows from compulsive soothing on the board.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "group-consumerism",
+                  "evidence": "Crossing arrows from compulsive soothing on the board.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "strategy-greed-more",
+              "title": "Greed, craving for \"more\"",
+              "text": "A craving for more that can stay hungry however much arrives, because what is being sought is not what is being acquired.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 712,
+              "connections": [
+                {
+                  "targetId": "group-consumerism",
+                  "evidence": "Arrow into the bracketed consumerism/individualism/neoliberal-capitalism/extractivism cluster.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Greed",
+                  "label": "Wikipedia: Greed"
+                }
+              ]
+            },
+            {
+              "id": "strategy-fear-dependence-separation",
+              "title": "Fear of dependence, urge towards \"separation\"",
+              "text": "Needing others feels dangerous, so closeness is avoided and distance is treated as safety.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 824,
+              "connections": [
+                {
+                  "targetId": "group-consumerism",
+                  "evidence": "Arrow into the consumerism/individualism cluster.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "strategy-perform-worth",
+              "title": "Perform (to be loved, worthy)",
+              "text": "Pursuing career, status or money to earn love and worth, as if being loved depended on achievement.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 1040,
+              "connections": [
+                {
+                  "targetId": "driver-neoliberal-capitalism",
+                  "evidence": "One of two arrows leaving Perform on the board.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "driver-hyper-agents-ai",
+                  "evidence": "Second arrow leaving Perform on the board.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Contingent_self-esteem",
+                  "label": "Wikipedia: Contingent self-esteem"
+                }
+              ]
+            },
+            {
+              "id": "strategy-narcissism",
+              "title": "Narcissism",
+              "text": "A grand self-image that defends against feeling unworthy and depends on continued admiration. Maté describes it as arrested development from unmet early needs rather than a fixed trait. (Maté)",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 968,
+              "connections": [
+                {
+                  "targetId": "driver-hyper-agents-ai",
+                  "evidence": "Arrow toward \"hyper agents / AI\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Narcissism",
+                  "label": "Wikipedia: Narcissism"
+                }
+              ]
+            },
+            {
+              "id": "strategy-hunting-sexual-attraction",
+              "title": "Hunting sexual attraction",
+              "text": "Pursuing sexual attention, possibly as a substitute for love and recognition that went unmet.",
+              "color": "#FFF3E0",
+              "width": 330,
+              "yPosition": 1152,
+              "connections": [
+                {
+                  "targetId": "driver-patriarchy-sexism",
+                  "evidence": "Arrow toward \"patriarchy / sexism\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            }
+          ]
+        }
+      ],
+      "row": "capability",
+      "note": "Placement disputed: COM-B would put cravings and learned impulses in automatic Motivation (Michie et al. 2011). This map follows the capability thesis (Jonas Becker)."
+    },
+    {
+      "title": "Collective capacity",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "structure-intergenerational-war-trauma",
+              "title": "Intergenerational war trauma",
+              "text": "Trauma from war that can be passed on to children and grandchildren through parents' emotional availability, bodily tension and family culture.",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 16,
+              "connections": [
+                {
+                  "targetId": "structure-collective-freeze",
+                  "evidence": "Arrow on the board (approved row).",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Intergenerational_trauma",
+                  "label": "Wikipedia: Transgenerational trauma"
+                }
+              ]
+            },
+            {
+              "id": "structure-collective-freeze",
+              "title": "Collective 'freeze'",
+              "text": "A group that is overwhelmed shuts down and fails to act, like the freeze response in an individual. This is an analogy used for modelling, not an established finding.",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 152,
+              "connections": [
+                {
+                  "targetId": "structure-dysfunctional-democracy",
+                  "evidence": "Arrow toward \"dysfunctional democracy\" within the same column.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "structure-lack-of-wisdom",
+              "title": "Lack of wisdom",
+              "text": "Power that has outgrown the wisdom to use it. Schmachtenberger argues that wisdom involves restraint, and that restraint keeps losing to rivals who do not practise it. (Schmachtenberger)",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 480,
+              "connections": [
+                {
+                  "targetId": "outcome-extinction-risk-tech",
+                  "evidence": "Arrow toward \"extinction risk tech\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://consilienceproject.org/development-in-progress/",
+                  "label": "The Consilience Project: Development in Progress"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "row": "capability",
+      "note": "Collective capability by analogy with individual capability; wisdom also spans institutions and values."
+    },
+    {
+      "title": "Structures & Incentives",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "structure-populism-narrative-warfare",
+              "title": "Populism, narrative warfare",
+              "text": "Politics driven by simple us-versus-them stories and deliberate manipulation of what people believe.",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 1584,
+              "connections": [
+                {
+                  "targetId": "outcome-great-power-war",
+                  "evidence": "Arrow toward \"great power war / violence / genocide\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "structure-dysfunctional-democracy",
+                  "evidence": "Arrow points up from populism to dysfunctional democracy on the board.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Populism",
+                  "label": "Wikipedia: Populism"
+                }
+              ]
+            },
+            {
+              "id": "structure-debt-interest-financial-system",
+              "title": "Debt + interest financial system",
+              "text": "Money created as interest-bearing debt, so the system needs continual growth to be repaid. Debt papers over a widening gap between monetary claims and the energy and materials needed to honour them. (Hagens)",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 1384,
+              "connections": [
+                {
+                  "targetId": "structure-embedded-growth-obligation",
+                  "evidence": "Vertical arrow directly below, within the same column.",
+                  "provenance": "verbatim"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "structure-embedded-growth-obligation",
+              "title": "Embedded growth obligation",
+              "text": "An economy that must keep growing to stay stable, whether or not growth serves people or the planet: humanity as a growth-compelled, energy-hungry \"superorganism\". (Hagens)",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 1856,
+              "connections": [
+                {
+                  "targetId": "outcome-climate-breakdown",
+                  "evidence": "Arrow fanning out into the polycrisis column.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "outcome-resource-depletion",
+                  "evidence": "Arrow fanning out into the polycrisis column.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "outcome-pollution",
+                  "evidence": "Arrow fanning out into the polycrisis column.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Growth_imperative",
+                  "label": "Wikipedia: Growth imperative"
+                }
+              ]
+            },
+            {
+              "id": "structure-loss-of-community",
+              "title": "Loss of community",
+              "text": "Fewer lasting ties between people, with less mutual care and fewer shared places.",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 1960,
+              "connections": [
+                {
+                  "targetId": "outcome-meaning-crisis",
+                  "evidence": "Arrow toward \"meaning crisis\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "group-multipolar-traps",
+                  "assumptions": "Communities that can talk to each other, build trust and monitor their own rules can govern shared resources without a central state and without privatisation (Ostrom).\n\nWhere community erodes, that capacity is lost. Actors then have no way to agree on limits or to check that others keep to them, and they fall back into races.",
+                  "evidence": "",
+                  "id": "c-ocm1",
+                  "provenance": "interpreted",
+                  "evidenceBlocks": [
+                    {
+                      "text": "Ostrom's Governing the Commons (1990) compares cases of fishing grounds, pastures, forests and irrigation systems that local users managed for generations, and sets out the conditions under which such self-governance holds, among them clear boundaries, rules made by the users and mutual monitoring.",
+                      "supports": [
+                        1
+                      ],
+                      "links": [
+                        {
+                          "url": "https://doi.org/10.1017/CBO9780511807763",
+                          "label": "Elinor Ostrom, Governing the Commons, Cambridge University Press, 1990"
+                        }
+                      ]
+                    },
+                    {
+                      "text": "In laboratory experiments by Ostrom, Walker and Gardner (1992), groups playing a shared-resource game who could talk to each other cooperated far more than groups who could not, and communication alone sharply raised cooperation. The loss-of-capacity half of the mechanism (paragraph 2) is an inference from this work, not something these studies tested.",
+                      "supports": [
+                        1,
+                        2
+                      ],
+                      "links": [
+                        {
+                          "url": "https://doi.org/10.2307/1964229",
+                          "label": "Ostrom, Walker & Gardner, \"Covenants With and Without a Sword: Self-Governance Is Possible\", American Political Science Review 86(2), 1992"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Social_capital",
+                  "label": "Wikipedia: Social capital"
+                }
+              ]
+            },
+            {
+              "id": "structure-loss-of-spirituality",
+              "title": "Loss of spirituality",
+              "text": "The loss of shared practices that gave people meaning, awe and belonging. Vervaeke describes it as the loss of an \"ecology of practices\" that religion once supplied. (Vervaeke)",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 2216,
+              "connections": [
+                {
+                  "targetId": "outcome-meaning-crisis",
+                  "evidence": "Arrow toward \"meaning crisis\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "structure-marketing",
+              "title": "Marketing",
+              "text": "Deliberately triggering and shaping desire in order to raise consumption.",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 2072,
+              "connections": [
+                {
+                  "targetId": "driver-consumerism",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted",
+                  "isFeedbackLoop": true
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Marketing",
+                  "label": "Wikipedia: Marketing"
+                }
+              ]
+            },
+            {
+              "id": "structure-power-politics",
+              "title": "Power politics",
+              "text": "Politics conducted as a contest of strength between states and elites.",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 1696,
+              "connections": [
+                {
+                  "targetId": "structure-dysfunctional-democracy",
+                  "evidence": "Jonas: his \"deficient democracy\" card; Jonas, 2026-10-31.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Power_politics",
+                  "label": "Wikipedia: Power politics"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "row": "opportunity"
+    },
+    {
+      "title": "Reflective Motivation",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "motivation-values-commitments",
+              "title": "Values and commitments",
+              "text": "Principles a person or group treats as worth acting on, together with plans to put them into practice. COM-B calls evaluations and plans reflective motivation; competitive environments can also shape which values spread. (Michie et al.; Schmachtenberger)",
+              "color": "#E8EAF6",
+              "width": 360,
+              "yPosition": 2416,
+              "connections": [],
+              "provenance": "interpreted",
+              "links": [
+                {
+                  "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3096582/",
+                  "label": "Michie et al.: The behaviour change wheel"
+                }
+              ]
+            },
+            {
+              "id": "motivation-integrated-identity",
+              "title": "Integrated identity",
+              "text": "A value becomes part of identity when it is examined, accepted as personally important and brought into line with the rest of the self. Self-Determination Theory distinguishes this from acting mainly for reward, approval or to avoid guilt. (Ryan & Deci)",
+              "color": "#E8EAF6",
+              "width": 360,
+              "yPosition": 2496,
+              "connections": [],
+              "provenance": "interpreted",
+              "links": [
+                {
+                  "url": "https://selfdeterminationtheory.org/SDT/documents/2000_RyanDeci_SDT.pdf",
+                  "label": "Ryan & Deci: Self-Determination Theory"
+                }
+              ]
+            },
+            {
+              "id": "motivation-meaning-purpose",
+              "title": "Meaning and purpose",
+              "text": "A sense that life and action matter within a larger orientation. Vervaeke argues that practices, community and a shared worldview once supported this orientation, and that their erosion contributes to a meaning crisis. (Vervaeke)",
+              "color": "#E8EAF6",
+              "width": 360,
+              "yPosition": 2576,
+              "connections": [],
+              "provenance": "interpreted",
+              "links": [
+                {
+                  "url": "https://www.simongrant.org/philosophy/2023_metacrisis-conversation.html",
+                  "label": "The Psychological Drivers of the Metacrisis"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "row": "motivation",
+      "note": "Provisional: no sourced pathways from these cards into the drivers yet."
+    },
+    {
+      "title": "Metacrisis Drivers",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "driver-erosion-sensemaking",
+              "title": "Erosion of collective sensemaking",
+              "text": "The weakening of a society's shared ability to agree on what is true and what matters, so that it cannot respond well to its problems. Schmachtenberger ties it to an information environment that rewards outrage and certainty over understanding. (Schmachtenberger)",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 24,
+              "connections": [
+                {
+                  "targetId": "structure-collective-freeze",
+                  "evidence": "Arrow toward \"collective 'freeze'\" in the structures column.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "group-multipolar-traps",
+                  "assumptions": "Agreeing on rules for a shared problem starts with a shared picture of the problem and the ability to talk about it openly (Ostrom).\n\nWhen a society can no longer tell what is true and discuss it, that step fails, and coordination to escape races becomes harder.",
+                  "evidence": "",
+                  "id": "c-oes2",
+                  "provenance": "interpreted",
+                  "evidenceBlocks": [
+                    {
+                      "text": "Ostrom, Walker and Gardner (1992) found that small groups in a shared-resource experiment cooperated much more when they could communicate. This supports the claim for small groups only. Carrying it over to whole societies, where sensemaking works through media, institutions and large numbers of strangers, is an extension that these studies do not test.",
+                      "supports": [
+                        1
+                      ],
+                      "links": [
+                        {
+                          "url": "https://doi.org/10.2307/1964229",
+                          "label": "Ostrom, Walker & Gardner, \"Covenants With and Without a Sword: Self-Governance Is Possible\", American Political Science Review 86(2), 1992"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://consilienceproject.org/democracy-and-the-epistemic-commons/",
+                  "label": "The Consilience Project: Democracy and the Epistemic Commons"
+                }
+              ]
+            },
+            {
+              "id": "driver-collective-disempowerment",
+              "title": "Collective disempowerment",
+              "text": "Many people feel unable to change anything and stop trying (German: \"Ohnmacht\", powerlessness).",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 128,
+              "connections": [
+                {
+                  "targetId": "structure-collective-freeze",
+                  "evidence": "Arrow toward \"collective 'freeze'\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "driver-lacking-willingness-change",
+              "title": "Lacking willingness to radical change / regulate",
+              "text": "Even where the problems are understood, the will to change course radically or to accept binding rules is missing.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 472,
+              "connections": [
+                {
+                  "targetId": "structure-dysfunctional-democracy",
+                  "evidence": "Arrow toward \"dysfunctional democracy\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "driver-racism-colonialism",
+              "title": "Racism + (post)colonialism",
+              "text": "Racism, together with the structures and stories of domination that colonial rule left behind and that persist after it formally ended.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 336,
+              "connections": [
+                {
+                  "targetId": "structure-populism-narrative-warfare",
+                  "evidence": "Arrow toward \"populism, narrative warfare\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "group-multipolar-traps",
+              "title": "Multipolar traps",
+              "text": "\"If I don't do it, someone else will; I can't compete.\" Each actor does what is locally rational and the combined result is bad for all; escaping it takes agreement, transparency and enforcement together. (Schmachtenberger)",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 680,
+              "connections": [
+                {
+                  "targetId": "structure-lack-of-wisdom",
+                  "evidence": "Arrow toward \"lack of wisdom\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "structure-debt-interest-financial-system",
+                  "evidence": "Arrow toward \"debt + interest financial system\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "kind": "group",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Collective_action_problem",
+                  "label": "Wikipedia: Collective action problem"
+                }
+              ]
+            },
+            {
+              "id": "driver-race-to-bottom",
+              "title": "Race to the bottom",
+              "text": "\"If we tax or regulate, companies move to the Bahamas.\" Competition between places or firms pushes standards down.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 680,
+              "connections": [],
+              "provenance": "verbatim",
+              "groupId": "group-multipolar-traps",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Race_to_the_bottom",
+                  "label": "Wikipedia: Race to the bottom"
+                }
+              ]
+            },
+            {
+              "id": "driver-race-to-market",
+              "title": "Race to market",
+              "text": "Privatise the upside, externalise the risk: in a first-mover race, whoever ships first captures the gain while others bear the costs. Schmachtenberger counts market races among the main forms of multipolar trap. (Schmachtenberger)",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 752,
+              "connections": [],
+              "provenance": "verbatim",
+              "groupId": "group-multipolar-traps",
+              "links": [
+                {
+                  "url": "https://consilienceproject.org/development-in-progress/",
+                  "label": "The Consilience Project: Development in Progress"
+                }
+              ]
+            },
+            {
+              "id": "driver-arms-race",
+              "title": "Arms race",
+              "text": "For example nuclear weapons, AI and bioweapons: each side builds up because the other might. (Schmachtenberger)",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 824,
+              "connections": [],
+              "provenance": "verbatim",
+              "groupId": "group-multipolar-traps",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Arms_race",
+                  "label": "Wikipedia: Arms race"
+                }
+              ]
+            },
+            {
+              "id": "group-consumerism",
+              "title": "Consumerism cluster",
+              "text": "Four mutually reinforcing features of modern economic life: consumerism, individualism, neoliberal capitalism and extractivism.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 2088,
+              "connections": [
+                {
+                  "targetId": "structure-loss-of-community",
+                  "evidence": "Arrow toward \"loss of community\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "structure-loss-of-spirituality",
+                  "evidence": "Arrow toward \"loss of spirituality\".",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "outcome-climate-breakdown",
+                  "evidence": "Arrow drawn past the structure cards to Climate breakdown.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "outcome-pollution",
+                  "evidence": "Arrow drawn past the structure cards to Pollution.",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "outcome-resource-depletion",
+                  "evidence": "Arrow drawn past the structure cards to Resource & hydrocarbon depletion.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "kind": "group"
+            },
+            {
+              "id": "driver-consumerism",
+              "title": "Consumerism",
+              "text": "Buying as the usual route to satisfaction. Markets sell \"pseudosatisfiers\" that deepen the hunger they promise to fill. (Schmachtenberger)",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 2088,
+              "connections": [
+                {
+                  "targetId": "driver-neoliberal-capitalism",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "groupId": "group-consumerism",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Consumerism",
+                  "label": "Wikipedia: Consumerism"
+                }
+              ]
+            },
+            {
+              "id": "driver-individualism",
+              "title": "Individualism",
+              "text": "Treating the person as a self-contained unit, which can loosen ties to community and shared responsibility.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 2160,
+              "connections": [
+                {
+                  "targetId": "driver-neoliberal-capitalism",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "groupId": "group-consumerism",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Individualism",
+                  "label": "Wikipedia: Individualism"
+                }
+              ]
+            },
+            {
+              "id": "driver-neoliberal-capitalism",
+              "title": "Neoliberal capitalism",
+              "text": "An economic order centred on markets, competition and growth.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 2232,
+              "connections": [
+                {
+                  "targetId": "driver-extractivism",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                },
+                {
+                  "targetId": "structure-marketing",
+                  "evidence": "Jonas, 2026-10-31",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "groupId": "group-consumerism",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Neoliberalism",
+                  "label": "Wikipedia: Neoliberalism"
+                }
+              ]
+            },
+            {
+              "id": "driver-extractivism",
+              "title": "Extractivism",
+              "text": "Taking resources and value out of nature and communities faster than they can renew.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 2296,
+              "connections": [],
+              "provenance": "verbatim",
+              "groupId": "group-consumerism",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Extractivism",
+                  "label": "Wikipedia: Extractivism"
+                }
+              ]
+            },
+            {
+              "id": "driver-hyper-agents-ai",
+              "title": "Hyper agents / AI",
+              "text": "\"Extremely motivated and capable to accrue power.\" The few actors at the top of a power law who maximise their returns on agency at scale and shape the incentives and values of everyone else. Whether advanced AI becomes another such agent is a live concern. (Schmachtenberger)",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 992,
+              "connections": [
+                {
+                  "targetId": "structure-power-politics",
+                  "evidence": "Arrow toward \"power politics\".",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://civilizationemerging.com/media/daniel-schmachtenberger-bend-not-break-maximum-power-hyper-agents/",
+                  "label": "Civilization Emerging: Bend Not Break, Maximum Power & Hyper Agents (Schmachtenberger)"
+                }
+              ]
+            },
+            {
+              "id": "driver-patriarchy-sexism",
+              "title": "Patriarchy / sexism",
+              "text": "A social order in which men hold most power and authority.",
+              "color": "#FFE0B2",
+              "width": 300,
+              "yPosition": 1168,
+              "connections": [
+                {
+                  "targetId": "outcome-sexual-assault",
+                  "assumptions": "Low-medium confidence — this may instead route through an unlabelled structural node.",
+                  "evidence": "Drawn closer to the polycrisis column than the structures column; arrow appears to run fairly directly to \"sexual assault\", skipping the structures column.",
+                  "provenance": "interpreted"
+                }
+              ],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Patriarchy",
+                  "label": "Wikipedia: Patriarchy"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Polycrisis outcomes (civilizational health)",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "outcome-great-power-war",
+              "title": "Great power war / violence / genocide",
+              "text": "Direct war between major powers, with the violence and genocide that accompany it.",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 1344,
+              "connections": [],
+              "provenance": "verbatim"
+            },
+            {
+              "id": "outcome-extinction-risk-tech",
+              "title": "Extinction risk from tech",
+              "text": "Technologies, such as engineered pathogens or advanced AI, that could end humanity's future.",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 304,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Global_catastrophic_risk",
+                  "label": "Wikipedia: Global catastrophic risk"
+                }
+              ]
+            },
+            {
+              "id": "outcome-climate-breakdown",
+              "title": "Climate breakdown",
+              "text": "A destabilised climate driven by greenhouse-gas emissions.",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 1040,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Climate_change",
+                  "label": "Wikipedia: Climate change"
+                }
+              ]
+            },
+            {
+              "id": "outcome-meaning-crisis",
+              "title": "Meaning crisis",
+              "text": "A widespread loss of purpose, belonging and orientation. Vervaeke argues that it has deep cultural and historical roots and underlies other crises. (Vervaeke)",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 1728,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://www.johnvervaeke.com/",
+                  "label": "John Vervaeke: Awakening from the Meaning Crisis"
+                }
+              ]
+            },
+            {
+              "id": "outcome-pollution",
+              "title": "Pollution",
+              "text": "Waste and toxins released into air, water and soil.",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 1120,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Pollution",
+                  "label": "Wikipedia: Pollution"
+                }
+              ]
+            },
+            {
+              "id": "outcome-resource-depletion",
+              "title": "Resource & hydrocarbon depletion",
+              "text": "Running down finite stocks, such as fossil fuels, that the economy depends on.",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 1200,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Resource_depletion",
+                  "label": "Wikipedia: Resource depletion"
+                }
+              ]
+            },
+            {
+              "id": "outcome-ecocide",
+              "title": "Ecocide",
+              "text": "Destruction of ecosystems on a large scale.",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 720,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Ecocide",
+                  "label": "Wikipedia: Ecocide"
+                }
+              ]
+            },
+            {
+              "id": "outcome-sexual-assault",
+              "title": "Sexual assault",
+              "text": "Sexual violence: any sexual act, or attempt of one, committed against a person without their consent.",
+              "color": "#FCE4EC",
+              "width": 300,
+              "yPosition": 968,
+              "connections": [],
+              "provenance": "verbatim",
+              "links": [
+                {
+                  "url": "https://en.wikipedia.org/wiki/Sexual_violence",
+                  "label": "Wikipedia: Sexual violence"
+                }
+              ]
+            },
+            {
+              "id": "structure-dysfunctional-democracy",
+              "title": "Dysfunctional democracy",
+              "text": "Democratic institutions that no longer turn what citizens want into workable decisions.",
+              "color": "#F0F4C3",
+              "width": 260,
+              "yPosition": 816,
+              "connections": [],
+              "provenance": "verbatim"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Marginal Notes",
+      "columns": [
+        {
+          "nodes": [
+            {
+              "id": "annotation-mate-health-crisis",
+              "title": "Side note: Maté's health-crisis path",
+              "text": "Maté argues that the same unmet needs also contribute to individual illness, including chronic and autoimmune disease. (Maté)",
+              "color": "#ECEFF1",
+              "width": 330,
+              "yPosition": 16,
+              "connections": [],
+              "provenance": "verbatim"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "textSize": 1,
+  "curvature": 0.5,
+  "columnPadding": 48,
+  "sectionPadding": 48,
+  "_metadata": {
+    "exportedAt": "2026-10-29",
+    "sourceDrawing": "tocs/theory-of-metacrisis_v2.jpeg",
+    "digitizedBy": "Claude, at Jonas's request, 2026-10-29",
+    "schemaExtensions": [
+      "Added optional per-node field `provenance`: \"verbatim\" (label read directly off the drawing) or \"interpreted\" (Jonas's own uncertainty, e.g. a question mark he drew).",
+      "Added optional per-connection field `provenance`: \"verbatim\" (arrow unambiguous and directly between these two boxes), \"verbatim-structure\" (a same-row pairing symbol, not a causal arrow), or \"interpreted\" (arrow direction/endpoints inferred with some uncertainty from a photographed whiteboard).",
+      "Added optional per-connection field `isFeedbackLoop: true` to mark a drawn bidirectional (two-headed) arrow. It is stored once, on one node, and means the arrow has a head at each end; a one-way arrow that merely points back to an earlier column carries no flag. 2026-10-29: the consumerism cluster <-> marketing arrow, previously stored as two flagged connections (one on each node), was collapsed into the single connection on the consumerism cluster (45 -> 44 connections); the twin's evidence text was appended as a further block. A theoryofchangebuilder.com-compatible export expands it back into the mutual pair.",
+      "No change to the existing `connections[].targetId` mechanism — it already allows any node to point at any other node, which is what makes feedback loops representable without a schema change.",
+      "Reserved (currently empty) top-level field `interventionLinks: []` for the later feature: an intervention theory of change will add entries here of the shape {interventionTocId, targetsNodeIds: [...], note}, linking back to specific node ids in this status-quo map without modifying this file's own nodes.",
+      "These are additive, optional fields — a file with none of them (e.g. a plain theoryofchangebuilder.com export) remains fully valid, and a file using them should still open correctly in theoryofchangebuilder.com with the extra fields simply ignored.",
+      "Added optional per-node field `layer`: \"capability\", \"opportunity\" or \"motivation\". It is set only on cards left of the shared Metacrisis drivers and Polycrisis outcomes spine."
+    ],
+    "v2Changes": [
+      "2026-10-31: v2 fidelity pass against the whiteboard photo; approved by Jonas 2026-10-31. See inbox note.",
+      "2026-10-31, Jonas: the NARM 'Connection' card became the group holding Thinking and Spiritualizing; Dysfunctional democracy moved to Polycrisis outcomes"
+    ],
+    "combiDraft": [
+      "2026-10-31: draft three-layer COM-B classification following Jonas Becker's requested capability framing.",
+      "Needs, NARM survival styles and coping strategies are Capability in this draft; their standard COM-B placement dispute is recorded in inbox/com-b-matrix-content.md.",
+      "This draft does not replace map/content.json.",
+      "2026-11-01: converted to map format version 2 by the editor's migration. Layers are now rows; the Capability cards of Structures & Incentives form the Collective capacity section; placement disputes are section notes."
+    ]
+  },
+  "version": 2,
+  "diagramType": "status-quo",
+  "interventionLinks": [],
+  "rows": [
+    {
+      "id": "capability",
+      "title": "Capability",
+      "question": "What people can do"
+    },
+    {
+      "id": "opportunity",
+      "title": "Opportunity",
+      "question": "What the world lets them do"
+    },
+    {
+      "id": "motivation",
+      "title": "Motivation",
+      "question": "What they want"
+    }
+  ]
+}
