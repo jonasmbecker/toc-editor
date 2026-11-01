@@ -72,8 +72,11 @@ const CORRIDOR_STEP = 10
 /** Corner radius of the arcs. */
 const RADIUS = 16
 
-function crossesHeader(headers: Rect[], x: number): boolean {
-  return headers.some((h) => x >= h.x && x <= h.x + h.w)
+/** Whether a line climbing from height `y` to the corridor above the map at `x` would cross a
+ * header bar. Only bars above `y` count: in a matrix the header bars of a lower row are not in
+ * the way of a row drawn above it. In a flat map every bar sits at the top, so any bar at `x`. */
+function crossesHeader(headers: Rect[], x: number, y: number): boolean {
+  return headers.some((h) => x >= h.x && x <= h.x + h.w && h.y < y)
 }
 
 function step(count: number): number {
@@ -92,7 +95,9 @@ export function assignLanes(links: RouteLink[], headers: Rect[]): Map<string, La
     else {
       const forward = l.tc > l.sc
       const above =
-        forward && !crossesHeader(headers, l.sx + CLEAR) && !crossesHeader(headers, l.tx - CLEAR)
+        forward &&
+        !crossesHeader(headers, l.sx + CLEAR, l.sy) &&
+        !crossesHeader(headers, l.tx - CLEAR, l.ty)
       outer.push({ ...l, above })
     }
   }

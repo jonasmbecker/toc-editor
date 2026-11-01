@@ -1,0 +1,122 @@
+/* The matrix view (version 2 maps with rows): row bands, layer tabs, faded cards. The layer
+   colour goes on the band, its label and the links; a card's left edge keeps its need colour. */
+
+.toc-row-band {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--toc-row-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--toc-row-color) 22%, transparent);
+  pointer-events: none;
+}
+
+.toc-row-band--active {
+  background: color-mix(in srgb, var(--toc-row-color) 10%, transparent);
+  border-color: color-mix(in srgb, var(--toc-row-color) 45%, transparent);
+}
+
+.toc-row-band__label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 148px;
+  padding: 16px 12px;
+  border-left: 4px solid var(--toc-row-color);
+  margin: 12px 0 0 8px;
+  /* Same adaptive size as card titles, so the label stays readable zoomed out. */
+  font-size: clamp(13px, calc(13px / var(--toc-zoom, 1)), 22px);
+  color: #2f2d2e;
+}
+
+.toc-row-band__title {
+  font-weight: 700;
+  font-size: 1.25em;
+  color: var(--toc-row-color);
+}
+
+.toc-row-band__question {
+  font-style: italic;
+}
+
+.toc-row-band__count,
+.toc-row-band__hidden {
+  font-size: 0.85em;
+  color: #6b6966;
+}
+
+.toc-row-band__hidden {
+  font-weight: 600;
+}
+
+/* Cards of the layers not chosen, and cards off every path through the selected card. */
+.toc-ghost,
+.toc-off-path {
+  opacity: 0.28;
+  transition: opacity 120ms ease;
+}
+
+.toc-layer-tabs {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.toc-layer-tabs__list {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #e2ded6;
+  box-shadow: 0 2px 8px rgba(47, 45, 46, 0.08);
+}
+
+.toc-layer-tabs__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2d2e;
+  cursor: pointer;
+}
+
+.toc-layer-tabs__tab:hover {
+  background: #f7f5f0;
+}
+
+.toc-layer-tabs__tab[aria-selected='true'] {
+  background: #2f2d2e;
+  color: #fff;
+}
+
+.toc-layer-tabs__tab:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.toc-layer-tabs__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.toc-layer-tabs__hint {
+  margin: 0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  color: #6b6966;
+}

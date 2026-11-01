@@ -19,9 +19,15 @@ import type { CardNodeType } from './CardNode'
 import type { SectionHeaderNodeType } from './SectionHeaderNode'
 import type { GroupNodeData, GroupNodeType } from './GroupNode'
 import { fitGroupHeights } from './groupFlow'
-import { endpointIds, refOfEdge, withSelection } from './selection'
+import { endpointIds, pathHighlight, refOfEdge, withSelection } from './selection'
+import type { RowBandNodeType } from './RowBandNode'
 
-type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType
+type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType | RowBandNodeType
+
+/** Space-separated class names, the empty ones left out. */
+function classes(...names: (string | false | undefined)[]): string | undefined {
+  return names.filter(Boolean).join(' ') || undefined
+}
 
 /**
  * Wires a derived `FlowGraph` into React Flow's controlled node/edge state. Selection is driven
@@ -49,6 +55,16 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
   // keystroke in a panel.
   const resync = useCallback(() => {
     const endpoints = endpointIds(graph.edges, selectedConnection)
+    // A selected card lights every path through it; the cards and links off them fade.
+    const path = selectedNodeId ? pathHighlight(graph.edges, selectedNodeId) : null
+    // A link to a group reaches every card in it, so a lit group keeps its cards lit.
+    const lit = new Set(path?.nodes)
+    for (const node of graph.nodes) {
+      if (node.type === 'group' && lit.has(node.id))
+        node.data.memberIds.forEach((id) => lit.add(id))
+    }
+    const dims = (node: FlowNode) =>
+      path !== null && (node.type === 'card' || node.type === 'group') && !lit.has(node.id)
     setNodes((previous) => {
       const measuredById = new Map(previous.map((node) => [node.id, node.measured]))
       return fitGroupHeights(
@@ -58,12 +74,23 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
             ...node,
             ...(measured ? { measured } : {}),
             selected: node.id === selectedNodeId,
-            className: endpoints.has(node.id) ? 'toc-endpoint' : undefined,
+            className: classes(
+              node.className,
+              endpoints.has(node.id) && 'toc-endpoint',
+              dims(node) && 'toc-off-path',
+            ),
           }
         }),
       )
     })
-    setEdges(graph.edges.map((edge) => withSelection(edge, selectedConnection)))
+    setEdges(
+      graph.edges.map((edge) => {
+        const shown = withSelection(edge, selectedConnection)
+        if (!path) return shown
+        const emphasis = path.edges.has(edge.id) ? ('on' as const) : ('off' as const)
+        return { ...shown, data: { ...shown.data!, emphasis } }
+      }),
+    )
   }, [graph, selectedNodeId, selectedConnection, setNodes, setEdges])
 
   useEffect(resync, [resync])

@@ -1,5 +1,5 @@
 import { BaseEdge, getBezierPath, type Edge, type EdgeProps } from '@xyflow/react'
-import { CANVAS_COLORS, edgeAppearance, type ConnectionProvenance } from './config'
+import { edgeAppearance, edgeStroke, type ConnectionProvenance } from './config'
 import type { ConnectionRef } from '../state/connections'
 import type { Lane } from './edgeRouting'
 
@@ -9,8 +9,14 @@ export interface ConnectionEdgeData extends Record<string, unknown> {
   isFeedbackLoop?: boolean
   /** Slots of a routed edge in the gaps and the corridor, assigned in `buildFlow`. */
   lane?: Lane
-  /** Colour of a column-skipping link, so it can be told apart from the lines beside it. */
+  /** Colour of a column-skipping link, so it can be told apart from the lines beside it, or in
+   * a matrix the colour of the layer the link leaves. */
   tint?: string
+  /** A one-way link pointing back to an earlier column: drawn lighter and dashed, so the
+   * forward flow stays readable (Jonas, 2026-11-01). */
+  backward?: boolean
+  /** With a card selected: 'on' for a link on one of its paths, 'off' for the rest. */
+  emphasis?: 'on' | 'off'
   /** Where this edge lives in the document, so a click can open it in the details panel. The
    * same `ConnectionRef` the store and the panel use. */
   ref: ConnectionRef
@@ -43,8 +49,8 @@ export function ConnectionEdge({
     targetY,
     targetPosition,
   })
-  const { stroke, dashArray, lineCap, width } = edgeAppearance(data ?? {})
-  const color = selected ? CANVAS_COLORS.select : stroke
+  const appearance = edgeAppearance(data ?? {})
+  const { stroke, width, opacity } = edgeStroke(data, appearance, selected)
 
   return (
     <BaseEdge
@@ -52,10 +58,11 @@ export function ConnectionEdge({
       markerEnd={markerEnd}
       markerStart={markerStart}
       style={{
-        stroke: color,
-        strokeWidth: selected ? width + 1 : width,
-        strokeDasharray: dashArray,
-        strokeLinecap: lineCap,
+        stroke,
+        strokeWidth: width,
+        strokeDasharray: appearance.dashArray,
+        strokeLinecap: appearance.lineCap,
+        opacity,
       }}
     />
   )

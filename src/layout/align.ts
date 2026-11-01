@@ -28,6 +28,9 @@ export interface AlignOptions {
   /** Measured card heights by node id; cards without an entry use DEFAULT_CARD_HEIGHT. */
   heights?: ReadonlyMap<string, number>
   gap?: number
+  /** In a matrix, the row whose links the spine lines up with: a spine card linked to this row
+   * ignores its links to the other rows, so this row's lines into the spine run straight. */
+  priorityRow?: string
 }
 
 interface Slot {
@@ -128,6 +131,26 @@ function columnMeta(doc: ToCDocument): ColumnMeta[] {
   let rowSlots = 0
   for (const [row, count] of nextSlot) if (row !== SPINE) rowSlots = Math.max(rowSlots, count)
   return meta.map((m) => (m.row === SPINE ? { ...m, slot: m.slot + rowSlots } : m))
+}
+
+/** Drops, from every spine unit linked to the priority row, its links to the other rows (see
+ * `AlignOptions.priorityRow`). Only where the spine looks for its place: the rows keep theirs. */
+function prioritise(
+  doc: ToCDocument,
+  columns: Unit[][],
+  meta: ColumnMeta[],
+  links: Map<Unit, Link[]>,
+  priorityRow: string,
+): void {
+  const priority = (doc.rows ?? []).findIndex((row) => row.id === priorityRow)
+  if (priority === -1) return
+  const rowOf = new Map<Unit, number>()
+  columns.forEach((units, index) => units.forEach((unit) => rowOf.set(unit, meta[index].row)))
+  for (const [unit, list] of links) {
+    if (rowOf.get(unit) !== SPINE) continue
+    const kept = list.filter((link) => [SPINE, priority].includes(rowOf.get(link.other)!))
+    if (kept.some((link) => rowOf.get(link.other) === priority)) links.set(unit, kept)
+  }
 }
 
 /** Pushes each row of a matrix down until it clears the row above by ROW_GAP, the room its
@@ -423,6 +446,7 @@ export function alignDocument(doc: ToCDocument, options: AlignOptions = {}): ToC
   const columns = buildColumns(doc, options)
   const meta = columnMeta(doc)
   const links = buildLinks(doc, columns)
+  if (options.priorityRow !== undefined) prioritise(doc, columns, meta, links, options.priorityRow)
   const units = columns.flat()
   const edges = buildEdges(columns, meta, links)
   // Start from a canonical stack (document order, no gaps beyond TIDY_GAP) so the result depends

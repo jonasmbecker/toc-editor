@@ -39,3 +39,54 @@ export function withSelection(
     markerStart: recolour(edge.markerStart),
   }
 }
+
+export interface PathHighlight {
+  /** Every card on a path through the selected one, the selected card included. */
+  nodes: Set<string>
+  /** Ids of the edges on those paths. */
+  edges: Set<string>
+}
+
+/** Cards a breadth-first walk reaches from `start` over `next`. */
+function reach(start: string, next: Map<string, string[]>): Set<string> {
+  const seen = new Set([start])
+  const queue = [start]
+  while (queue.length > 0) {
+    for (const id of next.get(queue.pop()!) ?? []) {
+      if (!seen.has(id)) {
+        seen.add(id)
+        queue.push(id)
+      }
+    }
+  }
+  return seen
+}
+
+/**
+ * Every path a card is part of: all it feeds, downstream, and all that feeds it, upstream,
+ * following forward links only, so a loop or a link back cannot pull the whole map in. A loop or
+ * back link is still lit when both its ends are on the paths. Works on any map (Jonas,
+ * 2026-11-01: "super useful in general").
+ */
+export function pathHighlight(edges: ConnectionEdgeType[], selectedId: string): PathHighlight {
+  const forward = new Map<string, string[]>()
+  const backward = new Map<string, string[]>()
+  for (const edge of edges) {
+    if (edge.data?.backward || edge.data?.isFeedbackLoop) continue
+    forward.set(edge.source, [...(forward.get(edge.source) ?? []), edge.target])
+    backward.set(edge.target, [...(backward.get(edge.target) ?? []), edge.source])
+  }
+  const down = reach(selectedId, forward)
+  const up = reach(selectedId, backward)
+  const nodes = new Set([...down, ...up])
+  const onPath = (edge: ConnectionEdgeType) => {
+    if (edge.data?.backward || edge.data?.isFeedbackLoop) {
+      return nodes.has(edge.source) && nodes.has(edge.target)
+    }
+    return (
+      (down.has(edge.source) && down.has(edge.target)) ||
+      (up.has(edge.source) && up.has(edge.target))
+    )
+  }
+  return { nodes, edges: new Set(edges.filter(onPath).map((edge) => edge.id)) }
+}

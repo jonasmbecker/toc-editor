@@ -29,6 +29,11 @@ const ROWS = [
     label: 'Both ways (feedback loop)',
     appearance: edgeAppearance({ isFeedbackLoop: true }),
   },
+  {
+    key: 'back',
+    label: 'Points back to an earlier column',
+    appearance: edgeAppearance({ backward: true }),
+  },
 ]
 
 export function Legend({ needs }: { needs: NeedMixResult['needs'] }) {

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  BACKWARD_DASH,
   bandForConfidence,
   CANVAS_COLORS,
   confidenceSentence,
@@ -29,8 +30,11 @@ describe('edgeAppearance', () => {
     expect(low.bothWays).toBe(true)
     expect(edgeAppearance({ confidence: 10 }).bothWays).toBe(false)
     expect(low.dashArray).toBe('2 5')
-    expect(edgeAppearance({ isFeedbackLoop: true }).dashArray).toBeUndefined()
-    expect(edgeAppearance({ isFeedbackLoop: true, confidence: 90 }).dashArray).toBeUndefined()
+    // Loops are long-dashed so the forward flow reads first; a confidence dash still wins.
+    expect(edgeAppearance({ isFeedbackLoop: true }).dashArray).toBe(BACKWARD_DASH)
+    expect(edgeAppearance({ isFeedbackLoop: true, confidence: 90 }).dashArray).toBe(BACKWARD_DASH)
+    const back = edgeAppearance({ backward: true })
+    expect([back.stroke, back.dashArray, back.bothWays]).toEqual([CANVAS_COLORS.backward, BACKWARD_DASH, false])
   })
 
   it('confidence sentences name the band and the value; unrated has its own line', () => {

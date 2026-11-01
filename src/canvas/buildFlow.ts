@@ -23,6 +23,8 @@ import { needSegments } from './needLook'
 import type { ConnectionEdgeData, ConnectionEdgeType } from './ConnectionEdge'
 import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from './anchors'
 import { assignLanes, type Rect, type RouteLink } from './edgeRouting'
+import { layerView } from './layers'
+import type { RowBandNodeType } from './RowBandNode'
 
 export interface DroppedConnection {
   sourceId: string
@@ -30,7 +32,7 @@ export interface DroppedConnection {
 }
 
 export interface FlowGraph {
-  nodes: (CardNodeType | SectionHeaderNodeType | GroupNodeType)[]
+  nodes: (CardNodeType | SectionHeaderNodeType | GroupNodeType | RowBandNodeType)[]
   edges: ConnectionEdgeType[]
   /** Connections whose `targetId` doesn't resolve to any node in the document. Surfaced rather
    * than silently skipped, so an imported file that lost an edge somewhere says so instead of
@@ -85,7 +87,7 @@ function buildCardNodes(
  * selection blue is left out). Feedback loops keep their rust accent. */
 const SKIP_PALETTE = ['#B45309', '#0F766E', '#7C3AED', '#BE185D', '#15803D', '#0369A1']
 
-type PositionById =Map<string, { x: number; y: number; width: number }>
+type PositionById = Map<string, { x: number; y: number; width: number }>
 
 type Route = 'flow' | 'stack-down' | 'stack-up' | 'routed' | 'near-loop'
 
@@ -138,9 +140,15 @@ function buildEdges(
         return
       }
       const route = routeFor(connection.targetId, node.id, positions, columns)
-      const skip = route === 'routed' && !connection.isFeedbackLoop
+      const backward =
+        !connection.isFeedbackLoop &&
+        (columns.get(connection.targetId) ?? 0) < (columns.get(node.id) ?? 0)
+      const skip = route === 'routed' && !connection.isFeedbackLoop && !backward
       const tint = skip ? SKIP_PALETTE[skipCount++ % SKIP_PALETTE.length] : undefined
-      const appearance = { ...edgeAppearance(connection), ...(tint ? { stroke: tint, width: 2 } : {}) }
+      const appearance = {
+        ...edgeAppearance({ ...connection, backward }),
+        ...(tint ? { stroke: tint, width: 2 } : {}),
+      }
       edges.push({
         id: `${node.id}->${connection.targetId}#${connection.id ?? index}`,
         source: node.id,
@@ -153,6 +161,7 @@ function buildEdges(
           confidence: connection.confidence,
           provenance: connection.provenance,
           isFeedbackLoop: connection.isFeedbackLoop,
+          ...(backward ? { backward } : {}),
           ref: { sourceId: node.id, index },
           tint,
         } satisfies ConnectionEdgeData,
@@ -201,7 +210,12 @@ function columnIndexById(layout: DocumentLayout): Map<string, number> {
 
 /** Converts a parsed document into React Flow's node/edge shape. Positions come entirely from
  * `layoutDocument`; this function only maps data across, it does no layout math of its own. */
-export function buildFlow(doc: ToCDocument): FlowGraph {
+/** What the canvas is showing: in a matrix map, the one layer chosen, or every layer. */
+export interface FlowView {
+  activeRow?: string
+}
+
+export function buildFlow(doc: ToCDocument, view: FlowView = {}): FlowGraph {
   const layout = layoutDocument(doc)
   const allNodes = doc.sections.flatMap((section) =>
     section.columns.flatMap((column) => column.nodes),
@@ -214,11 +228,8 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
   for (const group of groups) positionByNodeId.set(group.id, groupBox(group))
   const cards = allNodes.filter((node) => !isGroupNode(node))
 
-  const nodes = [
-    ...buildHeaderNodes(doc, layout),
-    ...groups,
-    ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc)),
-  ]
+  const cardNodes = buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc))
+  const nodes = [...buildHeaderNodes(doc, layout), ...groups, ...cardNodes]
   const headerBoxes = layout.sectionHeaders.map((h) => ({
     x: h.x,
     y: h.y,
@@ -232,5 +243,13 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
     headerBoxes,
   )
 
-  return { nodes, edges, droppedConnections: dropped }
+  if (!doc.rows?.length) return { nodes, edges, droppedConnections: dropped }
+  const layers = layerView(doc, layout, edges, view.activeRow)
+  const faded = (node: (typeof nodes)[number]) =>
+    layers.ghosts.has(node.id) ? { ...node, className: 'toc-ghost' } : node
+  return {
+    nodes: [...layers.bands, ...nodes.map(faded)],
+    edges: layers.edges,
+    droppedConnections: dropped,
+  }
 }

@@ -104,6 +104,7 @@ describe('templates and filenames', () => {
     for (const t of TEMPLATES) expect(t.create()).not.toBe(t.create())
     expect(TEMPLATES.map((t) => t.id)).toEqual([
       'status-quo-metacrisis',
+      'com-b-matrix',
       'blank-toc',
       'blank-status-quo',
     ])
