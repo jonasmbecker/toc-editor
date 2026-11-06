@@ -18,6 +18,8 @@ export interface CanvasTopBarProps {
   onSwitchTheory: (slug: string) => void
   /** Shown as a "Tidy layout" button when given and the diagram is editable. */
   onTidy?: () => void
+  /** Free canvas: shown as "+ Card" in Tidy's place, adding a card in the middle of the view. */
+  onAddCard?: () => void
 }
 
 const DIAGRAM_TYPES = diagramTypeSchema.options
@@ -31,6 +33,7 @@ export function CanvasTopBar({
   onHome,
   onSwitchTheory,
   onTidy,
+  onAddCard,
 }: CanvasTopBarProps) {
   const isTheory = useTheoryStore((state) => state.current !== null)
   const transform = useToCStore((state) => state.transform)
@@ -70,6 +73,16 @@ export function CanvasTopBar({
         ) : null}
       </span>
       {onTidy && !isReadOnly ? <TidyButton onTidy={onTidy} /> : null}
+      {onAddCard && !isReadOnly ? (
+        <button
+          type="button"
+          className="toc-topbar__btn"
+          title="Add a card in the middle of the view (or double-click empty canvas)"
+          onClick={onAddCard}
+        >
+          + Card
+        </button>
+      ) : null}
       <TopBarActions onHome={onHome} />
     </header>
   )

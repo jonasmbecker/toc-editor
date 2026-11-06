@@ -190,3 +190,16 @@
   outline: 2px solid #2563eb;
   outline-offset: 1px;
 }
+
+/* Free canvas with no cards yet: where to start. Takes no clicks, so the double-click it
+   describes lands on the canvas under it. */
+.toc-stage__hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: #6b6966;
+  pointer-events: none;
+}

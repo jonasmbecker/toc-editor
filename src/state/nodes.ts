@@ -8,6 +8,7 @@ import {
   findNodeLocation,
   mapAllNodes,
   mapNode,
+  nodeAt,
   type NodeLocation,
 } from './tree'
 
@@ -252,4 +253,26 @@ export function addNode(
     connections: [],
   }
   return { document: withNodeInserted(doc, newNode, sectionIndex, columnIndex), nodeId }
+}
+
+/** Free canvas: a new card centred on a point of the canvas, in the given section (which is
+ * created, untitled, when the map has none yet). The point is the card's centre, so it lands
+ * under the pointer that asked for it. */
+export function addNodeAt(
+  doc: ToCDocument,
+  sectionIndex: number,
+  center: { x: number; y: number },
+): AddNodeResult {
+  const withSection =
+    doc.sections.length > 0 ? doc : { ...doc, sections: [{ title: '', columns: [{ nodes: [] }] }] }
+  const section = Math.min(sectionIndex, withSection.sections.length - 1)
+  const { document, nodeId } = addNode(withSection, section, 0)
+  const width = nodeAt(document, nodeId)!.width
+  const placed = moveNodeFreely(
+    document,
+    nodeId,
+    center.x - width / 2,
+    center.y - ESTIMATED_CARD_HEIGHT / 2,
+  )
+  return { document: placed, nodeId }
 }

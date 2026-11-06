@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import type { DocumentNode, ToCDocument } from '../model/schema'
 import { buildFlow, freeRoute } from './buildFlow'
 import { layoutDocument, FREE_PARK_GAP } from '../layout/columns'
-import { moveNodeFreely, nodeAt } from '../state/nodes'
+import { addNodeAt, findNodeLocation, moveNodeFreely, nodeAt } from '../state/nodes'
+import { sectionAt } from './useAddCard'
 import { makeDocument, makeNode } from '../test/fixtures'
 import {
   FLOW_IN_HANDLE,
@@ -179,5 +180,37 @@ describe('free-canvas regions', () => {
     const doc = loopMap()
     delete doc.layoutMode
     expect(buildFlow(doc).nodes.find((n) => n.id === 'a')!.data).not.toHaveProperty('free')
+  })
+})
+
+describe('adding a card on a free canvas', () => {
+  it('centres the new card on the point, with its own x and y', () => {
+    const { document, nodeId } = addNodeAt(loopMap(), 1, { x: 1000, y: 500 })
+    const card = nodeAt(document, nodeId)!
+    expect(card.xPosition).toBe(Math.round(1000 - card.width / 2))
+    expect(card.yPosition).toBeLessThan(500)
+    expect(findNodeLocation(document, nodeId)?.sectionIndex).toBe(1)
+    const drawn = buildFlow(document).nodes.find((n) => n.id === nodeId)!
+    expect(drawn.position).toEqual({ x: card.xPosition, y: card.yPosition })
+  })
+
+  it('creates an untitled section on an empty map', () => {
+    const empty: ToCDocument = {
+      color: '#000000',
+      title: 'Empty',
+      sections: [],
+      layoutMode: 'free',
+    }
+    const { document, nodeId } = addNodeAt(empty, 0, { x: 0, y: 0 })
+    expect(document.sections).toHaveLength(1)
+    expect(document.sections[0].title).toBe('')
+    expect(nodeAt(document, nodeId)).not.toBeNull()
+  })
+
+  it('a double-click inside a region adds the card to that section; outside, to the first', () => {
+    const graph = buildFlow(loopMap())
+    expect(sectionAt(graph, { x: 400, y: 450 })).toBe(1)
+    expect(sectionAt(graph, { x: 100, y: 30 })).toBe(0)
+    expect(sectionAt(graph, { x: 5000, y: 5000 })).toBe(0)
   })
 })

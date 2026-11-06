@@ -15,6 +15,7 @@ import { connectionRefKey, type ConnectionRef } from '../state/connections'
 import { buildFlow } from './buildFlow'
 import { useControlledFlow } from './useControlledFlow'
 import { useConnectFlow } from './useConnectFlow'
+import { useAddCard } from './useAddCard'
 import { CardNode } from './CardNode'
 import { SectionHeaderNode } from './SectionHeaderNode'
 import { GroupNode } from './GroupNode'
@@ -144,6 +145,10 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
   )
   const flow = useControlledFlow(doc, graph)
   const connect = useConnectFlow()
+  const addCard = useAddCard(graph)
+  const free = isFreeLayout(doc)
+  const canAdd = free && !isReadOnly
+  const isEmpty = !flow.nodes.some((node) => node.type === 'card')
   const [showMinimap, setShowMinimap] = useState(false)
 
   return (
@@ -157,7 +162,8 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
         onHome={onHome}
         onSwitchTheory={onSwitchTheory}
         // A free canvas keeps every card where its author put it: nothing to tidy.
-        onTidy={isFreeLayout(doc) ? undefined : () => tidyLayout(flow.nodes)}
+        onTidy={free ? undefined : () => tidyLayout(flow.nodes)}
+        onAddCard={canAdd ? addCard.addAtCentre : undefined}
       />
       <StageBar />
       <TheoryNoteBar />
@@ -172,7 +178,13 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
           onNodeDragStart={flow.onNodeDragStart}
           onNodeDrag={flow.onNodeDrag}
           onNodeDragStop={flow.onNodeDragStop}
-          onInit={flow.onInit}
+          onInit={(instance) => {
+            flow.onInit(instance)
+            addCard.onInit(instance)
+          }}
+          // On a free canvas a double-click on empty space adds a card there instead of zooming.
+          zoomOnDoubleClick={!canAdd}
+          onDoubleClick={canAdd ? addCard.onDoubleClick : undefined}
           onConnect={connect.onConnect}
           onConnectStart={connect.onConnectStart}
           onConnectEnd={connect.onConnectEnd}
@@ -199,6 +211,9 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
           <ZoomMarker />
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
+        {canAdd && isEmpty ? (
+          <p className="toc-stage__hint">Double-click anywhere to add a card</p>
+        ) : null}
         <Legend needs={needs} linkLabels={linkLabels} />
         <NeedColoursSwitch />
         <button
