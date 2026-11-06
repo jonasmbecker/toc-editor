@@ -18,6 +18,7 @@ import { useConnectFlow } from './useConnectFlow'
 import { CardNode } from './CardNode'
 import { SectionHeaderNode } from './SectionHeaderNode'
 import { GroupNode } from './GroupNode'
+import { RegionNode } from './RegionNode'
 import { BandNode } from './BandNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { RoutedEdge } from './RoutedEdge'
@@ -42,6 +43,7 @@ const nodeTypes = {
   sectionHeader: SectionHeaderNode,
   group: GroupNode,
   band: BandNode,
+  region: RegionNode,
 }
 const edgeTypes = { connection: ConnectionEdge, routed: RoutedEdge }
 
@@ -64,7 +66,7 @@ function keyOf(ref: ConnectionRef | null): string {
 
 function minimapColor(node: Node): string {
   if (node.type === 'sectionHeader') return CANVAS_COLORS.primary
-  if (node.type === 'band') return 'rgba(47, 45, 46, 0.08)'
+  if (node.type === 'band' || node.type === 'region') return 'rgba(47, 45, 46, 0.08)'
   return node.type === 'group' ? 'rgba(201, 196, 186, 0.35)' : '#C9C4BA'
 }
 

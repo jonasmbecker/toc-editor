@@ -18,11 +18,12 @@ import type { ConnectionEdgeType } from './ConnectionEdge'
 import type { CardNodeType } from './CardNode'
 import type { SectionHeaderNodeType } from './SectionHeaderNode'
 import type { BandNodeType } from './BandNode'
+import type { RegionNodeType } from './RegionNode'
 import type { GroupNodeData, GroupNodeType } from './GroupNode'
 import { fitGroupHeights } from './groupFlow'
 import { endpointIds, refOfEdge, withSelection } from './selection'
 
-type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType | BandNodeType
+type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType | BandNodeType | RegionNodeType
 
 /**
  * Wires a derived `FlowGraph` into React Flow's controlled node/edge state. Selection is driven

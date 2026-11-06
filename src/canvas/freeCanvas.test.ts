@@ -136,3 +136,48 @@ describe('moving a card on a free canvas', () => {
     expect(card.position).toEqual({ x: -250, y: 900 })
   })
 })
+
+describe('free-canvas regions', () => {
+  it('draws one region per titled section, around its cards', () => {
+    const graph = buildFlow(loopMap())
+    const regions = graph.nodes.filter((n) => n.type === 'region')
+    expect(regions.map((r) => r.id)).toEqual(['region-0', 'region-1'])
+    const first = regions[0]
+    // Cards a (0,0) and b (600,0), each 200 wide.
+    expect(first.position.x).toBeLessThan(0)
+    expect(first.position.y).toBeLessThan(0)
+    expect(first.position.x + first.width!).toBeGreaterThan(800)
+    expect(first.data).toMatchObject({ title: 'S1', count: 2, memberIds: ['a', 'b'] })
+  })
+
+  it('draws no region for an untitled section', () => {
+    const doc = loopMap()
+    doc.sections[1] = { ...doc.sections[1], title: '  ' }
+    const ids = buildFlow(doc)
+      .nodes.filter((n) => n.type === 'region')
+      .map((n) => n.id)
+    expect(ids).toEqual(['region-0'])
+  })
+
+  it('draws no region when the map has one section', () => {
+    const doc: ToCDocument = {
+      ...makeDocument([at('a', 0, 0, ['b']), at('b', 600, 0)]),
+      layoutMode: 'free',
+    }
+    expect(buildFlow(doc).nodes.some((n) => n.type === 'region')).toBe(false)
+  })
+
+  it('a stage map has no regions', () => {
+    const doc = loopMap()
+    delete doc.layoutMode
+    expect(buildFlow(doc).nodes.some((n) => n.type === 'region')).toBe(false)
+  })
+
+  it('cards on a free canvas know it, so they show a link dot on every side', () => {
+    const card = buildFlow(loopMap()).nodes.find((n) => n.id === 'a')!
+    expect(card.data).toMatchObject({ free: true })
+    const doc = loopMap()
+    delete doc.layoutMode
+    expect(buildFlow(doc).nodes.find((n) => n.id === 'a')!.data).not.toHaveProperty('free')
+  })
+})

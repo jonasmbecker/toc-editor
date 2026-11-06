@@ -14,6 +14,9 @@ export interface CardNodeData extends Record<string, unknown> {
   /** The card sits in a band under the columns. Column routing leaves it out, so loops that run
    * below the map pass between the columns and the band. */
   inBand?: boolean
+  /** The map is a free canvas: a link may start from any side, and lands on whichever side of
+   * the target faces it (see `freeRoute` in `buildFlow.ts`). */
+  free?: boolean
 }
 
 export type CardNodeType = Node<CardNodeData, 'card'>
@@ -90,6 +93,20 @@ export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
       className={`toc-card${selected ? ' toc-card--selected' : ''}`}
       style={{ ...nodeColorStyle(data.color), ...needStripeStyle(data.needMix, needColours) }}
     >
+      {data.free ? <FreeHandles /> : <ColumnHandles />}
+      <div className="toc-card__title">{data.title}</div>
+      {data.text ? <div className="toc-card__text">{data.text}</div> : null}
+      {data.provenance === 'interpreted' ? <ProvenanceBadge /> : null}
+      {data.free ? null : <StackHandles />}
+    </div>
+  )
+}
+
+/** A column map: links are drawn out of the right edge into the left edge; the other anchors
+ * are only for routed loops and stacked cards. */
+function ColumnHandles() {
+  return (
+    <>
       <Handle
         type="target"
         id={FLOW_IN_HANDLE}
@@ -103,9 +120,6 @@ export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
         className="toc-card__loop-handle"
         isConnectable={false}
       />
-      <div className="toc-card__title">{data.title}</div>
-      {data.text ? <div className="toc-card__text">{data.text}</div> : null}
-      {data.provenance === 'interpreted' ? <ProvenanceBadge /> : null}
       <Handle
         type="source"
         id={FLOW_OUT_HANDLE}
@@ -120,7 +134,42 @@ export function CardNode({ data, selected }: NodeProps<CardNodeType>) {
         className="toc-card__loop-handle"
         isConnectable={false}
       />
-      <StackHandles />
-    </div>
+    </>
+  )
+}
+
+/** The same eight anchors, with the ids `buildFlow` names, but a free canvas has no reading
+ * direction: a dot on every side starts a link, and every side takes one (unseen, found by the
+ * canvas's snap radius as the drag nears the card). */
+const FREE_SIDES = [
+  { position: Position.Right, source: FLOW_OUT_HANDLE, target: LOOP_IN_HANDLE },
+  { position: Position.Left, source: LOOP_OUT_HANDLE, target: FLOW_IN_HANDLE },
+  { position: Position.Top, source: STACK_UP_OUT_HANDLE, target: STACK_DOWN_IN_HANDLE },
+  { position: Position.Bottom, source: STACK_DOWN_OUT_HANDLE, target: STACK_UP_IN_HANDLE },
+]
+
+function FreeHandles() {
+  return (
+    <>
+      {FREE_SIDES.map((side) => (
+        <Handle
+          key={side.source}
+          type="source"
+          id={side.source}
+          position={side.position}
+          className="toc-card__handle toc-card__handle--free"
+          title="Drag to connect"
+        />
+      ))}
+      {FREE_SIDES.map((side) => (
+        <Handle
+          key={side.target}
+          type="target"
+          id={side.target}
+          position={side.position}
+          className="toc-card__loop-handle"
+        />
+      ))}
+    </>
   )
 }

@@ -131,6 +131,22 @@
   pointer-events: none;
 }
 
+/* Free canvas: a dot on the top and bottom edges as well, centred. */
+.toc-card__handle--free.react-flow__handle-top,
+.toc-card__handle--free.react-flow__handle-bottom {
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.toc-card__handle--free.react-flow__handle-top {
+  top: -9px;
+}
+
+.toc-card__handle--free.react-flow__handle-bottom {
+  top: auto;
+  bottom: -9px;
+}
+
 /* 'Drag to connect' cue: a chevron inside the source (right) dot. */
 .toc-card__handle.react-flow__handle-right::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M3.5 2 6.5 5 3.5 8' fill='none' stroke='%232563eb' stroke-width='2'/%3E%3C/svg%3E");

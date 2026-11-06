@@ -1,0 +1,35 @@
+/* A titled section on a free canvas (RegionNode); tokens per canvas.css, shape as band.css. */
+.toc-region {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(47, 45, 46, 0.04);
+  border: 1px dashed #d4cfc5;
+  pointer-events: none;
+}
+
+.toc-region__title {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6966;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.toc-region__count {
+  flex: none;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #eeebe4;
+  font-size: 11px;
+  line-height: 18px;
+  color: #6b6966;
+}

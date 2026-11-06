@@ -7,6 +7,9 @@ import type { GroupNodeData, GroupNodeType } from './GroupNode'
  * the group's title and description. Layout choices, not part of the document format. */
 export const GROUP_PAD = 12
 export const GROUP_HEAD = 64
+/** Room around a free-canvas region's cards, and above them for its title. */
+export const REGION_PAD = 32
+export const REGION_HEAD = 48
 /** Room under a band's lowest card. */
 export const BAND_BOTTOM_PAD = 24
 /** Card height assumed until React Flow has measured the real one (see `fitGroupHeights`). */
@@ -74,7 +77,7 @@ export function fitGroupHeights<T extends Sized>(nodes: T[]): T[] {
   let changed = false
   const next = nodes.map((node) => {
     // A band section's strip is fitted to its cards the same way (see `BandNode`).
-    if (node.type !== 'group' && node.type !== 'band') return node
+    if (node.type !== 'group' && node.type !== 'band' && node.type !== 'region') return node
     const { memberIds } = node.data as GroupNodeData
     let bottom = -Infinity
     for (const id of memberIds) {
@@ -84,7 +87,8 @@ export function fitGroupHeights<T extends Sized>(nodes: T[]): T[] {
       bottom = Math.max(bottom, member.position.y + height)
     }
     if (bottom === -Infinity) return node
-    const pad = node.type === 'band' ? BAND_BOTTOM_PAD : GROUP_PAD
+    const pad =
+      node.type === 'band' ? BAND_BOTTOM_PAD : node.type === 'region' ? REGION_PAD : GROUP_PAD
     const height = Math.round(bottom - node.position.y + pad)
     if (node.height === height) return node
     changed = true

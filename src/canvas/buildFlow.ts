@@ -18,6 +18,8 @@ import type { SectionHeaderData, SectionHeaderNodeType } from './SectionHeaderNo
 import type { GroupNodeType } from './GroupNode'
 import { BAND_BOTTOM_PAD, buildGroupNodes, groupBox, type Box } from './groupFlow'
 import type { BandNodeData, BandNodeType } from './BandNode'
+import type { RegionNodeData, RegionNodeType } from './RegionNode'
+import { REGION_HEAD, REGION_PAD } from './groupFlow'
 import { bundleLabels, type LabelledLink } from './linkLabels'
 import { isGroupNode } from '../state/groups'
 import { computeNeedMixes, type NeedMixResult } from './needMix'
@@ -32,7 +34,7 @@ export interface DroppedConnection {
 }
 
 export interface FlowGraph {
-  nodes: (CardNodeType | SectionHeaderNodeType | GroupNodeType | BandNodeType)[]
+  nodes: (CardNodeType | SectionHeaderNodeType | GroupNodeType | BandNodeType | RegionNodeType)[]
   edges: ConnectionEdgeType[]
   /** Connections whose `targetId` doesn't resolve to any node in the document. Surfaced rather
    * than silently skipped, so an imported file that lost an edge somewhere says so instead of
@@ -64,6 +66,7 @@ function buildCardNodes(
   positionByNodeId: Map<string, { x: number; y: number; width: number }>,
   needs: NeedMixResult,
   inBand: Set<string>,
+  free: boolean,
 ): CardNodeType[] {
   return allNodes.map((node) => {
     const pos = positionByNodeId.get(node.id)
@@ -80,6 +83,7 @@ function buildCardNodes(
         provenance: node.provenance,
         needMix: needSegments(needs, node.id),
         ...(inBand.has(node.id) ? { inBand: true } : {}),
+        ...(free ? { free: true } : {}),
       } satisfies CardNodeData,
     }
   })
@@ -290,6 +294,39 @@ function buildBandNodes(doc: ToCDocument, layout: DocumentLayout): BandNodeType[
   })
 }
 
+/** Free canvas: one region per titled section, around its cards (and their group frames). A map
+ * of one section, or a section with no title, draws none: it is just cards and links. */
+function buildRegionNodes(doc: ToCDocument, positions: PositionById): RegionNodeType[] {
+  if (doc.sections.length < 2) return []
+  const regions: RegionNodeType[] = []
+  doc.sections.forEach((section, sectionIndex) => {
+    if (!section.title.trim()) return
+    const members = section.columns.flatMap((c) => c.nodes)
+    const boxes = members.map((n) => positions.get(n.id)).filter((b): b is Box => !!b)
+    if (boxes.length === 0) return
+    const left = Math.min(...boxes.map((b) => b.x)) - REGION_PAD
+    const top = Math.min(...boxes.map((b) => b.y)) - REGION_HEAD
+    const right = Math.max(...boxes.map((b) => b.x + b.width)) + REGION_PAD
+    const bottom = Math.max(...boxes.map((b) => b.y)) + FREE_CARD_HEIGHT + REGION_PAD
+    regions.push({
+      id: `region-${sectionIndex}`,
+      type: 'region',
+      position: { x: left, y: top },
+      width: right - left,
+      height: bottom - top,
+      draggable: false,
+      selectable: false,
+      zIndex: -3,
+      data: {
+        title: section.title,
+        count: members.filter((n) => !isGroupNode(n)).length,
+        memberIds: members.map((n) => n.id),
+      } satisfies RegionNodeData,
+    })
+  })
+  return regions
+}
+
 /** Converts a parsed document into React Flow's node/edge shape. Positions come entirely from
  * `layoutDocument`; this function only maps data across, it does no layout math of its own. */
 export function buildFlow(doc: ToCDocument): FlowGraph {
@@ -307,10 +344,11 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
   const inBand = new Set(layout.nodes.filter((n) => n.inBand).map((n) => n.nodeId))
 
   const nodes = [
+    ...(isFreeLayout(doc) ? buildRegionNodes(doc, positionByNodeId) : []),
     ...buildBandNodes(doc, layout),
     ...buildHeaderNodes(doc, layout),
     ...groups,
-    ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc), inBand),
+    ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc), inBand, isFreeLayout(doc)),
   ]
   const headerBoxes = layout.sectionHeaders.map((h) => ({
     x: h.x,
