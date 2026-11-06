@@ -73,4 +73,81 @@ describe('split and merge of the live template', () => {
     expect(serializeMapFile(s.content)).toBe(serializeMapFile(content))
     expect(serializeMapFile(s.layout)).not.toBe(serializeMapFile(layout))
   })
+
+  it('writes no xPosition or layoutMode for a column map', () => {
+    expect(JSON.stringify(layout)).not.toContain('xPosition')
+    expect(layout.layoutMode).toBeUndefined()
+  })
+})
+
+/** A small free-canvas map: two cards, each at its own x and y. */
+function freeMap(): ToCDocument {
+  return {
+    color: '#2F2D2E',
+    title: 'Loops',
+    diagramType: 'status-quo',
+    layoutMode: 'free',
+    sections: [
+      {
+        title: '',
+        columns: [
+          {
+            nodes: [
+              {
+                id: 'a',
+                title: 'A',
+                text: '',
+                color: '#FFFFFF',
+                width: 200,
+                yPosition: 40,
+                xPosition: 320,
+                connections: [{ targetId: 'b' }],
+              },
+              {
+                id: 'b',
+                title: 'B',
+                text: '',
+                color: '#FFFFFF',
+                width: 200,
+                yPosition: 260,
+                xPosition: -80,
+                connections: [{ targetId: 'a' }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    columnPadding: 40,
+  }
+}
+
+describe('split and merge of a free-canvas map', () => {
+  const doc = freeMap()
+  const { content, layout } = splitDocument(doc)
+
+  it('puts x, y and the layout mode in layout.json, none of it in content.json', () => {
+    expect(layout.layoutMode).toBe('free')
+    expect(layout.cards.a).toEqual({ width: 200, yPosition: 40, xPosition: 320 })
+    expect(layout.cards.b.xPosition).toBe(-80)
+    const text = JSON.stringify(content)
+    expect(text).not.toContain('xPosition')
+    expect(text).not.toContain('layoutMode')
+  })
+
+  it('merges back to exactly the free map, key order included', () => {
+    const c = JSON.parse(serializeMapFile(content)) as MapContent
+    const l = JSON.parse(serializeMapFile(layout)) as MapLayout
+    const merged = mergeDocument(c, l)
+    if (!merged.ok) throw new Error(merged.errors.join('; '))
+    expect(serializeMapFile(merged.document)).toBe(serializeMapFile(doc))
+  })
+
+  it('a horizontal move changes layout.json only', () => {
+    const moved = structuredClone(doc)
+    moved.sections[0].columns[0].nodes[0].xPosition = 500
+    const s = splitDocument(moved)
+    expect(serializeMapFile(s.content)).toBe(serializeMapFile(content))
+    expect(s.layout.cards.a.xPosition).toBe(500)
+  })
 })

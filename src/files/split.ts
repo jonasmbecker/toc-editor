@@ -10,6 +10,8 @@ import type { ToCDocument } from '../model/schema'
 export interface CardLayout {
   width: number
   yPosition: number
+  /** Free-canvas maps only. */
+  xPosition?: number
 }
 
 export interface MapLayout {
@@ -17,6 +19,8 @@ export interface MapLayout {
   curvature?: number
   columnPadding?: number
   sectionPadding?: number
+  /** "free" for a free-canvas map, whose cards each carry `xPosition`. */
+  layoutMode?: 'free'
   /** Positions keyed by card id, keys sorted so a moved card is a one-line diff. */
   cards: Record<string, CardLayout>
 }
@@ -25,7 +29,9 @@ export interface MapLayout {
 export type MapContent = Record<string, unknown>
 
 const DOCUMENT_LAYOUT_KEYS = ['textSize', 'curvature', 'columnPadding', 'sectionPadding'] as const
-const CARD_LAYOUT_KEYS = ['width', 'yPosition'] as const
+/** Layout keys that sit elsewhere in the document's key order: each goes back after its anchor. */
+const ANCHORED_LAYOUT_KEYS = [['layoutMode', 'diagramType']] as const
+const CARD_LAYOUT_KEYS = ['width', 'yPosition', 'xPosition'] as const
 
 export function splitDocument(doc: ToCDocument): { content: MapContent; layout: MapLayout } {
   const cards: Record<string, CardLayout> = {}
@@ -34,8 +40,9 @@ export function splitDocument(doc: ToCDocument): { content: MapContent; layout: 
     columns: section.columns.map((column) => ({
       ...column,
       nodes: column.nodes.map((node) => {
-        const { width, yPosition, ...rest } = node
-        cards[node.id] = { width, yPosition }
+        const { width, yPosition, xPosition, ...rest } = node
+        cards[node.id] =
+          xPosition === undefined ? { width, yPosition } : { width, yPosition, xPosition }
         return rest
       }),
     })),
@@ -44,7 +51,10 @@ export function splitDocument(doc: ToCDocument): { content: MapContent; layout: 
   const content: MapContent = {}
   const layout: MapLayout = { cards: {} }
   for (const [key, value] of Object.entries(doc)) {
-    if ((DOCUMENT_LAYOUT_KEYS as readonly string[]).includes(key)) {
+    if (
+      (DOCUMENT_LAYOUT_KEYS as readonly string[]).includes(key) ||
+      ANCHORED_LAYOUT_KEYS.some(([k]) => k === key)
+    ) {
       ;(layout as unknown as Record<string, unknown>)[key] = value
     } else {
       content[key] = key === 'sections' ? sections : value
@@ -91,7 +101,10 @@ export function mergeDocument(content: MapContent, layout: MapLayout): MergeResu
         return insertAfter(
           node,
           'color',
-          CARD_LAYOUT_KEYS.map((k): [string, unknown] => [k, place[k]]),
+          CARD_LAYOUT_KEYS.filter((k) => place[k] !== undefined).map((k): [string, unknown] => [
+            k,
+            place[k],
+          ]),
         )
       }),
     })),
@@ -101,11 +114,11 @@ export function mergeDocument(content: MapContent, layout: MapLayout): MergeResu
   const numbers = DOCUMENT_LAYOUT_KEYS.filter((k) => layout[k] !== undefined).map(
     (k): [string, unknown] => [k, layout[k]],
   )
-  const withSections = { ...content, sections }
-  return {
-    ok: true,
-    document: insertAfter(withSections, 'sections', numbers) as unknown as ToCDocument,
+  let merged = insertAfter({ ...content, sections }, 'sections', numbers)
+  for (const [key, anchor] of ANCHORED_LAYOUT_KEYS) {
+    if (layout[key] !== undefined) merged = insertAfter(merged, anchor, [[key, layout[key]]])
   }
+  return { ok: true, document: merged as unknown as ToCDocument }
 }
 
 /** The exact text written to a map file: 2-space JSON and a final newline. */

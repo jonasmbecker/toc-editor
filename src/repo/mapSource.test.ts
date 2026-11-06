@@ -261,6 +261,37 @@ describe('documentFromFiles', () => {
       RepoFetchError,
     )
   })
+
+  const freeContent = {
+    color: '#2F2D2E',
+    title: 'Loops',
+    sections: [
+      {
+        title: '',
+        columns: [
+          { nodes: [{ id: 'a', title: 'A', text: '', color: '#FFFFFF', connections: [] }] },
+        ],
+      },
+    ],
+  }
+
+  it('reads a free-canvas layout: the mode and every card x', () => {
+    const freeLayout = {
+      layoutMode: 'free',
+      cards: { a: { width: 200, yPosition: 40, xPosition: 320 } },
+    }
+    const doc = documentFromFiles({ content: freeContent, layout: freeLayout })
+    expect(doc.layoutMode).toBe('free')
+    expect(doc.sections[0].columns[0].nodes[0].xPosition).toBe(320)
+  })
+
+  it('refuses a free layout whose x is not a number', () => {
+    const bad = {
+      layoutMode: 'free',
+      cards: { a: { width: 200, yPosition: 40, xPosition: 'left' } },
+    }
+    expect(() => documentFromFiles({ content: freeContent, layout: bad })).toThrow(RepoFetchError)
+  })
 })
 
 describe('parseTheoryIndex', () => {

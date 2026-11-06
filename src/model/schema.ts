@@ -14,6 +14,7 @@ import { HEX_COLOR_PATTERN } from './color'
 export const connectionProvenanceSchema = z.enum(['verbatim', 'verbatim-structure', 'interpreted'])
 export const nodeProvenanceSchema = z.enum(['verbatim', 'interpreted'])
 export const diagramTypeSchema = z.enum(['theory-of-change', 'status-quo'])
+export const layoutModeSchema = z.enum(['free'])
 
 /** `kind` value of the node that titles a group of cards. It is an ordinary node in the column
  * (so connections, ids and undo need no special case); the canvas draws it as a container
@@ -79,6 +80,9 @@ export const nodeSchema = z
     // Infinity and hand React Flow a NaN viewport.
     width: z.number().finite(),
     yPosition: z.number().finite(),
+    /** Free-canvas maps only (`layoutMode: "free"`): the card's own x, stored next to its y.
+     * Column maps derive x from the section and column, as ToCB does, and never write it. */
+    xPosition: z.number().finite().optional(),
     connections: z.array(connectionSchema),
     // Read but never regenerated; purpose unclear, kept for round-trip fidelity.
     connectionIds: z.array(z.string()).optional(),
@@ -142,6 +146,9 @@ export const documentSchema = z
     // Extensions:
     schemaVersion: z.literal(1).optional(),
     diagramType: diagramTypeSchema.optional(),
+    /** Absent = stages: cards sit in section columns. "free" = every card sits at its own
+     * `xPosition`/`yPosition`, for theories that are loops rather than stages. */
+    layoutMode: layoutModeSchema.optional(),
     interventionLinks: z.array(interventionLinkSchema).optional(),
   })
   .passthrough()
@@ -176,9 +183,14 @@ export const documentSchema = z
  * list the compatible export strips from, kept next to the schema so a new extension field
  * cannot be added above without being named here.
  */
-export const DOCUMENT_EXTENSION_KEYS = ['schemaVersion', 'diagramType', 'interventionLinks']
+export const DOCUMENT_EXTENSION_KEYS = [
+  'schemaVersion',
+  'diagramType',
+  'layoutMode',
+  'interventionLinks',
+]
 export const SECTION_EXTENSION_KEYS = ['display']
-export const NODE_EXTENSION_KEYS =['provenance', 'kind', 'groupId', 'links']
+export const NODE_EXTENSION_KEYS = ['provenance', 'kind', 'groupId', 'links', 'xPosition']
 export const CONNECTION_EXTENSION_KEYS = [
   'id',
   'provenance',
@@ -197,6 +209,11 @@ export type Section = z.infer<typeof sectionSchema>
 /** True for a section drawn as a band under the columns rather than as columns. */
 export function isBandSection(section: { display?: unknown }): boolean {
   return section.display === 'band'
+}
+
+/** True for a free-canvas map: cards at their own x and y, no columns, no Tidy. */
+export function isFreeLayout(doc: { layoutMode?: unknown }): boolean {
+  return doc.layoutMode === 'free'
 }
 export type InterventionLink = z.infer<typeof interventionLinkSchema>
 export type ToCDocument = z.infer<typeof documentSchema>
