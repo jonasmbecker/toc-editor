@@ -82,6 +82,35 @@ describe('a valid suggestion', () => {
     expect(opened[0].title).toBe('Moved 1 card on the map')
   })
 
+  it('round-trips a free canvas: a sideways move commits layout.json with the new x', async () => {
+    const free = (doc: Parameters<typeof card>[0]) => {
+      doc.layoutMode = 'free'
+      for (const section of doc.sections)
+        for (const column of section.columns)
+          column.nodes.forEach((node, i) => (node.xPosition = 100 + i * 10))
+    }
+    const base = suggestion(free)
+    ;({ repo, opened } = fakeRepo({
+      readMap: vi.fn(async () => ({
+        content: serializeMapFile(base.content),
+        layout: serializeMapFile(base.layout),
+      })),
+    }))
+    deps = freshDeps(repo)
+    await post(
+      suggestion((doc) => {
+        free(doc)
+        card(doc, TRAUMA).xPosition = 777
+      }),
+    )
+    const [spec] = opened
+    expect(spec.files.map((file) => file.path)).toEqual(['map/layout.json'])
+    expect(spec.title).toBe('Moved 1 card on the map')
+    const written = JSON.parse(spec.files[0].text)
+    expect(written.layoutMode).toBe('free')
+    expect(written.cards[TRAUMA].xPosition).toBe(777)
+  })
+
   it('commits both files when a card is removed, so no position is left behind', async () => {
     await post(
       suggestion((doc) => {

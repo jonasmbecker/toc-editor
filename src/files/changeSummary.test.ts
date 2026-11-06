@@ -204,6 +204,19 @@ describe('summarizeChanges', () => {
     expect(summaryTitle(summary)).toBe('Moved 2 cards on the map')
   })
 
+  it('counts a sideways move on a free canvas as a move, not as a changed detail', () => {
+    const before = edited((doc) => {
+      doc.layoutMode = 'free'
+      card(doc, TRAUMA).xPosition = 100
+    })
+    const after = structuredClone(before)
+    card(after, TRAUMA).xPosition = 400
+    const summary = summarizeChanges(before, after)
+    expect(summary.lines).toEqual([])
+    expect(summary.moved).toBe(1)
+    expect(layoutLine(summary)).toBe('Moved 1 card on the map')
+  })
+
   it('reports a spacing change when no card moved', () => {
     const next = edited((doc) => {
       doc.curvature = (doc.curvature ?? 0) + 0.1

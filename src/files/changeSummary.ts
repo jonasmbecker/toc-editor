@@ -208,6 +208,7 @@ const CARD_KEYS_HANDLED = [
   'connectionIds',
   'width',
   'yPosition',
+  'xPosition',
 ]
 
 function detailLines(before: Cards, after: Cards): string[] {
@@ -267,7 +268,8 @@ export function summarizeChanges(before: ToCDocument, after: ToCDocument): Chang
   let moved = 0
   for (const [id, card] of now) {
     const old = was.get(id)
-    if (old && (old.width !== card.width || old.yPosition !== card.yPosition)) moved += 1
+    const shifted = old && (old.yPosition !== card.yPosition || old.xPosition !== card.xPosition)
+    if (old && (old.width !== card.width || shifted)) moved += 1
   }
   return {
     lines,
