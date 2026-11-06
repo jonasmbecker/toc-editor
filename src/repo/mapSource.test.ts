@@ -4,16 +4,19 @@ import { loadDefaultMap, statusQuoMetacrisis } from '../templates'
 import { serializeMapFile, splitDocument } from '../files/split'
 import type { ToCDocument } from '../model/schema'
 import {
-  CACHE_KEY,
   CACHE_TTL_MS,
   FETCH_TIMEOUT_MS,
   RepoFetchError,
+  cacheKey,
   documentFromFiles,
+  indexUrl,
+  loadTheoryIndex,
   loadTheoryMap,
   theoryOriginOf,
   rawUrl,
   THEORY_REPO,
 } from './mapSource'
+import { BUNDLED_INDEX, parseTheoryIndex } from './theoryIndex'
 
 const { content, layout } = splitDocument(statusQuoJson as unknown as ToCDocument)
 
@@ -21,18 +24,44 @@ function respond(body: string, status = 200) {
   return Promise.resolve(new Response(body, { status }))
 }
 
-/** Serves the split bundled map from the raw host, as GitHub would. */
 const SHA = 'a'.repeat(40)
 const SHA_URL = 'https://api.github.com/repos/jonasmbecker/theory-of-metacrisis/commits/main'
 
-function serveMap(overrides: Partial<Record<'content' | 'layout', string>> = {}) {
+const INDEX = {
+  default: 'jonas',
+  theories: [
+    { slug: 'jonas', title: "Jonas Becker's theory", status: 'author', layout: 'stages' },
+    {
+      slug: 'schmachtenberger',
+      title: 'Daniel Schmachtenberger (reconstructed)',
+      status: 'reconstructed',
+      layout: 'free',
+      statusNote: 'Not endorsed by him.',
+    },
+  ],
+}
+
+interface Served {
+  content?: string
+  layout?: string
+  /** The index file's text, or null for a commit that has none yet (its map is in `map/`). */
+  index?: string | null
+}
+
+/** Serves the split bundled map as both theories, the index, and the commit main points at. */
+function serveMap(overrides: Served = {}) {
+  const index = overrides.index === undefined ? JSON.stringify(INDEX) : overrides.index
+  const dirs = index === null ? ['map'] : ['theories/jonas', 'theories/schmachtenberger']
   const fetchMock = vi.fn((url: string) => {
     if (url === SHA_URL) return respond(SHA)
-    if (url === rawUrl(THEORY_REPO, SHA, 'content')) {
-      return respond(overrides.content ?? serializeMapFile(content))
-    }
-    if (url === rawUrl(THEORY_REPO, SHA, 'layout')) {
-      return respond(overrides.layout ?? serializeMapFile(layout))
+    if (url === indexUrl(THEORY_REPO, SHA) && index !== null) return respond(index)
+    for (const dir of dirs) {
+      if (url === rawUrl(THEORY_REPO, SHA, dir, 'content')) {
+        return respond(overrides.content ?? serializeMapFile(content))
+      }
+      if (url === rawUrl(THEORY_REPO, SHA, dir, 'layout')) {
+        return respond(overrides.layout ?? serializeMapFile(layout))
+      }
     }
     return respond('not found', 404)
   })
@@ -41,21 +70,52 @@ function serveMap(overrides: Partial<Record<'content' | 'layout', string>> = {})
 }
 
 const title = (doc: ToCDocument) => doc.title
+const urls = (fetchMock: ReturnType<typeof vi.fn>) => fetchMock.mock.calls.map(([url]) => url)
 
-describe('loading the theory map from the repo', () => {
+describe('loading a theory from the repo', () => {
   beforeEach(() => sessionStorage.clear())
 
-  it('reads content.json and layout.json at the commit main points at and merges them', async () => {
+  it("reads the index, then the default theory's two files, at the commit main points at", async () => {
     const fetchMock = serveMap()
     const doc = await loadTheoryMap()
-    expect(fetchMock.mock.calls.map(([url]) => url).sort()).toEqual([
+    const raw = `https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/${SHA}`
+    expect(urls(fetchMock).sort()).toEqual([
       SHA_URL,
-      `https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/${SHA}/map/content.json`,
-      `https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/${SHA}/map/layout.json`,
+      `${raw}/theories/index.json`,
+      `${raw}/theories/jonas/content.json`,
+      `${raw}/theories/jonas/layout.json`,
     ])
     expect(serializeMapFile(doc)).toBe(serializeMapFile(statusQuoMetacrisis()))
-    expect(theoryOriginOf(doc)?.sha).toBe(SHA)
+    expect(theoryOriginOf(doc)).toMatchObject({ sha: SHA, slug: 'jonas' })
     expect(theoryOriginOf(statusQuoMetacrisis())).toBeNull()
+  })
+
+  it('opens another listed theory from its own folder, at the same commit', async () => {
+    const fetchMock = serveMap()
+    const doc = await loadTheoryMap('schmachtenberger')
+    expect(urls(fetchMock)).toContain(
+      rawUrl(THEORY_REPO, SHA, 'theories/schmachtenberger', 'content'),
+    )
+    expect(theoryOriginOf(doc)).toMatchObject({ sha: SHA, slug: 'schmachtenberger' })
+  })
+
+  it('refuses a theory the index does not list, without reading any folder', async () => {
+    const fetchMock = serveMap()
+    await expect(loadTheoryMap('../map')).rejects.toMatchObject({ kind: 'http', status: 404 })
+    expect(urls(fetchMock).some((url) => String(url).endsWith('content.json'))).toBe(false)
+  })
+
+  it('reads map/ as the default theory while the repo has no index yet', async () => {
+    const fetchMock = serveMap({ index: null })
+    const doc = await loadTheoryMap()
+    expect(urls(fetchMock)).toContain(rawUrl(THEORY_REPO, SHA, 'map', 'content'))
+    expect(theoryOriginOf(doc)).toMatchObject({ sha: SHA, slug: 'jonas' })
+    expect((await loadTheoryIndex()).index).toEqual(BUNDLED_INDEX)
+  })
+
+  it('fails rather than guessing when the index is not one', async () => {
+    serveMap({ index: '{"default": "nobody", "theories": []}' })
+    await expect(loadTheoryMap()).rejects.toMatchObject({ kind: 'unreadable' })
   })
 
   it('reads main and offers no origin when GitHub will not give the commit', async () => {
@@ -64,14 +124,13 @@ describe('loading the theory map from the repo', () => {
         ? respond(serializeMapFile(content))
         : url.endsWith('layout.json')
           ? respond(serializeMapFile(layout))
-          : respond('rate limited', 403),
+          : url.endsWith('index.json')
+            ? respond(JSON.stringify(INDEX))
+            : respond('rate limited', 403),
     )
     vi.stubGlobal('fetch', fetchMock)
     const doc = await loadTheoryMap()
-    expect(fetchMock).toHaveBeenCalledWith(
-      rawUrl(THEORY_REPO, 'main', 'content'),
-      expect.anything(),
-    )
+    expect(urls(fetchMock)).toContain(rawUrl(THEORY_REPO, 'main', 'theories/jonas', 'content'))
     expect(theoryOriginOf(doc)).toBeNull()
   })
 
@@ -90,31 +149,31 @@ describe('loading the theory map from the repo', () => {
   it('serves a repeat open from sessionStorage until the entry is 5 minutes old', async () => {
     const fetchMock = serveMap()
     const start = 1_000_000
-    await loadTheoryMap(() => start)
-    await loadTheoryMap(() => start + CACHE_TTL_MS - 1)
-    expect(fetchMock).toHaveBeenCalledTimes(3)
-    await loadTheoryMap(() => start + CACHE_TTL_MS + 1)
-    expect(fetchMock).toHaveBeenCalledTimes(6)
+    await loadTheoryMap(null, () => start)
+    await loadTheoryMap(null, () => start + CACHE_TTL_MS - 1)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+    await loadTheoryMap(null, () => start + CACHE_TTL_MS + 1)
+    expect(fetchMock).toHaveBeenCalledTimes(8)
   })
 
   it('lets a click that lands during the fetch-ahead join that request', async () => {
     const fetchMock = serveMap()
     const [ahead, click] = await Promise.all([loadTheoryMap(), loadTheoryMap()])
-    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
     expect(serializeMapFile(click)).toBe(serializeMapFile(ahead))
   })
 
   it('never caches files that fail to merge', async () => {
     serveMap({ layout: serializeMapFile({ cards: {} }) })
     await expect(loadTheoryMap()).rejects.toBeInstanceOf(RepoFetchError)
-    expect(sessionStorage.getItem(CACHE_KEY)).toBeNull()
+    expect(sessionStorage.getItem(cacheKey('jonas'))).toBeNull()
   })
 
   it('drops a damaged cache entry and fetches again', async () => {
-    sessionStorage.setItem(CACHE_KEY, '{"fetchedAt": 1, nonsense')
+    sessionStorage.setItem(cacheKey('jonas'), '{"fetchedAt": 1, nonsense')
     const fetchMock = serveMap()
     await loadTheoryMap()
-    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
   })
 
   it('still opens when storage is blocked', async () => {
@@ -197,5 +256,29 @@ describe('documentFromFiles', () => {
     expect(() => documentFromFiles({ content: { sections: [{ columns: 3 }] }, layout })).toThrow(
       RepoFetchError,
     )
+  })
+})
+
+describe('parseTheoryIndex', () => {
+  it('keeps the entries that fit, and marks an unknown status as other', () => {
+    const index = parseTheoryIndex({
+      default: 'a',
+      theories: [
+        { slug: 'a', title: 'A', status: 'author' },
+        { slug: 'b', title: 'B', status: 'endorsed-later' },
+        { slug: 'Not A Slug', title: 'C', status: 'author' },
+        { slug: 'a', title: 'A again', status: 'author' },
+      ],
+    })
+    expect(index?.theories.map((t) => [t.slug, t.status, t.layout])).toEqual([
+      ['a', 'author', 'stages'],
+      ['b', 'other', 'stages'],
+    ])
+  })
+
+  it('refuses an index whose default it does not list', () => {
+    const one = [{ slug: 'a', title: 'A', status: 'author' }]
+    expect(parseTheoryIndex({ default: 'x', theories: one })).toBeNull()
+    expect(parseTheoryIndex([])).toBeNull()
   })
 })

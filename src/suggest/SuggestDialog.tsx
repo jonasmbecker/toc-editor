@@ -105,7 +105,7 @@ export function SuggestDialog({ origin, onClose }: SuggestDialogProps) {
     if (!canSend) return
     setError(null)
     setSending(true)
-    const result = await sendSuggestion(document, origin.sha, form)
+    const result = await sendSuggestion(document, origin, form)
     setSending(false)
     if (result.ok) {
       clearForm()

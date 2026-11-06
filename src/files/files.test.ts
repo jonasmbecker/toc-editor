@@ -102,11 +102,8 @@ describe('import errors', () => {
 describe('templates and filenames', () => {
   it('creates fresh independent documents', () => {
     for (const t of TEMPLATES) expect(t.create()).not.toBe(t.create())
-    expect(TEMPLATES.map((t) => t.id)).toEqual([
-      'status-quo-metacrisis',
-      'blank-toc',
-      'blank-status-quo',
-    ])
+    // The metacrisis map is a theory now (repo/openTheory.ts), not a template.
+    expect(TEMPLATES.map((t) => t.id)).toEqual(['blank-toc', 'blank-status-quo'])
   })
   it('bundles the status-quo fixture plus the two extension keys', () => {
     const fixture = importFromText(readFixtureText('theory-of-metacrisis-status-quo_v2.json'))

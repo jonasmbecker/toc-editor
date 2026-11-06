@@ -25,6 +25,7 @@ import { computeNeedMixes } from './needMix'
 import { tidyLayout } from './tidyLayout'
 import { SnapGuide } from './SnapGuide'
 import { CanvasTopBar } from './CanvasTopBar'
+import { TheoryNoteBar } from './TheoryNoteBar'
 import { NodePanel } from '../panels/NodePanel'
 import { NodeReadPanel } from '../panels/NodeReadPanel'
 import { ConnectionDetails } from '../panels/ConnectionDetails'
@@ -113,7 +114,12 @@ function SelectionPanels() {
 /** The document being edited lives in the zustand store, not a prop: once more than one screen
  * can open a document (home-files, share-links), each funnels through `store.load`, and this
  * component always renders whatever the store currently holds. */
-export function Canvas({ onHome }: { onHome: () => void }) {
+export interface CanvasProps {
+  onHome: () => void
+  onSwitchTheory: (slug: string) => void
+}
+
+export function Canvas({ onHome, onSwitchTheory }: CanvasProps) {
   const doc = useToCStore((state) => state.document)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
   const graph = useMemo(() => buildFlow(doc), [doc])
@@ -131,9 +137,11 @@ export function Canvas({ onHome }: { onHome: () => void }) {
         connectionCount={flow.edges.length}
         droppedCount={graph.droppedConnections.length}
         onHome={onHome}
+        onSwitchTheory={onSwitchTheory}
         onTidy={() => tidyLayout(flow.nodes)}
       />
       <StageBar />
+      <TheoryNoteBar />
       <div className={stageClassName(connect.isConnecting, isReadOnly)}>
         <ReactFlow
           nodes={flow.nodes}

@@ -58,7 +58,7 @@ function isGithubUrl(value: unknown): value is string {
  * `website` field is the honeypot, always empty from a person. */
 export async function sendSuggestion(
   document: ToCDocument,
-  baseSha: string,
+  base: { sha: string; slug: string },
   form: SuggestForm,
   doFetch: typeof fetch = fetch,
 ): Promise<SuggestResult> {
@@ -73,7 +73,8 @@ export async function sendSuggestion(
         layout,
         name: form.name.trim(),
         reason: form.reason.trim(),
-        baseSha,
+        baseSha: base.sha,
+        theory: base.slug,
         website: '',
       }),
     })

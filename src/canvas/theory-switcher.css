@@ -1,0 +1,217 @@
+/* The theory switcher in the top bar (design detail "switcher-design", f013/land-in-map). It
+   takes the brand's place and reuses the bar's pill and the Share dialog's surface. */
+
+.toc-theory {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* The theory's name is the page's title: the counts give way before it does. */
+  flex: none;
+  min-width: 0;
+}
+
+.toc-topbar:has(.toc-theory) .toc-topbar__counts {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toc-theory__button {
+  min-width: 0;
+  max-width: 320px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 22px 4px 6px;
+  margin-left: -6px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: inherit;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  background: none
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236b6966' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 7px center;
+}
+
+.toc-theory__button:hover:not(:disabled) {
+  background-color: #f1eee7;
+}
+
+.toc-theory__button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.toc-theory__button:disabled {
+  cursor: default;
+  background-image: none;
+  padding-right: 6px;
+}
+
+.toc-theory__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* A reconstruction must never pass for the author's own: amber, text #8a5a00 on #fdf3dc
+   (contrast about 5.6:1). */
+.toc-theory-badge--reconstructed {
+  background-color: #fdf3dc;
+  color: #8a5a00;
+}
+
+.toc-theory__popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: -6px;
+  z-index: 25;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #e2ded6;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(47, 45, 46, 0.16);
+  animation: toc-fade-in 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toc-theory__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-theory__option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px 8px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+}
+
+.toc-theory__option:hover,
+.toc-theory__option:focus-visible {
+  background: #f1eee7;
+  outline: none;
+}
+
+.toc-theory__option:focus-visible {
+  box-shadow: inset 0 0 0 2px #2563eb;
+}
+
+.toc-theory__option[aria-selected='true']::before {
+  content: '✓';
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-size: 13px;
+  color: #2563eb;
+}
+
+.toc-theory__option-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toc-theory__option-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.toc-theory__note {
+  font-size: 12px;
+  color: #6b6966;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.toc-theory__fallback {
+  margin: 4px 10px;
+}
+
+.toc-theory__start {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 0;
+  border-top: 1px solid #e2ded6;
+  border-radius: 0 0 6px 6px;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  color: #2563eb;
+  text-align: left;
+  cursor: pointer;
+}
+
+.toc-theory__start:hover {
+  background: #f1eee7;
+}
+
+.toc-theory__start:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+}
+
+/* The reconstruction note under the top bar, once per theory per session. */
+.toc-bar--theory {
+  background: #fdf3dc;
+  border-bottom-color: #ecd9a0;
+}
+
+.toc-bar--theory strong {
+  color: #8a5a00;
+}
+
+.toc-bar__close {
+  border: 0;
+  background: none;
+  color: #6b6966;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.toc-bar__close:hover {
+  background: rgba(47, 45, 46, 0.08);
+}
+
+.toc-bar__close:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+/* Narrow windows: the badge becomes a dot, its words stay for screen readers. */
+@media (max-width: 900px) {
+  .toc-theory {
+    flex: 0 1 auto;
+  }
+
+  .toc-topbar .toc-theory-badge {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    font-size: 0;
+    flex: none;
+    background-color: #b8b2a7;
+  }
+
+  .toc-topbar .toc-theory-badge--reconstructed {
+    background-color: #d99a1e;
+  }
+}

@@ -2,28 +2,32 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { Home } from './Home'
 import type { Draft } from '../files/draft'
-import { blankTheoryOfChange, statusQuoMetacrisis } from '../templates'
-import { serializeMapFile, splitDocument } from '../files/split'
+import { blankTheoryOfChange } from '../templates'
+import { useTheoryStore } from '../repo/theoryStore'
+import { BUNDLED_INDEX } from '../repo/theoryIndex'
 
 function renderHome(draft: Draft | null = null) {
   const onOpen = vi.fn()
+  const onOpenTheory = vi.fn()
   const onRestoreDraft = vi.fn()
   const onDiscardDraft = vi.fn()
   render(
     <Home
       draft={draft}
       onOpen={onOpen}
+      onOpenTheory={onOpenTheory}
       onRestoreDraft={onRestoreDraft}
       onDiscardDraft={onDiscardDraft}
     />,
   )
-  return { onOpen, onRestoreDraft, onDiscardDraft }
+  return { onOpen, onOpenTheory, onRestoreDraft, onDiscardDraft }
 }
 
 describe('Home', () => {
-  it('offers the status-quo map, two blank templates and open-file', () => {
+  it('offers the theories, two blank templates and open-file', () => {
     renderHome()
-    expect(screen.getByRole('button', { name: /Metacrisis status-quo map/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Jonas Becker's theory/ })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Metacrisis status-quo map/ })).toBeNull()
     expect(screen.getByRole('button', { name: /Blank theory of change/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Blank status-quo map/ })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Open a JSON file' })).toBeInTheDocument()
@@ -78,37 +82,43 @@ describe('Home', () => {
   })
 })
 
-describe('Home: the featured map', () => {
-  it('fetches the theory repo ahead, so a click opens the repo version from the cache', async () => {
-    const edited = { ...splitDocument(statusQuoMetacrisis()).content, title: 'Edited on GitHub' }
-    const { layout } = splitDocument(statusQuoMetacrisis())
-    const fetchMock = vi.fn((url: string) =>
-      Promise.resolve(
-        new Response(serializeMapFile(url.endsWith('content.json') ? edited : layout)),
-      ),
+describe('Home: the theories', () => {
+  it('lists every theory in the index with its status, and opens one by its slug', () => {
+    useTheoryStore.getState().setIndex(
+      {
+        default: 'jonas',
+        theories: [
+          ...BUNDLED_INDEX.theories,
+          {
+            slug: 'schmachtenberger',
+            title: 'Daniel Schmachtenberger (reconstructed)',
+            status: 'reconstructed',
+            layout: 'free',
+            statusNote: 'Not endorsed by him.',
+          },
+        ],
+      },
+      false,
     )
-    vi.stubGlobal('fetch', fetchMock)
-    const { onOpen } = renderHome()
-    await waitFor(() => expect(sessionStorage.length).toBe(1))
-    expect(fetchMock).toHaveBeenCalledTimes(3)
-
-    fireEvent.click(screen.getByRole('button', { name: /Metacrisis status-quo map/ }))
-    await waitFor(() => expect(onOpen).toHaveBeenCalledTimes(1))
-    expect(onOpen.mock.calls[0][0].title).toBe('Edited on GitHub')
-    expect(fetchMock).toHaveBeenCalledTimes(3)
-  })
-
-  it('opens the bundled map, with no message, when GitHub cannot be reached', async () => {
-    const { onOpen } = renderHome()
-    fireEvent.click(screen.getByRole('button', { name: /Metacrisis status-quo map/ }))
-    await waitFor(() => expect(onOpen).toHaveBeenCalledTimes(1))
-    expect(serializeMapFile(onOpen.mock.calls[0][0])).toBe(serializeMapFile(statusQuoMetacrisis()))
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    const { onOpenTheory, onOpen } = renderHome()
+    const card = screen.getByRole('button', { name: /Daniel Schmachtenberger/ })
+    expect(card).toHaveTextContent('Reconstructed · not endorsed')
+    expect(card).toHaveTextContent('Not endorsed by him.')
+    expect(screen.getByRole('button', { name: /Jonas Becker's theory/ })).toHaveTextContent(
+      "Author's own",
+    )
+    fireEvent.click(card)
+    expect(onOpenTheory).toHaveBeenCalledWith('schmachtenberger')
+    expect(onOpen).not.toHaveBeenCalled()
+    useTheoryStore.getState().setIndex(BUNDLED_INDEX, false)
   })
 
   it('never calls GitHub for a blank template', () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
     const { onOpen } = renderHome()
     fireEvent.click(screen.getByRole('button', { name: /Blank status-quo map/ }))
     expect(onOpen).toHaveBeenCalledTimes(1)
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 })

@@ -59,7 +59,12 @@ describe('branchSlug', () => {
 })
 
 describe('pullRequestBody', () => {
-  const text = { name: 'Ana', reason: 'Because.', summary: summary(['Added card: "X"']) }
+  const text = {
+    name: 'Ana',
+    reason: 'Because.',
+    summary: summary(['Added card: "X"']),
+    dir: 'map',
+  }
 
   it("has the template's headings, the list, the quoted reason and the contributor", () => {
     const body = pullRequestBody(text, null)
@@ -83,6 +88,7 @@ describe('pullRequestBody', () => {
         name: '@boss <b>Ana</b>',
         reason: 'See [this](http://evil.example) @maintainer #1\n\n<img src=x>',
         summary: summary(['Renamed card: "@x" → "[y](http://z)"']),
+        dir: 'map',
       },
       null,
     )
@@ -104,6 +110,12 @@ describe('pullRequestBody', () => {
     expect(body).toContain('- Added card: "C39"')
     expect(body).not.toContain('"C40"')
     expect(body).toContain('- …and 5 more (see the Files tab)')
+  })
+
+  it("names the theory's own positions file", () => {
+    const moved = summary([], { layoutChanged: true, moved: 2 })
+    const body = pullRequestBody({ ...text, summary: moved, dir: 'theories/jonas' }, null)
+    expect(body).toContain('(positions only, in `theories/jonas/layout.json`)')
   })
 
   it('mentions moved cards after the changes, as positions only', () => {

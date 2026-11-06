@@ -64,23 +64,12 @@ export interface TemplateInfo {
   id: string
   name: string
   description: string
-  /** Shown as the full-width first card on the home screen. */
-  isFeatured?: boolean
-  /** The bundled copy: instant, offline, and what tests and the fallback use. */
   create: () => ToCDocument
-  /** When given, opening the card uses this instead of `create`. */
-  load?: () => Promise<ToCDocument>
 }
 
+/** The start page's templates. The metacrisis map is not one of them any more: it is a theory,
+ * opened from the switcher or the start page's theory cards (`repo/openTheory.ts`). */
 export const TEMPLATES: TemplateInfo[] = [
-  {
-    id: 'status-quo-metacrisis',
-    name: 'Metacrisis status-quo map',
-    description: 'From unmet childhood needs to the metacrisis: the digitised whiteboard.',
-    isFeatured: true,
-    create: statusQuoMetacrisis,
-    load: loadDefaultMap,
-  },
   {
     id: 'blank-toc',
     name: 'Blank theory of change',

@@ -66,8 +66,9 @@ function ShareAction() {
   )
 }
 
-/** Offered only on the default map opened from the theory repo, when it is editable and not a
- * share link: those are the maps a suggestion can be compared against and branched from. */
+/** Offered only on a theory opened from the theory repo, when it is editable and not a share
+ * link: those are the maps a suggestion can be compared against and branched from. The pull
+ * request goes to that theory's own folder (`origin.slug`). */
 function SuggestAction() {
   const origin = useOriginStore((state) => state.origin)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
@@ -103,7 +104,7 @@ function exportNow(mode: ExportMode) {
   downloadDocument(useToCStore.getState().document, mode)
 }
 
-/** Save state, Home, the two exports and Share, shown on the right of the top bar. Reads the
+/** Save state, Start your own (the start page), the two exports and Share, shown on the right of the top bar. Reads the
  * document only when a button is pressed, so typing does not re-render the bar. */
 export function TopBarActions({ onHome }: { onHome: () => void }) {
   const isLocalDirty = useToCStore((state) => state.isDirty)
@@ -117,8 +118,13 @@ export function TopBarActions({ onHome }: { onHome: () => void }) {
           Unsaved local draft
         </span>
       ) : null}
-      <button type="button" className="toc-topbar__btn" onClick={onHome}>
-        Home
+      <button
+        type="button"
+        className="toc-topbar__btn"
+        title="Start a new map, or open a file"
+        onClick={onHome}
+      >
+        Start your own
       </button>
       <button type="button" className="toc-topbar__btn" onClick={() => exportNow('full')}>
         Export JSON

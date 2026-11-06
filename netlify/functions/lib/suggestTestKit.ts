@@ -36,6 +36,8 @@ export function fakeRepo(overrides: Partial<TheoryRepo> = {}) {
   const opened: PullRequestSpec[] = []
   const repo: TheoryRepo = {
     isOnMain: vi.fn(async (sha: string) => sha === BASE_SHA),
+    // A base commit from before the theory index: the default theory still lives in `map/`.
+    mapDir: vi.fn(async (_sha: string, slug: string) => (slug === 'jonas' ? 'map' : null)),
     readMap: vi.fn(async () => ({
       content: serializeMapFile(baseFiles.content),
       layout: serializeMapFile(baseFiles.layout),
