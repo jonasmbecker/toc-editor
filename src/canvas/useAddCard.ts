@@ -1,7 +1,6 @@
 import { useCallback, useRef, type MouseEvent } from 'react'
 import { useToCStore } from '../state/store'
 import { addNodeAt } from '../state/nodes'
-import type { FlowGraph } from './buildFlow'
 
 interface Point {
   x: number
@@ -13,10 +12,20 @@ interface Projector {
   screenToFlowPosition: (point: Point) => Point
 }
 
+/** A canvas node as far as finding a region goes: its box, with the measured height once
+ * React Flow has one. */
+interface Placed {
+  id: string
+  type?: string
+  position: Point
+  width?: number
+  height?: number
+}
+
 /** The section whose region holds the point (the last drawn wins where regions overlap), or the
- * first section. */
-export function sectionAt(graph: FlowGraph, point: Point): number {
-  const hit = graph.nodes
+ * first section. Takes the canvas's live nodes, whose regions are fitted to the measured cards. */
+export function sectionAt(nodes: Placed[], point: Point): number {
+  const hit = nodes
     .filter((n) => n.type === 'region')
     .reverse()
     .find(
@@ -45,7 +54,7 @@ function focusNewTitle() {
  * title is ready to type into. The canvas's own double-click zoom is off on a free map, so the
  * gesture means one thing.
  */
-export function useAddCard(graph: FlowGraph) {
+export function useAddCard(nodes: Placed[]) {
   const transform = useToCStore((state) => state.transform)
   const select = useToCStore((state) => state.select)
   const instance = useRef<Projector | null>(null)
@@ -54,7 +63,7 @@ export function useAddCard(graph: FlowGraph) {
     (point: Point) => {
       let added: string | null = null
       transform('add card', (doc) => {
-        const result = addNodeAt(doc, sectionAt(graph, point), point)
+        const result = addNodeAt(doc, sectionAt(nodes, point), point)
         added = result.nodeId
         return result.document
       })
@@ -63,14 +72,15 @@ export function useAddCard(graph: FlowGraph) {
         focusNewTitle()
       }
     },
-    [graph, transform, select],
+    [nodes, transform, select],
   )
 
   const onDoubleClick = useCallback(
     (event: MouseEvent) => {
       if (!instance.current) return
-      // Only on empty canvas: a double-click on a card or a link is not a request for a card.
-      if (!(event.target as Element).closest('.react-flow__pane')) return
+      // Only on empty canvas: a double-click on a card or a link is not a request for a card. The
+      // pane wraps every node and edge, so it has to be the target itself.
+      if (!(event.target as Element).classList.contains('react-flow__pane')) return
       addAt(instance.current.screenToFlowPosition({ x: event.clientX, y: event.clientY }))
     },
     [addAt],

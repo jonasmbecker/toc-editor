@@ -3,6 +3,7 @@ import {
   useStore,
   Background,
   BackgroundVariant,
+  ConnectionMode,
   Controls,
   MiniMap,
   ReactFlow,
@@ -145,7 +146,7 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
   )
   const flow = useControlledFlow(doc, graph)
   const connect = useConnectFlow()
-  const addCard = useAddCard(graph)
+  const addCard = useAddCard(flow.nodes)
   const free = isFreeLayout(doc)
   const canAdd = free && !isReadOnly
   const isEmpty = !flow.nodes.some((node) => node.type === 'card')
@@ -184,6 +185,9 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
           }}
           // On a free canvas a double-click on empty space adds a card there instead of zooming.
           zoomOnDoubleClick={!canAdd}
+          // Every visible dot on a free card starts a link, so a drop on one must count too: loose
+          // mode lets a link end on any handle (onConnect reads only the two cards).
+          connectionMode={free ? ConnectionMode.Loose : ConnectionMode.Strict}
           onDoubleClick={canAdd ? addCard.onDoubleClick : undefined}
           onConnect={connect.onConnect}
           onConnectStart={connect.onConnectStart}

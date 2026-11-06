@@ -1,4 +1,4 @@
-import { isBandSection, isFreeLayout, type ToCDocument } from '../model/schema'
+import { GROUP_KIND, isBandSection, isFreeLayout, type ToCDocument } from '../model/schema'
 
 /**
  * theoryofchangebuilder.com's model has no x coordinate: a node's horizontal position is
@@ -155,7 +155,8 @@ function layoutFree(doc: ToCDocument): DocumentLayout {
   doc.sections.forEach((section, sectionIndex) => {
     section.columns.forEach((column, columnIndex) => {
       for (const node of column.nodes) {
-        const placed = node.xPosition !== undefined
+        // A group's frame is drawn around its members, so it needs no x of its own.
+        const placed = node.xPosition !== undefined || node.kind === GROUP_KIND
         const layout = {
           nodeId: node.id,
           sectionIndex,

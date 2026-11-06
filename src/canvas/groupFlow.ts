@@ -32,12 +32,15 @@ export function buildGroupNodes(doc: ToCDocument, positions: PositionById): Grou
     const boxes = members.map((m) => positions.get(m.id)).filter((b): b is Box => !!b)
     if (boxes.length === 0) continue
     const top = Math.min(...boxes.map((b) => b.y)) - GROUP_HEAD
+    const left = Math.min(...boxes.map((b) => b.x))
     const bottom = Math.max(...boxes.map((b) => b.y)) + ESTIMATED_CARD_HEIGHT
     nodes.push({
       id: group.id,
       type: 'group',
-      position: { x: Math.min(...boxes.map((b) => b.x)) - GROUP_PAD, y: top },
-      width: Math.max(...boxes.map((b) => b.width)) + GROUP_PAD * 2,
+      position: { x: left - GROUP_PAD, y: top },
+      // Right edge of the furthest card, not the widest card: on a free canvas members can sit
+      // side by side. In a column they share one x, so this is the widest card as before.
+      width: Math.max(...boxes.map((b) => b.x + b.width)) - left + GROUP_PAD * 2,
       height: bottom - top + GROUP_PAD,
       // Only the title strip drags the group, so cards inside it keep their own drags. No
       // `draggable` here: it would override the canvas-wide read-only switch.

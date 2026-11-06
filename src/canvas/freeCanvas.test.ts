@@ -209,8 +209,33 @@ describe('adding a card on a free canvas', () => {
 
   it('a double-click inside a region adds the card to that section; outside, to the first', () => {
     const graph = buildFlow(loopMap())
-    expect(sectionAt(graph, { x: 400, y: 450 })).toBe(1)
-    expect(sectionAt(graph, { x: 100, y: 30 })).toBe(0)
-    expect(sectionAt(graph, { x: 5000, y: 5000 })).toBe(0)
+    expect(sectionAt(graph.nodes, { x: 400, y: 450 })).toBe(1)
+    expect(sectionAt(graph.nodes, { x: 100, y: 30 })).toBe(0)
+    expect(sectionAt(graph.nodes, { x: 5000, y: 5000 })).toBe(0)
+  })
+})
+
+describe('groups on a free canvas', () => {
+  /** The loop map with a and b in one group, side by side. */
+  function grouped(): ToCDocument {
+    const doc = loopMap()
+    const nodes = doc.sections[0].columns[0].nodes
+    nodes.unshift({ ...makeNode('g', [], { width: 200 }), kind: 'group' })
+    for (const n of nodes.slice(1)) n.groupId = 'g'
+    return doc
+  }
+
+  it("the frame reaches the right edge of the furthest card, not just the widest card's width", () => {
+    const frame = buildFlow(grouped()).nodes.find((n) => n.id === 'g')!
+    // a at x 0 and b at x 600, each 200 wide.
+    expect(frame.position.x).toBeLessThan(0)
+    expect(frame.position.x + frame.width!).toBeGreaterThan(800)
+  })
+
+  it('the group node itself needs no x and is not parked with unplaced cards', () => {
+    const doc = grouped()
+    doc.sections[1].columns[0].nodes.push(makeNode('new', [], { width: 200 }))
+    const byId = new Map(layoutDocument(doc).nodes.map((n) => [n.nodeId, n]))
+    expect(byId.get('new')!.x).toBe(0)
   })
 })
