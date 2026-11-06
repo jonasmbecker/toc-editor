@@ -50,6 +50,10 @@ export interface Lane {
   near: boolean
   /** Outer arc runs above the header bars (forward) or below the lowest card (loop). */
   above: boolean
+  /** A forward skip link: it looks for a channel through the skipped columns first (see
+   * `assignChannels`), even when one of its ends sits under a header bar and its corridor is
+   * therefore the one below the map. */
+  forward: boolean
   sourceSlot: number
   sourceCount: number
   targetSlot: number
@@ -85,7 +89,7 @@ function step(count: number): number {
  * the one starting further from the corridor sits further from the cards. */
 export function assignLanes(links: RouteLink[], headers: Rect[]): Map<string, Lane> {
   const lanes = new Map<string, Lane>()
-  const outer: (RouteLink & { above: boolean })[] = []
+  const outer: (RouteLink & { above: boolean; forward: boolean })[] = []
   const near: RouteLink[] = []
   for (const l of links) {
     if (l.tc === l.sc - 1) near.push(l)
@@ -93,7 +97,7 @@ export function assignLanes(links: RouteLink[], headers: Rect[]): Map<string, La
       const forward = l.tc > l.sc
       const above =
         forward && !crossesHeader(headers, l.sx + CLEAR) && !crossesHeader(headers, l.tx - CLEAR)
-      outer.push({ ...l, above })
+      outer.push({ ...l, above, forward })
     }
   }
 
@@ -134,6 +138,7 @@ export function assignLanes(links: RouteLink[], headers: Rect[]): Map<string, La
       lanes.set(l.id, {
         near: false,
         above,
+        forward: l.forward,
         sourceSlot,
         sourceCount,
         targetSlot,
@@ -152,6 +157,7 @@ export function assignLanes(links: RouteLink[], headers: Rect[]): Map<string, La
       lanes.set(l.id, {
         near: true,
         above: false,
+        forward: false,
         sourceSlot: i,
         sourceCount: members.length,
         targetSlot: i,
@@ -280,8 +286,17 @@ export function assignChannels(
       cursor = Math.max(cursor, bottom)
     }
     bands.push([cursor, Infinity])
+    // A link whose drop beside the source or target column runs under a header bar (a section's
+    // second or third column) must stay below that bar, or its vertical run would cross it.
+    const floor = Math.max(
+      -Infinity,
+      ...headers
+        .filter((h) => (from >= h.x && from <= h.x + h.w) || (to >= h.x && to <= h.x + h.w))
+        .map((h) => h.y + h.h + CLEAR),
+    )
     const mid = (link.sy + link.ty) / 2
     const fits = bands
+      .map(([a, b]): [number, number] => [Math.max(a, floor), b])
       .filter(([a, b]) => b - a >= CHANNEL_MIN)
       .map(([a, b]) => ({ lo: a + CHANNEL_EDGE, hi: b - CHANNEL_EDGE }))
       .map((band) => ({ ...band, y: Math.min(band.hi, Math.max(band.lo, mid)) }))

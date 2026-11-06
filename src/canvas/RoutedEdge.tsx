@@ -16,6 +16,7 @@ import { LinkLabel } from './LinkLabel'
 const FALLBACK_LANE: Lane = {
   near: false,
   above: true,
+  forward: true,
   sourceSlot: 0,
   sourceCount: 1,
   targetSlot: 0,
@@ -47,11 +48,11 @@ function readScene(s: ReactFlowState): RouteScene {
 }
 
 /** The y of this link's channel through the skipped columns, or undefined for a link that takes
- * the corridor (a loop). Worked out for all forward skip links together,
- * because links sharing a band are spread across it. */
+ * the corridor (a loop, or a forward link with no free band). Worked out for all forward skip
+ * links together, because links sharing a band are spread across it. */
 function channelOf(s: ReactFlowState, id: string): number | undefined {
   const links = (s.edges as ConnectionEdgeType[]).flatMap((e) =>
-    e.type === 'routed' && e.data?.lane?.above && e.data.lane.ends
+    e.type === 'routed' && e.data?.lane?.forward && e.data.lane.ends
       ? [{ id: e.id, ...e.data.lane.ends }]
       : [],
   )

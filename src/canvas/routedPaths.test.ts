@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { buildFlow } from './buildFlow'
 import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from './anchors'
 import { LOOP_OUT_HANDLE } from './CardNode'
-import { assignChannels, routePoints, sampleLine, type Pt, type Rect } from './edgeRouting'
+import { assignChannels, assignLanes, routePoints, sampleLine, type Pt, type Rect } from './edgeRouting'
 import { statusQuoMetacrisis } from '../templates'
 import { SECTION_HEADER_HEIGHT } from '../layout/columns'
 
@@ -91,6 +91,41 @@ describe('skip links threaded through the skipped columns', () => {
             if (inside(card, p, 10)) problems.push(`${edge.id} too close at ${p.x},${p.y}`)
           }
         }
+      }
+    }
+    expect(problems).toEqual([])
+  })
+
+  it('a link into a section\'s second column threads a channel instead of the corridor under the map', () => {
+    // Three sections: the source (x 0), one skipped column (x 200), and a two-column section
+    // (x 400 and x 600) whose header spans both columns, so the drop beside the target sits under it.
+    const cards: Rect[] = [
+      { x: 0, y: 100, w: 100, h: 50 },
+      { x: 200, y: 100, w: 100, h: 50 },
+      { x: 200, y: 250, w: 100, h: 50 },
+      { x: 400, y: 100, w: 100, h: 50 },
+      { x: 400, y: 250, w: 100, h: 50 },
+      { x: 600, y: 200, w: 100, h: 50 },
+    ]
+    const headers: Rect[] = [
+      { x: 0, y: 40, w: 100, h: 40 },
+      { x: 200, y: 40, w: 100, h: 40 },
+      { x: 400, y: 40, w: 300, h: 40 },
+    ]
+    const link = { id: 'x', sx: 100, sy: 120, tx: 600, ty: 220, sc: 0, tc: 3 }
+    const lane = assignLanes([link], headers).get('x')!
+    expect(lane.above).toBe(false)
+    expect(lane.forward).toBe(true)
+    const y = assignChannels([{ ...link }], cards, headers).get('x')
+    expect(y).toBeDefined()
+    // Below the header bar it drops under, and between the card rows, not below the lowest card.
+    expect(y!).toBeGreaterThan(80 + 10)
+    expect(y!).toBeLessThan(250)
+    const points = routePoints({ x: 100, y: 120 }, { x: 600, y: 220 }, { cards, headers }, lane, y)
+    const problems: string[] = []
+    for (const p of sampleLine(points.slice(1, -1))) {
+      for (const box of [...cards.slice(1, -1), ...headers]) {
+        if (inside(box, p)) problems.push(`crosses at ${p.x},${p.y}`)
       }
     }
     expect(problems).toEqual([])
