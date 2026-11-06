@@ -120,7 +120,14 @@ function linksByTarget(card: DocumentNode | undefined): Map<string, Connection> 
 }
 
 const REASONING_KEYS = ['assumptions', 'evidence', 'evidenceBlocks']
-const LINK_KEYS_HANDLED = ['id', 'targetId', 'confidence', 'isFeedbackLoop', ...REASONING_KEYS]
+const LINK_KEYS_HANDLED = [
+  'id',
+  'targetId',
+  'confidence',
+  'isFeedbackLoop',
+  'label',
+  ...REASONING_KEYS,
+]
 
 function linkChanges(was: Connection, now: Connection, label: string): string[] {
   const lines: string[] = []
@@ -132,6 +139,13 @@ function linkChanges(was: Connection, now: Connection, label: string): string[] 
   }
   if (REASONING_KEYS.some((key) => canon(was[key]) !== canon(now[key]))) {
     lines.push(`Changed the reasoning behind the link ${label}`)
+  }
+  if ((was.label ?? '') !== (now.label ?? '')) {
+    lines.push(
+      now.label
+        ? `Labelled the link ${label} "${clip(now.label, TITLE_LIMIT)}"`
+        : `Removed the label from the link ${label}`,
+    )
   }
   if (Boolean(was.isFeedbackLoop) !== Boolean(now.isFeedbackLoop)) {
     lines.push(`${now.isFeedbackLoop ? 'Marked' : 'Unmarked'} the link ${label} as a feedback loop`)
@@ -215,6 +229,18 @@ function mapLines(before: ToCDocument, after: ToCDocument): string[] {
   const ignore = ['title', 'sections', 'textSize', 'curvature', 'columnPadding', 'sectionPadding']
   const keys = changedKeys(before, after, ignore)
   if (keys.length > 0) lines.push(`Changed other settings of the map (${otherDetails(keys)})`)
+  const bandOf = (doc: ToCDocument, title: string) =>
+    doc.sections.find((s) => s.title === title)?.display
+  for (const section of after.sections) {
+    const was = bandOf(before, section.title)
+    if (before.sections.some((s) => s.title === section.title) && was !== section.display) {
+      lines.push(
+        section.display === 'band'
+          ? `Drew ${quote(section.title)} as a band under the columns`
+          : `Drew ${quote(section.title)} as columns again`,
+      )
+    }
+  }
   // Which cards sit in which column of which section, among the cards both versions have.
   const common = (doc: ToCDocument, other: Cards) =>
     doc.sections.map((section) => [

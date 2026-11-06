@@ -35,6 +35,9 @@ export const BAND_INSET = 24
 export const BAND_GAP = 64
 /** Card height assumed where layout needs one and has no measurement (an empty band's top). */
 const ESTIMATED_CARD_HEIGHT = 100
+/** Room above a group's first card for its title strip (`canvas/groupFlow.ts` GROUP_HEAD); kept
+ * as a number here so the layout does not import from the canvas. */
+const GROUP_HEAD = 64
 
 export interface NodeLayout {
   nodeId: string
@@ -181,7 +184,12 @@ function layoutBands(doc: ToCDocument, nodes: NodeLayout[], columnsRight: number
   const width = bandWidth(columnsRight)
   const bands: BandLayout[] = []
   let floor = -Infinity
-  for (const node of nodes) floor = Math.max(floor, node.y + ESTIMATED_CARD_HEIGHT)
+  // Top of the lowest card above: a band header above it means the band was never tidied.
+  let lowestTop = -Infinity
+  for (const node of nodes) {
+    floor = Math.max(floor, node.y + ESTIMATED_CARD_HEIGHT)
+    lowestTop = Math.max(lowestTop, node.y)
+  }
   if (!Number.isFinite(floor)) floor = HEADER_CLEARANCE
 
   doc.sections.forEach((section, sectionIndex) => {
@@ -202,13 +210,22 @@ function layoutBands(doc: ToCDocument, nodes: NodeLayout[], columnsRight: number
       }
     })
     const cards = nodes.slice(first)
-    // The header sits a header-clearance above the band's highest card, the same distance as a
-    // column header above `yPosition: 0`; an empty band takes the next free place.
-    const y =
-      cards.length > 0 ? Math.min(...cards.map((n) => n.y)) - HEADER_CLEARANCE : floor + BAND_GAP
+    // The header sits a header-clearance above the band's highest card (or the frame of a group
+    // in its first row), the same distance as a column header above `yPosition: 0`. A band whose
+    // cards were never tidied would land on top of the columns; it is moved, cards and all, to
+    // the next free place, as an empty band is.
+    const grouped = new Set(section.columns.flatMap((c) => c.nodes.filter((n) => n.groupId).map((n) => n.id)))
+    const tops = cards.map((n) => n.y - (grouped.has(n.nodeId) ? GROUP_HEAD : 0))
+    const wanted = tops.length > 0 ? Math.min(...tops) - HEADER_CLEARANCE : -Infinity
+    const y = wanted >= lowestTop ? wanted : floor + BAND_GAP
+    if (Number.isFinite(wanted)) for (const n of cards) n.y += y - wanted
     bands.push({ sectionIndex, title: section.title, x: CANVAS_MARGIN, y, width })
-    for (const n of cards) floor = Math.max(floor, n.y + ESTIMATED_CARD_HEIGHT)
-    if (cards.length === 0) floor = y + HEADER_CLEARANCE
+    floor = y + HEADER_CLEARANCE
+    for (const n of cards) {
+      floor = Math.max(floor, n.y + ESTIMATED_CARD_HEIGHT)
+      lowestTop = Math.max(lowestTop, n.y)
+    }
+    lowestTop = Math.max(lowestTop, y)
   })
   return bands
 }

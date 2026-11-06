@@ -2,14 +2,21 @@ import { describe, expect, it } from 'vitest'
 import { parseDocument, type DocumentNode, type ToCDocument } from '../model/schema'
 import { buildFlow } from './buildFlow'
 import { bundleLabels, labelCounts } from './linkLabels'
-import { layoutDocument, HEADER_CLEARANCE, BAND_GAP } from '../layout/columns'
+import {
+  layoutDocument,
+  HEADER_CLEARANCE,
+  BAND_GAP,
+  SECTION_HEADER_HEIGHT,
+} from '../layout/columns'
 import { alignDocument, DEFAULT_CARD_HEIGHT } from '../layout/align'
 import { resolveDropTarget } from './dragSnap'
 import { toCompatibleJson } from '../files/export'
 import { mergeDocument, splitDocument } from '../files/split'
 import { allNodes } from '../state/tree'
 import { extensionKeysIn, makeDocument, makeNode, readFixtureText } from '../test/fixtures'
-import { STACK_DOWN_IN_HANDLE, STACK_UP_OUT_HANDLE } from './CardNode'
+import { LOOP_OUT_HANDLE, STACK_DOWN_IN_HANDLE, STACK_UP_OUT_HANDLE } from './CardNode'
+import { CARD_ANCHOR_Y } from './anchors'
+import { routePoints, sampleLine, type Rect } from './edgeRouting'
 
 /**
  * The labels-band slice: the real metacrisis map with a time stage in front whose two cards link
@@ -184,6 +191,53 @@ describe('band section', () => {
     expect(layout.bands[0].y - columnBottom).toBeGreaterThanOrEqual(BAND_GAP + 10 * loops.length - 10)
   })
 
+  it('no routed line crosses the band: its header or its cards', () => {
+    // Tidy and the check use the same generous card height, as routedPaths.test does.
+    const HEIGHT = 140
+    const heights = new Map(allNodes(doc).map((n) => [n.id, HEIGHT]))
+    const tidied = alignDocument(doc, { heights })
+    const g = buildFlow(tidied)
+    const rect = (n: (typeof g.nodes)[number]): Rect => ({
+      x: n.position.x,
+      y: n.position.y,
+      w: n.width ?? 0,
+      h: n.type === 'group' ? (n.height ?? 0) : HEIGHT,
+    })
+    const boxes = new Map(g.nodes.map((n) => [n.id, rect(n)]))
+    const isCard = (n: (typeof g.nodes)[number]) => n.type === 'card'
+    const inBandCard = (n: (typeof g.nodes)[number]) => isCard(n) && Boolean(n.data.inBand)
+    // The scene the canvas routes with: column cards and headers, never band cards.
+    const scene = {
+      cards: g.nodes.filter((n) => isCard(n) && !inBandCard(n)).map(rect),
+      headers: g.nodes.filter((n) => n.type === 'sectionHeader').map((n) => ({ ...rect(n), h: SECTION_HEADER_HEIGHT })),
+    }
+    const [band] = layoutDocument(tidied).bands
+    const obstacles = [
+      ...g.nodes.filter(inBandCard).map(rect),
+      { x: band.x, y: band.y, w: band.width, h: SECTION_HEADER_HEIGHT },
+    ]
+    const problems: string[] = []
+    for (const edge of g.edges.filter((e) => e.type === 'routed')) {
+      const s = boxes.get(edge.source)!
+      const t = boxes.get(edge.target)!
+      const near = edge.sourceHandle === LOOP_OUT_HANDLE
+      const points = routePoints(
+        { x: near ? s.x : s.x + s.w, y: s.y + CARD_ANCHOR_Y },
+        { x: near ? t.x + t.w : t.x, y: t.y + CARD_ANCHOR_Y },
+        scene,
+        edge.data!.lane!,
+      )
+      for (const p of sampleLine(points)) {
+        for (const o of obstacles) {
+          if (p.x > o.x && p.x < o.x + o.w && p.y > o.y && p.y < o.y + o.h) {
+            problems.push(`${edge.id} at ${Math.round(p.x)},${Math.round(p.y)}`)
+          }
+        }
+      }
+    }
+    expect(problems).toEqual([])
+  })
+
   it('draws one strip behind its cards', () => {
     const strips = graph.nodes.filter((n) => n.type === 'band')
     expect(strips).toHaveLength(1)
@@ -194,6 +248,31 @@ describe('band section', () => {
     const [band] = layout.bands
     expect(resolveDropTarget(doc, 400, band.y + 200).sectionIndex).toBe(bandIndex)
     expect(resolveDropTarget(doc, 400, band.y - 200).sectionIndex).not.toBe(bandIndex)
+  })
+
+  it('a band never tidied (cards at height 0) sits below the columns and does not take their drops', () => {
+    const untidied = makeDocument([makeNode('a', [], { yPosition: 300 })], [makeNode('b')])
+    untidied.sections[1].display = 'band'
+    const l = layoutDocument(untidied)
+    const a = l.nodes.find((n) => n.nodeId === 'a')!
+    const b = l.nodes.find((n) => n.nodeId === 'b')!
+    expect(l.bands[0].y).toBeGreaterThan(a.y)
+    expect(b.y).toBe(l.bands[0].y + HEADER_CLEARANCE)
+    expect(resolveDropTarget(untidied, a.x + 10, a.y).sectionIndex).toBe(0)
+  })
+
+  it("a group in the band's first row sits below the band header", () => {
+    const group = { ...makeNode('g'), kind: 'group' }
+    const members = [
+      { ...makeNode('m1'), groupId: 'g' },
+      { ...makeNode('m2'), groupId: 'g' },
+    ]
+    const withGroup = alignDocument(makeDocument([makeNode('a')], [group, ...members]))
+    withGroup.sections[1].display = 'band'
+    const tidied = alignDocument(withGroup)
+    const l = layoutDocument(tidied)
+    const frame = buildFlow(tidied).nodes.find((n) => n.id === 'g')!
+    expect(frame.position.y).toBeGreaterThanOrEqual(l.bands[0].y + SECTION_HEADER_HEIGHT)
   })
 
   it('a document without a band lays out exactly as before', () => {

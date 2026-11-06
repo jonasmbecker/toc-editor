@@ -47,6 +47,23 @@ describe('summarizeChanges', () => {
     expect(summaryTitle(summary)).toBe(summary.lines[0])
   })
 
+  it('names a link label and a section turned into a band', () => {
+    const target = card(live, TRAUMA).connections[0].targetId
+    const next = edited((doc) => {
+      card(doc, TRAUMA).connections[0].label = 'Dringlichkeit'
+      doc.sections.find((s) => s.title.startsWith('Structures'))!.display = 'band'
+    })
+    const section = live.sections.find((s) => s.title.startsWith('Structures'))!.title
+    expect(summarizeChanges(live, next).lines).toEqual([
+      `Drew "${section}" as a band under the columns`,
+      `Labelled the link "Intergenerational war trauma" → "${card(live, target).title}" "Dringlichkeit"`,
+    ])
+    expect(summarizeChanges(next, live).lines).toEqual([
+      `Drew "${section}" as columns again`,
+      `Removed the label from the link "Intergenerational war trauma" → "${card(live, target).title}"`,
+    ])
+  })
+
   it('names a removed link, and lists links into a removed card but not out of it', () => {
     const target = card(live, TRAUMA).connections[0].targetId
     const removedLink = edited((doc) => {

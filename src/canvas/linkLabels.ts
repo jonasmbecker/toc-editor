@@ -26,6 +26,10 @@ export interface LabelledLink {
   target: string
   ref: ConnectionRef
   label?: string
+  /** Handles the link leaves and enters by: links share a pill only where they share a start
+   * (or an end), so a card's side and top links never share one. */
+  sourceHandle?: string
+  targetHandle?: string
 }
 
 /** Edge id → the bundle that edge draws. Only one edge per bundle (its first) is a key. */
@@ -36,8 +40,8 @@ export function bundleLabels(links: LabelledLink[]): Map<string, LabelBundle> {
     for (const link of labelled) out.set(key(link), [...(out.get(key(link)) ?? []), link])
     return out
   }
-  const bySource = groups((l) => `${l.source}\u0000${l.label}`)
-  const byTarget = groups((l) => `${l.target}\u0000${l.label}`)
+  const bySource = groups((l) => [l.source, l.sourceHandle, l.label].join('\u0000'))
+  const byTarget = groups((l) => [l.target, l.targetHandle, l.label].join('\u0000'))
 
   const placed = new Set<string>()
   const result = new Map<string, LabelBundle>()

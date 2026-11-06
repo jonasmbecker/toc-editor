@@ -169,6 +169,7 @@ function buildEdges(
         target: connection.targetId,
         ref: { sourceId: node.id, index },
         label: connection.label,
+        ...HANDLES[route],
       })
       const skip = route === 'routed' && !connection.isFeedbackLoop
       const tint = skip ? SKIP_PALETTE[skipCount++ % SKIP_PALETTE.length] : undefined
