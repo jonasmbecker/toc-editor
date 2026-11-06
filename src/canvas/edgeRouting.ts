@@ -48,7 +48,8 @@ export interface RouteLink {
 export interface Lane {
   /** Adjacent-column feedback loop: a compact curve in the gap, no corridor. */
   near: boolean
-  /** Outer arc runs above the header bars (forward) or below the lowest card (loop). */
+  /** Outer arc's corridor runs above the header bars (a forward link whose drops are clear of
+   * them) or below the lowest card (a loop, or a forward link ending under a header bar). */
   above: boolean
   /** A forward skip link: it looks for a channel through the skipped columns first (see
    * `assignChannels`), even when one of its ends sits under a header bar and its corridor is
@@ -132,7 +133,11 @@ export function assignLanes(links: RouteLink[], headers: Rect[]): Map<string, La
     const group = outer
       .filter((l) => l.above === above)
       .sort((a, b) => Math.abs(a.tx - a.sx) - Math.abs(b.tx - b.sx))
-    group.forEach((l, corridorSlot) => {
+    let nextSlot = 0
+    group.forEach((l) => {
+      // A forward link below the map always threads a channel instead (the last band in
+      // `assignChannels` is open-ended), so only loops take room in the corridor under the map.
+      const corridorSlot = above || !l.forward ? nextSlot++ : 0
       const [sourceSlot, sourceCount] = fromSource.get(l.id)!
       const [targetSlot, targetCount] = intoTarget.get(l.id)!
       lanes.set(l.id, {
@@ -255,6 +260,18 @@ export interface ChannelLink {
   ty: number
 }
 
+/** The links that thread a channel: every forward skip link, including one ending in a section's
+ * second or third column, whose corridor would be the one under the map. */
+export function channelLinks(
+  edges: { id: string; type?: string; data?: { lane?: Lane } }[],
+): ChannelLink[] {
+  return edges.flatMap((e) =>
+    e.type === 'routed' && e.data?.lane?.forward && e.data.lane.ends
+      ? [{ id: e.id, ...e.data.lane.ends }]
+      : [],
+  )
+}
+
 /** A free band between card rows must be at least this tall to carry a line. */
 export const CHANNEL_MIN = 14
 /** A line keeps this far inside its band, off the cards on either side. */
@@ -286,14 +303,7 @@ export function assignChannels(
       cursor = Math.max(cursor, bottom)
     }
     bands.push([cursor, Infinity])
-    // A link whose drop beside the source or target column runs under a header bar (a section's
-    // second or third column) must stay below that bar, or its vertical run would cross it.
-    const floor = Math.max(
-      -Infinity,
-      ...headers
-        .filter((h) => (from >= h.x && from <= h.x + h.w) || (to >= h.x && to <= h.x + h.w))
-        .map((h) => h.y + h.h + CLEAR),
-    )
+    const floor = headerFloor(headers, from, to)
     const mid = (link.sy + link.ty) / 2
     const fits = bands
       .map(([a, b]): [number, number] => [Math.max(a, floor), b])
@@ -318,6 +328,18 @@ export function assignChannels(
     members.forEach((m, i) => channels.set(m.link.id, first + i * spacing))
   }
   return channels
+}
+
+/** Highest y a channel may take when the link drops at `from` and `to`: a drop under a header bar
+ * (a section's second or third column) must stay below that bar, or its vertical run would
+ * cross it. */
+function headerFloor(headers: Rect[], from: number, to: number): number {
+  return Math.max(
+    -Infinity,
+    ...headers
+      .filter((h) => crossesHeader([h], from) || crossesHeader([h], to))
+      .map((h) => h.y + h.h + CLEAR),
+  )
 }
 
 /** Lane spacing that also fits `room`, the free width of the gap beyond the clearances. */

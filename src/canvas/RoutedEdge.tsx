@@ -3,6 +3,7 @@ import { useToCStore } from '../state/store'
 import { CANVAS_COLORS, edgeAppearance } from './config'
 import {
   assignChannels,
+  channelLinks,
   roundedPath,
   routePoints,
   type Lane,
@@ -12,11 +13,11 @@ import {
 import type { ConnectionEdgeType } from './ConnectionEdge'
 import { LinkLabel } from './LinkLabel'
 
-/** Only used if an edge reaches the canvas without lanes (not produced by uildFlow). */
+/** Only used if an edge reaches the canvas without lanes (not produced by buildFlow). */
 const FALLBACK_LANE: Lane = {
   near: false,
   above: true,
-  forward: true,
+  forward: false,
   sourceSlot: 0,
   sourceCount: 1,
   targetSlot: 0,
@@ -47,17 +48,12 @@ function readScene(s: ReactFlowState): RouteScene {
   return { cards, headers }
 }
 
-/** The y of this link's channel through the skipped columns, or undefined for a link that takes
- * the corridor (a loop, or a forward link with no free band). Worked out for all forward skip
- * links together, because links sharing a band are spread across it. */
+/** The y of this link's channel through the skipped columns, or undefined for a loop, which
+ * takes the corridor. Worked out for all forward skip links together, because links sharing a
+ * band are spread across it. */
 function channelOf(s: ReactFlowState, id: string): number | undefined {
-  const links = (s.edges as ConnectionEdgeType[]).flatMap((e) =>
-    e.type === 'routed' && e.data?.lane?.forward && e.data.lane.ends
-      ? [{ id: e.id, ...e.data.lane.ends }]
-      : [],
-  )
   const { cards, headers } = readScene(s)
-  return assignChannels(links, cards, headers).get(id)
+  return assignChannels(channelLinks(s.edges as ConnectionEdgeType[]), cards, headers).get(id)
 }
 
 /** A connection that skips columns or points back. A forward link threads through a free channel

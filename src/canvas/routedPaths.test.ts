@@ -2,7 +2,15 @@ import { describe, expect, it } from 'vitest'
 import { buildFlow } from './buildFlow'
 import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from './anchors'
 import { LOOP_OUT_HANDLE } from './CardNode'
-import { assignChannels, assignLanes, routePoints, sampleLine, type Pt, type Rect } from './edgeRouting'
+import {
+  assignChannels,
+  assignLanes,
+  channelLinks,
+  routePoints,
+  sampleLine,
+  type Pt,
+  type Rect,
+} from './edgeRouting'
 import { statusQuoMetacrisis } from '../templates'
 import { SECTION_HEADER_HEIGHT } from '../layout/columns'
 
@@ -96,7 +104,7 @@ describe('skip links threaded through the skipped columns', () => {
     expect(problems).toEqual([])
   })
 
-  it('a link into a section\'s second column threads a channel instead of the corridor under the map', () => {
+  it("a link into a section's second column threads a channel instead of the corridor under the map", () => {
     // Three sections: the source (x 0), one skipped column (x 200), and a two-column section
     // (x 400 and x 600) whose header spans both columns, so the drop beside the target sits under it.
     const cards: Rect[] = [
@@ -129,6 +137,30 @@ describe('skip links threaded through the skipped columns', () => {
       }
     }
     expect(problems).toEqual([])
+    // The canvas offers it for a channel although its corridor would be the one below the map.
+    expect(channelLinks([{ id: 'x', type: 'routed', data: { lane } }]).map((l) => l.id)).toEqual([
+      'x',
+    ])
+  })
+
+  it('a link dropping under a header bar never takes a channel above that bar', () => {
+    // The source sits high, so the free band nearest the link's middle is the one above the
+    // header bars; the drop beside the target would cross the two-column section's header.
+    const cards: Rect[] = [
+      { x: 0, y: -300, w: 100, h: 50 },
+      { x: 200, y: 100, w: 100, h: 50 },
+      { x: 200, y: 250, w: 100, h: 50 },
+      { x: 400, y: 100, w: 100, h: 50 },
+      { x: 400, y: 250, w: 100, h: 50 },
+      { x: 600, y: 200, w: 100, h: 50 },
+    ]
+    const headers: Rect[] = [
+      { x: 200, y: 40, w: 100, h: 40 },
+      { x: 400, y: 40, w: 300, h: 40 },
+    ]
+    const link = { id: 'x', sx: 100, sy: -280, tx: 600, ty: 220 }
+    const y = assignChannels([link], cards, headers).get('x')!
+    expect(y).toBeGreaterThan(40 + 40 + 10)
   })
 
   it('a channel keeps out of the section header bars', () => {
