@@ -17,11 +17,12 @@ import type { FlowGraph } from './buildFlow'
 import type { ConnectionEdgeType } from './ConnectionEdge'
 import type { CardNodeType } from './CardNode'
 import type { SectionHeaderNodeType } from './SectionHeaderNode'
+import type { BandNodeType } from './BandNode'
 import type { GroupNodeData, GroupNodeType } from './GroupNode'
 import { fitGroupHeights } from './groupFlow'
 import { endpointIds, refOfEdge, withSelection } from './selection'
 
-type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType
+type FlowNode = CardNodeType | SectionHeaderNodeType | GroupNodeType | BandNodeType
 
 /**
  * Wires a derived `FlowGraph` into React Flow's controlled node/edge state. Selection is driven
@@ -107,7 +108,11 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
     (_event, node) => {
       if (node.type === 'group') {
         const home = graph.nodes.find((n) => n.id === node.id)
-        const target = resolveDropTarget(doc, node.position.x + (node.width ?? 0) / 2)
+        const target = resolveDropTarget(
+          doc,
+          node.position.x + (node.width ?? 0) / 2,
+          node.position.y,
+        )
         const rawDy = home ? node.position.y - home.position.y : 0
         const deltaY = Math.sign(rawDy) * snapYPosition(Math.abs(rawDy))
         transform(`move ${node.id}`, (document) =>
@@ -119,7 +124,7 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
       }
       if (node.type !== 'card') return
       const centerX = node.position.x + (node.width ?? 0) / 2
-      const target = resolveDropTarget(doc, centerX)
+      const target = resolveDropTarget(doc, centerX, node.position.y)
       const location = findNodeLocation(doc, node.id)
       const kept = snap.finish(node.id)
       const staysPut =

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   useStore,
   Background,
@@ -17,14 +17,18 @@ import { useConnectFlow } from './useConnectFlow'
 import { CardNode } from './CardNode'
 import { SectionHeaderNode } from './SectionHeaderNode'
 import { GroupNode } from './GroupNode'
+import { BandNode } from './BandNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { RoutedEdge } from './RoutedEdge'
 import { Legend } from './Legend'
 import { NeedColoursSwitch } from './NeedColoursSwitch'
 import { computeNeedMixes } from './needMix'
 import { tidyLayout } from './tidyLayout'
+import { labelCounts } from './linkLabels'
+import { allNodes } from '../state/tree'
 import { SnapGuide } from './SnapGuide'
 import { CanvasTopBar } from './CanvasTopBar'
+import { TheoryNoteBar } from './TheoryNoteBar'
 import { NodePanel } from '../panels/NodePanel'
 import { NodeReadPanel } from '../panels/NodeReadPanel'
 import { ConnectionDetails } from '../panels/ConnectionDetails'
@@ -32,7 +36,12 @@ import { StageBar } from '../share/StageBar'
 import { CANVAS_COLORS } from './config'
 import './canvas.css'
 
-const nodeTypes = { card: CardNode, sectionHeader: SectionHeaderNode, group: GroupNode }
+const nodeTypes = {
+  card: CardNode,
+  sectionHeader: SectionHeaderNode,
+  group: GroupNode,
+  band: BandNode,
+}
 const edgeTypes = { connection: ConnectionEdge, routed: RoutedEdge }
 
 /** The in-progress line while dragging from a handle: dashed, in the selection colour. */
@@ -54,6 +63,7 @@ function keyOf(ref: ConnectionRef | null): string {
 
 function minimapColor(node: Node): string {
   if (node.type === 'sectionHeader') return CANVAS_COLORS.primary
+  if (node.type === 'band') return 'rgba(47, 45, 46, 0.08)'
   return node.type === 'group' ? 'rgba(201, 196, 186, 0.35)' : '#C9C4BA'
 }
 
@@ -113,11 +123,22 @@ function SelectionPanels() {
 /** The document being edited lives in the zustand store, not a prop: once more than one screen
  * can open a document (home-files, share-links), each funnels through `store.load`, and this
  * component always renders whatever the store currently holds. */
-export function Canvas({ onHome }: { onHome: () => void }) {
+export interface CanvasProps {
+  onHome: () => void
+  onSwitchTheory: (slug: string) => void
+  /** A strip the app adds under the top bar (the draft bar on a theory). */
+  banner?: ReactNode
+}
+
+export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
   const doc = useToCStore((state) => state.document)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
   const graph = useMemo(() => buildFlow(doc), [doc])
   const needs = useMemo(() => computeNeedMixes(doc).needs, [doc])
+  const linkLabels = useMemo(
+    () => labelCounts(allNodes(doc).flatMap((node) => node.connections.map((c) => c.label))),
+    [doc],
+  )
   const flow = useControlledFlow(doc, graph)
   const connect = useConnectFlow()
   const [showMinimap, setShowMinimap] = useState(false)
@@ -131,9 +152,12 @@ export function Canvas({ onHome }: { onHome: () => void }) {
         connectionCount={flow.edges.length}
         droppedCount={graph.droppedConnections.length}
         onHome={onHome}
+        onSwitchTheory={onSwitchTheory}
         onTidy={() => tidyLayout(flow.nodes)}
       />
       <StageBar />
+      <TheoryNoteBar />
+      {banner}
       <div className={stageClassName(connect.isConnecting, isReadOnly)}>
         <ReactFlow
           nodes={flow.nodes}
@@ -171,7 +195,7 @@ export function Canvas({ onHome }: { onHome: () => void }) {
           <ZoomMarker />
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
-        <Legend needs={needs} />
+        <Legend needs={needs} linkLabels={linkLabels} />
         <NeedColoursSwitch />
         <button
           type="button"

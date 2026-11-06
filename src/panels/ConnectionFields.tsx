@@ -12,6 +12,7 @@ import {
 } from '../state/connections'
 import { ConfidenceField } from './ConfidenceField'
 import { BlockListField } from './BlockListField'
+import { LinkLabelField } from './LinkLabelField'
 
 const firstWords = (text: string) => text.split(/\s+/).slice(0, 6).join(' ')
 
@@ -59,6 +60,10 @@ export function ConnectionFields({
         onChange={(confidence) =>
           onEdit('rate connection', { confidence }, `confidence:${coalesceScope}`)
         }
+      />
+      <LinkLabelField
+        label={connection.label}
+        onChange={(label) => onEdit('label connection', { label }, `label:${coalesceScope}`)}
       />
       <BlockListField
         id="conn-mechanism"

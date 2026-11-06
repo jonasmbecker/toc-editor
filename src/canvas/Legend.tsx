@@ -4,6 +4,7 @@ import { EdgeSwatch } from '../panels/EdgeSwatch'
 import type { NeedMixResult } from './needMix'
 import { useNeedColours } from './needLook'
 import './legend.css'
+import './link-label.css'
 
 const CONFIDENCE_BAND_ORDER: ConfidenceBand[] = ['high', 'medium', 'low']
 
@@ -31,7 +32,13 @@ const ROWS = [
   },
 ]
 
-export function Legend({ needs }: { needs: NeedMixResult['needs'] }) {
+export interface LegendProps {
+  needs: NeedMixResult['needs']
+  /** Each link label on the map and how many links carry it (see `labelCounts`). */
+  linkLabels?: { label: string; count: number }[]
+}
+
+export function Legend({ needs, linkLabels = [] }: LegendProps) {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const needColours = useNeedColours()
 
@@ -52,6 +59,15 @@ export function Legend({ needs }: { needs: NeedMixResult['needs'] }) {
             <li key={row.key}>
               <EdgeSwatch appearance={row.appearance} />
               {row.label}
+            </li>
+          ))}
+          {linkLabels.length > 0 ? (
+            <li className="toc-legend__heading">Link labels, shown once per bundle</li>
+          ) : null}
+          {linkLabels.map(({ label, count }) => (
+            <li key={`label:${label}`}>
+              <span className="toc-link-label">{label}</span>
+              {count} link{count === 1 ? '' : 's'}
             </li>
           ))}
           {needColours

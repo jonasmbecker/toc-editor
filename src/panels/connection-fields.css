@@ -137,6 +137,26 @@
   margin-top: 4px;
 }
 
+.toc-label-input {
+  font: inherit;
+  font-size: 13px;
+  color: #2f2d2e;
+  padding: 6px 10px;
+  border: 1px solid #e2ded6;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.toc-label-input:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.toc-label-input:disabled {
+  background: #faf8f4;
+  color: #6b6966;
+}
+
 .toc-linkbtn {
   align-self: flex-start;
   border: 0;

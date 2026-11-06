@@ -1,0 +1,36 @@
+/* A theory's status pill (StatusBadge.tsx). The base look is the top bar's .toc-topbar__pill. */
+
+/* A reconstruction must never pass for the author's own: amber, text #8a5a00 on #fdf3dc
+   (contrast about 5.4:1, AA for the 11px bold pill). */
+.toc-theory-badge--reconstructed {
+  background-color: #fdf3dc;
+  color: #8a5a00;
+}
+
+/* Narrow windows: the pill becomes a mark, round for the author's own and square for a
+   reconstruction, so the status does not rest on colour alone. The words are hidden visually
+   only, so every screen reader still reads them. */
+@media (max-width: 900px) {
+  .toc-topbar .toc-theory-badge {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    flex: none;
+    background-color: #b8b2a7;
+  }
+
+  .toc-topbar .toc-theory-badge--reconstructed {
+    border-radius: 2px;
+    background-color: #d99a1e;
+  }
+
+  .toc-topbar .toc-theory-badge__text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}

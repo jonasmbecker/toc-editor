@@ -42,27 +42,32 @@ export interface SuggestionText {
   name: string
   reason: string
   summary: ChangeSummary
+  /** The theory's folder, for naming the positions file. */
+  dir: string
 }
 
-function changeList(summary: ChangeSummary): string[] {
+function changeList(summary: ChangeSummary, dir: string): string[] {
   const shown = summary.lines.slice(0, MAX_LISTED).map((line) => `- ${escapeMarkdown(line)}`)
   const hidden = summary.lines.length - shown.length
   if (hidden > 0) shown.push(`- …and ${hidden} more (see the Files tab)`)
   const layout = layoutLine(summary)
-  if (layout) shown.push(`- ${layout} (positions only, in \`map/layout.json\`)`)
+  if (layout) shown.push(`- ${layout} (positions only, in \`${dir}/layout.json\`)`)
   return shown
 }
 
 /** The pull request body, in the shape of the repo's pull request template. `number` is null at
  * creation; the follow-up edit passes the real one so the body can link to the preview. */
-export function pullRequestBody({ name, reason, summary }: SuggestionText, number: number | null) {
+export function pullRequestBody(
+  { name, reason, summary, dir }: SuggestionText,
+  number: number | null,
+) {
   const quoted = reason
     .split('\n')
     .map((line) => `> ${escapeMarkdown(line)}`.trimEnd())
     .join('\n')
   const parts = [
     '## What this suggestion changes',
-    changeList(summary).join('\n'),
+    changeList(summary, dir).join('\n'),
     '## Why',
     quoted,
     `Suggested by **${escapeMarkdown(name)}** through the map editor, without a GitHub account. ` +

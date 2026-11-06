@@ -10,11 +10,13 @@ import {
   type RouteScene,
 } from './edgeRouting'
 import type { ConnectionEdgeType } from './ConnectionEdge'
+import { LinkLabel } from './LinkLabel'
 
 /** Only used if an edge reaches the canvas without lanes (not produced by uildFlow). */
 const FALLBACK_LANE: Lane = {
   near: false,
   above: true,
+  forward: true,
   sourceSlot: 0,
   sourceCount: 1,
   targetSlot: 0,
@@ -32,6 +34,7 @@ function readScene(s: ReactFlowState): RouteScene {
   const headers: Rect[] = []
   for (const n of s.nodeLookup.values()) {
     if (n.type !== 'card' && n.type !== 'sectionHeader') continue
+    if ((n.data as { inBand?: boolean }).inBand) continue
     const pos = n.internals.positionAbsolute
     const box = {
       x: Math.round(pos.x),
@@ -45,11 +48,11 @@ function readScene(s: ReactFlowState): RouteScene {
 }
 
 /** The y of this link's channel through the skipped columns, or undefined for a link that takes
- * the corridor (a loop). Worked out for all forward skip links together,
- * because links sharing a band are spread across it. */
+ * the corridor (a loop, or a forward link with no free band). Worked out for all forward skip
+ * links together, because links sharing a band are spread across it. */
 function channelOf(s: ReactFlowState, id: string): number | undefined {
   const links = (s.edges as ConnectionEdgeType[]).flatMap((e) =>
-    e.type === 'routed' && e.data?.lane?.above && e.data.lane.ends
+    e.type === 'routed' && e.data?.lane?.forward && e.data.lane.ends
       ? [{ id: e.id, ...e.data.lane.ends }]
       : [],
   )
@@ -70,6 +73,8 @@ export function RoutedEdge({
   sourceY,
   targetX,
   targetY,
+  sourcePosition,
+  targetPosition,
   data,
   selected,
   markerEnd,
@@ -92,19 +97,31 @@ export function RoutedEdge({
   const faded = tinted && selectedNodeId != null && !touches
   const drawn = tinted ? 2 : width
 
+  const mid = points[Math.floor(points.length / 2)] ?? { x: sourceX, y: sourceY }
+
   return (
-    <BaseEdge
-      id={id}
-      path={roundedPath(points)}
-      markerEnd={markerEnd}
-      markerStart={markerStart}
-      style={{
-        stroke: color,
-        strokeWidth: selected || (tinted && touches) ? drawn + 1 : drawn,
-        strokeDasharray: dashArray,
-        strokeLinecap: lineCap,
-        opacity: faded ? 0.15 : 1,
-      }}
-    />
+    <>
+      <BaseEdge
+        id={id}
+        path={roundedPath(points)}
+        markerEnd={markerEnd}
+        markerStart={markerStart}
+        style={{
+          stroke: color,
+          strokeWidth: selected || (tinted && touches) ? drawn + 1 : drawn,
+          strokeDasharray: dashArray,
+          strokeLinecap: lineCap,
+          opacity: faded ? 0.15 : 1,
+        }}
+      />
+      {data?.labelBundle ? (
+        <LinkLabel
+          bundle={data.labelBundle}
+          source={{ x: sourceX, y: sourceY, position: sourcePosition }}
+          target={{ x: targetX, y: targetY, position: targetPosition }}
+          mid={mid}
+        />
+      ) : null}
+    </>
   )
 }

@@ -1,4 +1,5 @@
-import type { DocumentNode, ToCDocument } from '../model/schema'
+import { isBandSection, type DocumentNode, type ToCDocument } from '../model/schema'
+import { BAND_GAP, bandSlots, HEADER_CLEARANCE, layoutDocument } from './columns'
 import { CARD_ANCHOR_Y, GROUP_ANCHOR_Y } from '../canvas/anchors'
 import { CHANNEL_MIN, CLEAR, MAX_STEP } from '../canvas/edgeRouting'
 import { GROUP_HEAD, GROUP_PAD } from '../canvas/groupFlow'
@@ -96,9 +97,71 @@ function columnUnits(nodes: DocumentNode[], opts: AlignOptions): Unit[] {
   return units.sort((a, b) => order.get(a.id)! - order.get(b.id)!)
 }
 
+/** The column sections' columns. Band sections are not columns: Tidy stacks them under the
+ * columns afterwards (`placeBands`), and links to their cards do not pull on column cards. */
 function buildColumns(doc: ToCDocument, opts: AlignOptions): Unit[][] {
-  const columns = doc.sections.flatMap((section) => section.columns)
+  const columns = doc.sections.filter((s) => !isBandSection(s)).flatMap((s) => s.columns)
   return columns.map((column) => columnUnits(column.nodes, opts))
+}
+
+/** Puts every band section under the columns, in document order: each band's header a BAND_GAP
+ * below whatever is above it (in layout, a band's header sits HEADER_CLEARANCE above its highest
+ * card), and inside a band its cards in rows, as many per row as `bandSlots` fits side by side. */
+function placeBands(
+  doc: ToCDocument,
+  positions: Map<string, number>,
+  opts: AlignOptions,
+  gap: number,
+): void {
+  const heightOf = (id: string) => opts.heights?.get(id) ?? DEFAULT_CARD_HEIGHT
+  let bottom = 0
+  for (const [id, y] of positions) bottom = Math.max(bottom, y + heightOf(id))
+  // Loops arc below the lowest column card, one lane apart, so the first band leaves them room.
+  bottom += CORRIDOR_LANE * corridorLinks(doc)
+  const { bands } = layoutDocument(doc)
+  for (const band of bands) {
+    const section = doc.sections[band.sectionIndex]
+    const slots = bandSlots(section, doc.columnPadding ?? 0, band.width)
+    const units = columnUnits(
+      section.columns.flatMap((c) => c.nodes),
+      opts,
+    )
+    const rowOf = (unit: Unit) => Math.floor(slots.slotOf.get(unit.slots[0].id)! / slots.perRow)
+    let rowTop = snapUp(bottom + BAND_GAP + HEADER_CLEARANCE)
+    bottom = rowTop
+    for (let row = 0; units.some((u) => rowOf(u) >= row); row++) {
+      const inRow = units.filter((u) => rowOf(u) === row)
+      for (const unit of inRow) placeUnit(unit, rowTop, positions)
+      const rowBottom = Math.max(rowTop, ...inRow.map((u) => rowTop + u.height))
+      bottom = rowBottom
+      rowTop = snapUp(rowBottom + gap)
+    }
+  }
+}
+
+/** Space one corridor link takes below the columns (edgeRouting's corridor step). */
+const CORRIDOR_LANE = 10
+
+/** Links between column cards that may take edgeRouting's corridor below the map: every link
+ * that skips a column. Loops and links back always do; a forward one does when its end sits
+ * under a header bar (e.g. the second column of a section). Counting all of them reserves a little
+ * more than needed rather than letting a corridor run through the band. */
+function corridorLinks(doc: ToCDocument): number {
+  const columns = doc.sections.filter((s) => !isBandSection(s)).flatMap((s) => s.columns)
+  const columnOf = new Map<string, number>()
+  columns.forEach((column, index) => column.nodes.forEach((n) => columnOf.set(n.id, index)))
+  const links = columns.flatMap((column, from) =>
+    column.nodes.flatMap((n) => n.connections.map((c) => ({ c, from }))),
+  )
+  return links.filter(({ c, from }) => {
+    const to = columnOf.get(c.targetId)
+    return to !== undefined && Math.abs(to - from) >= 2
+  }).length
+}
+
+function placeUnit(unit: Unit, top: number, positions: Map<string, number>): void {
+  for (const slot of unit.slots) positions.set(slot.id, snapToGrid(top + slot.top))
+  if (unit.slots[0].id !== unit.id) positions.set(unit.id, positions.get(unit.slots[0].id)!)
 }
 
 /** For every unit, the connections that tie it to a card in another column (both directions). */
@@ -387,6 +450,7 @@ export function alignDocument(doc: ToCDocument, options: AlignOptions = {}): ToC
   units.forEach((unit, i) => (unit.top = best[i]))
   reserveChannels(columns, edges)
   const positions = collectPositions(columns)
+  placeBands(doc, positions, options, gap)
   return mapAllNodes(doc, (node) => {
     const y = positions.get(node.id)
     return y === undefined || y === node.yPosition ? node : { ...node, yPosition: y }

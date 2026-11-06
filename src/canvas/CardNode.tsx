@@ -11,6 +11,9 @@ export interface CardNodeData extends Record<string, unknown> {
   provenance?: NodeProvenance
   /** Display-only need mix, empty when colour coding is off or the card has no need behind it. */
   needMix?: NeedSegment[]
+  /** The card sits in a band under the columns. Column routing leaves it out, so loops that run
+   * below the map pass between the columns and the band. */
+  inBand?: boolean
 }
 
 export type CardNodeType = Node<CardNodeData, 'card'>

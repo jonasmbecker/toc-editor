@@ -1,3 +1,4 @@
+import { DEFAULT_SLUG, parseTheoryIndex } from '../../../src/repo/theoryIndex'
 import {
   GithubError,
   githubMessage,
@@ -46,7 +47,11 @@ export interface PullRequestSpec {
 export interface TheoryRepo {
   /** Whether `sha` is a commit on main (or main itself). */
   isOnMain(sha: string): Promise<boolean>
-  readMap(sha: string): Promise<MapTexts>
+  /** The folder theory `slug` lives in at `sha`: `theories/<slug>` when that commit's
+   * `theories/index.json` lists it, `map` for the default theory at a commit from before the
+   * index, and null for anything else, so a suggestion can never write outside a theory. */
+  mapDir(sha: string, slug: string): Promise<string | null>
+  readMap(sha: string, dir: string): Promise<MapTexts>
   openPullRequest(spec: PullRequestSpec): Promise<{ number: number; url: string }>
 }
 
@@ -108,14 +113,31 @@ async function isOnMain(api: Api, sha: string): Promise<boolean> {
   return status === 'ahead' || status === 'identical'
 }
 
-async function readFile(api: Api, sha: string, file: string): Promise<string> {
-  const response = await api.mustCall(
-    `read ${file}.json`,
-    'GET',
-    `/contents/map/${file}.json?ref=${sha}`,
-    { accept: 'application/vnd.github.raw+json' },
-  )
+async function readFile(api: Api, sha: string, path: string): Promise<string> {
+  const name = path.split('/').pop()
+  const response = await api.mustCall(`read ${name}`, 'GET', `/contents/${path}?ref=${sha}`, {
+    accept: 'application/vnd.github.raw+json',
+  })
   return response.text()
+}
+
+async function mapDir(api: Api, sha: string, slug: string): Promise<string | null> {
+  const response = await api.call('GET', `/contents/theories/index.json?ref=${sha}`, {
+    accept: 'application/vnd.github.raw+json',
+  })
+  if (response.status === 404) return slug === DEFAULT_SLUG ? 'map' : null
+  if (!response.ok) {
+    throw new GithubError('read index.json', response.status, await githubMessage(response))
+  }
+  let raw: unknown
+  try {
+    raw = JSON.parse(await response.text())
+  } catch {
+    throw new GithubError('read index.json', 0, 'not JSON')
+  }
+  const index = parseTheoryIndex(raw)
+  if (!index) throw new GithubError('read index.json', 0, 'not a theory index')
+  return index.theories.some((theory) => theory.slug === slug) ? `theories/${slug}` : null
 }
 
 async function commitFiles(api: Api, spec: PullRequestSpec): Promise<string> {
@@ -204,10 +226,11 @@ export function createTheoryRepo(
   const api = createApi(config, fetchFn, now)
   return {
     isOnMain: (sha) => isOnMain(api, sha),
-    readMap: async (sha) => {
+    mapDir: (sha, slug) => mapDir(api, sha, slug),
+    readMap: async (sha, dir) => {
       const [content, layout] = await Promise.all([
-        readFile(api, sha, 'content'),
-        readFile(api, sha, 'layout'),
+        readFile(api, sha, `${dir}/content.json`),
+        readFile(api, sha, `${dir}/layout.json`),
       ])
       return { content, layout }
     },

@@ -132,6 +132,7 @@ describe('view-only screen', () => {
           connectionCount={1}
           droppedCount={0}
           onHome={() => {}}
+          onSwitchTheory={() => {}}
         />
         <StageBar />
       </>,

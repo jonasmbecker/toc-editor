@@ -50,6 +50,8 @@ export const evidenceBlockSchema = z
   })
   .passthrough()
 
+export const CONNECTION_LABEL_MAX = 40
+
 export const connectionSchema = z
   .object({
     targetId: z.string(),
@@ -61,6 +63,9 @@ export const connectionSchema = z
     provenance: connectionProvenanceSchema.optional(),
     isFeedbackLoop: z.boolean().optional(),
     evidenceBlocks: z.array(evidenceBlockSchema).optional(),
+    /** A short name for what kind of link this is (e.g. "Wichtigkeit"). The canvas shows it
+     * once per bundle of links that share it (see `canvas/linkLabels.ts`). */
+    label: z.string().max(CONNECTION_LABEL_MAX).optional(),
   })
   .passthrough()
 
@@ -98,10 +103,16 @@ export const columnSchema = z
   })
   .passthrough()
 
+/** How a section is drawn. Absent = a column section, as in ToCB. "band" = a full-width strip
+ * under the columns (e.g. the structures every stage of the map passes through). */
+export const sectionDisplaySchema = z.enum(['band'])
+
 export const sectionSchema = z
   .object({
     title: z.string(),
     columns: z.array(columnSchema),
+    // Extension:
+    display: sectionDisplaySchema.optional(),
   })
   .passthrough()
 
@@ -166,8 +177,15 @@ export const documentSchema = z
  * cannot be added above without being named here.
  */
 export const DOCUMENT_EXTENSION_KEYS = ['schemaVersion', 'diagramType', 'interventionLinks']
-export const NODE_EXTENSION_KEYS = ['provenance', 'kind', 'groupId', 'links']
-export const CONNECTION_EXTENSION_KEYS = ['id', 'provenance', 'isFeedbackLoop', 'evidenceBlocks']
+export const SECTION_EXTENSION_KEYS = ['display']
+export const NODE_EXTENSION_KEYS =['provenance', 'kind', 'groupId', 'links']
+export const CONNECTION_EXTENSION_KEYS = [
+  'id',
+  'provenance',
+  'isFeedbackLoop',
+  'evidenceBlocks',
+  'label',
+]
 
 export type EvidenceLink = z.infer<typeof evidenceLinkSchema>
 export type EvidenceBlock = z.infer<typeof evidenceBlockSchema>
@@ -175,6 +193,11 @@ export type Connection = z.infer<typeof connectionSchema>
 export type DocumentNode = z.infer<typeof nodeSchema>
 export type Column = z.infer<typeof columnSchema>
 export type Section = z.infer<typeof sectionSchema>
+
+/** True for a section drawn as a band under the columns rather than as columns. */
+export function isBandSection(section: { display?: unknown }): boolean {
+  return section.display === 'band'
+}
 export type InterventionLink = z.infer<typeof interventionLinkSchema>
 export type ToCDocument = z.infer<typeof documentSchema>
 export type ConnectionProvenance = z.infer<typeof connectionProvenanceSchema>

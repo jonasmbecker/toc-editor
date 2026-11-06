@@ -40,6 +40,14 @@ function columnSpansInSection(
     .sort((a, b) => a.columnIndex - b.columnIndex)
 }
 
+/** The band a card dropped with its top at `top` lands in: the lowest band whose header is above
+ * the card. A card above every band goes back to the columns. */
+function bandAt(doc: ToCDocument, top: number): number | undefined {
+  let hit: number | undefined
+  for (const band of layoutDocument(doc).bands) if (top >= band.y) hit = band.sectionIndex
+  return hit
+}
+
 function nearestSpan<T extends Span>(spans: T[], x: number): T {
   const hit = spans.find((s) => x >= s.left && x < s.right)
   if (hit) return hit
@@ -50,7 +58,13 @@ function nearestSpan<T extends Span>(spans: T[], x: number): T {
  * with no nodes has no visual footprint (`layoutDocument` gives it zero width), so a drop over
  * one resolves to "append a new column" rather than guessing which invisible column was meant —
  * placing a node into a specific empty column is the node panel's job, not drag's. */
-export function resolveDropTarget(doc: ToCDocument, centerX: number): DropTarget {
+export function resolveDropTarget(doc: ToCDocument, centerX: number, top?: number): DropTarget {
+  const band = top === undefined ? undefined : bandAt(doc, top)
+  if (band !== undefined) {
+    const columns = columnSpansInSection(doc, band)
+    if (columns.length === 0) return { sectionIndex: band, columnIndex: 0 }
+    return { sectionIndex: band, columnIndex: nearestSpan(columns, centerX).columnIndex }
+  }
   const sections = sectionSpans(doc)
   if (sections.length === 0) return { sectionIndex: 0, columnIndex: 0 }
   const section = nearestSpan(sections, centerX)

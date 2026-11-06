@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type DragEvent } from 'react'
+import { useRef, useState, type DragEvent } from 'react'
 import type { ToCDocument } from '../model/schema'
-import { TEMPLATES, type TemplateInfo } from '../templates'
-import { warmTheoryMap } from '../repo/mapSource'
+import { TEMPLATES } from '../templates'
+import { useTheoryStore } from '../repo/theoryStore'
+import { StatusBadge } from '../canvas/StatusBadge'
 import { importFromFile } from '../files/import'
 import type { Draft } from '../files/draft'
 import './home.css'
@@ -9,6 +10,8 @@ import './home.css'
 export interface HomeProps {
   draft: Draft | null
   onOpen: (document: ToCDocument) => void
+  /** Opens a theory from the repo at its own address. */
+  onOpenTheory: (slug: string) => void
   onRestoreDraft: () => void
   onDiscardDraft: () => void
 }
@@ -43,37 +46,43 @@ function DraftBanner({
   )
 }
 
+/** The theories the site offers, first: the start page is where "Start your own" leads, and
+ * the way back to a theory from there. */
+function TheoryCards({ onOpenTheory }: { onOpenTheory: (slug: string) => void }) {
+  const theories = useTheoryStore((state) => state.index.theories)
+  return (
+    <section className="toc-home__cards" aria-label="Theories">
+      {theories.map((theory) => (
+        <button
+          key={theory.slug}
+          type="button"
+          className="toc-home__card toc-home__card--wide"
+          onClick={() => onOpenTheory(theory.slug)}
+        >
+          <span className="toc-home__card-name">
+            {theory.title} <StatusBadge theory={theory} />
+          </span>
+          {theory.statusNote ? (
+            <span className="toc-home__card-desc">{theory.statusNote}</span>
+          ) : null}
+        </button>
+      ))}
+    </section>
+  )
+}
+
 function TemplateCards({ onOpen }: { onOpen: (document: ToCDocument) => void }) {
-  const [openingId, setOpeningId] = useState<string | null>(null)
-
-  // Fetch the repo's map ahead, so the click below usually opens from the cache at once.
-  useEffect(() => warmTheoryMap(), [])
-
-  async function openTemplate(template: TemplateInfo) {
-    if (!template.load) return onOpen(template.create())
-    setOpeningId(template.id)
-    try {
-      onOpen(await template.load())
-    } finally {
-      setOpeningId(null)
-    }
-  }
-
   return (
     <section className="toc-home__cards" aria-label="Start a diagram">
       {TEMPLATES.map((template) => (
         <button
           key={template.id}
           type="button"
-          className={`toc-home__card${template.isFeatured ? ' toc-home__card--wide' : ''}`}
-          disabled={openingId !== null}
-          aria-busy={openingId === template.id}
-          onClick={() => void openTemplate(template)}
+          className="toc-home__card"
+          onClick={() => onOpen(template.create())}
         >
           <span className="toc-home__card-name">{template.name}</span>
-          <span className="toc-home__card-desc">
-            {openingId === template.id ? 'Opening the map' : template.description}
-          </span>
+          <span className="toc-home__card-desc">{template.description}</span>
         </button>
       ))}
     </section>
@@ -153,7 +162,7 @@ function OpenFileZone({ onFile }: { onFile: (file: File | undefined) => void }) 
   )
 }
 
-export function Home({ draft, onOpen, onRestoreDraft, onDiscardDraft }: HomeProps) {
+export function Home({ draft, onOpen, onOpenTheory, onRestoreDraft, onDiscardDraft }: HomeProps) {
   const [errors, setErrors] = useState<string[]>([])
   const [fileName, setFileName] = useState('')
 
@@ -172,12 +181,13 @@ export function Home({ draft, onOpen, onRestoreDraft, onDiscardDraft }: HomeProp
   return (
     <main className="toc-home">
       <header className="toc-home__head">
-        <h1>ToC editor</h1>
-        <p>Draw and edit theory-of-change diagrams and status-quo maps.</p>
+        <h1>Start your own</h1>
+        <p>Draw a theory-of-change diagram or a status-quo map, or go back to a theory.</p>
       </header>
       {draft ? (
         <DraftBanner draft={draft} onRestore={onRestoreDraft} onDiscard={onDiscardDraft} />
       ) : null}
+      <TheoryCards onOpenTheory={onOpenTheory} />
       <TemplateCards onOpen={onOpen} />
       <OpenFileZone onFile={(file) => void openFile(file)} />
       {errors.length > 0 ? (
