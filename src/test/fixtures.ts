@@ -4,6 +4,7 @@ import {
   CONNECTION_EXTENSION_KEYS,
   DOCUMENT_EXTENSION_KEYS,
   NODE_EXTENSION_KEYS,
+  SECTION_EXTENSION_KEYS,
   type Connection,
   type DocumentNode,
   type ToCDocument,
@@ -19,6 +20,7 @@ export function extensionKeysIn(doc: ToCDocument): string[] {
   const connections = nodes.flatMap((node) => node.connections)
   return [
     ...present('document', doc, DOCUMENT_EXTENSION_KEYS),
+    ...doc.sections.flatMap((section) => present('section', section, SECTION_EXTENSION_KEYS)),
     ...nodes.flatMap((node) => present('node', node, NODE_EXTENSION_KEYS)),
     ...connections.flatMap((c) => present('connection', c, CONNECTION_EXTENSION_KEYS)),
   ]

@@ -46,6 +46,9 @@ function doc(diagramType?: 'status-quo' | 'theory-of-change'): ToCDocument {
 
 const ref = { sourceId: 'a1', index: 0 }
 
+/** The mechanism and evidence block boxes, without the one-line Label field. */
+const blockBoxes = () => screen.getAllByRole('textbox').filter((box) => box.id !== 'conn-label')
+
 describe('ConnectionDetails', () => {
   beforeEach(() => {
     useToCStore.getState().load(doc('status-quo'))
@@ -59,7 +62,17 @@ describe('ConnectionDetails', () => {
     expect(screen.getByText('Unrated')).toBeInTheDocument()
     expect(screen.getByText('Mechanism')).toBeInTheDocument()
     expect(screen.getByText(/saved as "assumptions"/)).toBeInTheDocument()
-    expect(screen.getAllByRole('textbox')).toHaveLength(2)
+    expect(blockBoxes()).toHaveLength(2)
+    expect(screen.getByRole('textbox', { name: 'Label' })).toHaveValue('')
+  })
+
+  it('sets a link label, and emptying it removes the key', () => {
+    render(<ConnectionDetails />)
+    const box = screen.getByRole('textbox', { name: 'Label' })
+    fireEvent.change(box, { target: { value: 'Wichtigkeit' } })
+    expect(findConnection(useToCStore.getState().document, ref)?.label).toBe('Wichtigkeit')
+    fireEvent.change(box, { target: { value: '  ' } })
+    expect('label' in (findConnection(useToCStore.getState().document, ref) ?? {})).toBe(false)
   })
 
   it('uses theory-of-change labels when the document has no diagramType', () => {
@@ -82,7 +95,7 @@ describe('ConnectionDetails', () => {
 
   it('edits a block and joins the list back into one string', () => {
     render(<ConnectionDetails />)
-    const [first] = screen.getAllByRole('textbox')
+    const [first] = blockBoxes()
     fireEvent.change(first, { target: { value: 'Changed.' } })
     expect(findConnection(useToCStore.getState().document, ref)?.assumptions).toBe(
       'Changed.\n\nTwo.',

@@ -17,12 +17,15 @@ import { useConnectFlow } from './useConnectFlow'
 import { CardNode } from './CardNode'
 import { SectionHeaderNode } from './SectionHeaderNode'
 import { GroupNode } from './GroupNode'
+import { BandNode } from './BandNode'
 import { ConnectionEdge } from './ConnectionEdge'
 import { RoutedEdge } from './RoutedEdge'
 import { Legend } from './Legend'
 import { NeedColoursSwitch } from './NeedColoursSwitch'
 import { computeNeedMixes } from './needMix'
 import { tidyLayout } from './tidyLayout'
+import { labelCounts } from './linkLabels'
+import { allNodes } from '../state/tree'
 import { SnapGuide } from './SnapGuide'
 import { CanvasTopBar } from './CanvasTopBar'
 import { TheoryNoteBar } from './TheoryNoteBar'
@@ -33,7 +36,12 @@ import { StageBar } from '../share/StageBar'
 import { CANVAS_COLORS } from './config'
 import './canvas.css'
 
-const nodeTypes = { card: CardNode, sectionHeader: SectionHeaderNode, group: GroupNode }
+const nodeTypes = {
+  card: CardNode,
+  sectionHeader: SectionHeaderNode,
+  group: GroupNode,
+  band: BandNode,
+}
 const edgeTypes = { connection: ConnectionEdge, routed: RoutedEdge }
 
 /** The in-progress line while dragging from a handle: dashed, in the selection colour. */
@@ -55,6 +63,7 @@ function keyOf(ref: ConnectionRef | null): string {
 
 function minimapColor(node: Node): string {
   if (node.type === 'sectionHeader') return CANVAS_COLORS.primary
+  if (node.type === 'band') return 'rgba(47, 45, 46, 0.08)'
   return node.type === 'group' ? 'rgba(201, 196, 186, 0.35)' : '#C9C4BA'
 }
 
@@ -126,6 +135,10 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
   const isReadOnly = useToCStore((state) => state.isReadOnly)
   const graph = useMemo(() => buildFlow(doc), [doc])
   const needs = useMemo(() => computeNeedMixes(doc).needs, [doc])
+  const linkLabels = useMemo(
+    () => labelCounts(allNodes(doc).flatMap((node) => node.connections.map((c) => c.label))),
+    [doc],
+  )
   const flow = useControlledFlow(doc, graph)
   const connect = useConnectFlow()
   const [showMinimap, setShowMinimap] = useState(false)
@@ -182,7 +195,7 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
           <ZoomMarker />
           <SnapGuide guide={flow.guide} />
         </ReactFlow>
-        <Legend needs={needs} />
+        <Legend needs={needs} linkLabels={linkLabels} />
         <NeedColoursSwitch />
         <button
           type="button"

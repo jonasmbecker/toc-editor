@@ -30,6 +30,7 @@ export function ConnectionReadView({ resolved, labels, onClose }: ConnectionRead
         <div className="toc-ends__leads">
           <EdgeSwatch appearance={edgeAppearance(connection)} />
           <span>leads to</span>
+          {connection.label ? <span className="toc-link-label">{connection.label}</span> : null}
         </div>
         <span className="toc-end__label">To</span>
         <EndCard node={target} />

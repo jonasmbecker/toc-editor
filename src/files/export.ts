@@ -2,6 +2,7 @@ import {
   CONNECTION_EXTENSION_KEYS,
   DOCUMENT_EXTENSION_KEYS,
   NODE_EXTENSION_KEYS,
+  SECTION_EXTENSION_KEYS,
   type ToCDocument,
 } from '../model/schema'
 import { flattenEvidence, linkLine } from '../model/evidence'
@@ -44,7 +45,9 @@ export function toCompatibleJson(doc: ToCDocument, now = new Date()): ToCDocumen
       return without(flat, CONNECTION_EXTENSION_KEYS)
     }),
   }))
-  return withExportedAt(without(expanded, DOCUMENT_EXTENSION_KEYS), now)
+  // ToCB has no bands: a band section exports as an ordinary section of columns.
+  const sections = expanded.sections.map((section) => without(section, SECTION_EXTENSION_KEYS))
+  return withExportedAt(without({ ...expanded, sections }, DOCUMENT_EXTENSION_KEYS), now)
 }
 
 /** Lowercase ASCII slug of the title (accents stripped), so the name is safe for any browser's

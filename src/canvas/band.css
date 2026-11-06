@@ -1,0 +1,24 @@
+/* A band section: full-width strip under the columns (BandNode). */
+.toc-band-strip {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  background: rgba(47, 45, 46, 0.04);
+  border: 1px solid #e2ded6;
+  pointer-events: none;
+}
+
+/* Same dark bar as a column header, but left-aligned across the strip's whole width. */
+.toc-band-strip .toc-section-header--band {
+  box-sizing: border-box;
+  justify-content: flex-start;
+  text-align: left;
+  border-radius: 13px 13px 8px 8px;
+  padding: 0 24px;
+}
+
+.toc-band-strip__empty {
+  margin: 24px;
+  font-size: 13px;
+  color: #6b6966;
+}

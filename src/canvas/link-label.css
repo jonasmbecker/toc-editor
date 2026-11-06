@@ -1,0 +1,33 @@
+/* A connection's label, drawn once per bundle of links that share it (see linkLabels.ts), and the
+   same pill in the legend and the read-only panel. */
+.toc-link-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #2f2d2e;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2ded6;
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.toc-link-label--canvas {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  /* Grows as the map zooms out, like card titles, so the label stays readable. */
+  font-size: clamp(11px, calc(11px / var(--toc-zoom, 1)), 24px);
+  transition: opacity 120ms ease;
+}
+
+.toc-link-label--selected {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+.toc-link-label--faded {
+  opacity: 0.12;
+}

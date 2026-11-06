@@ -10,6 +10,7 @@ import {
   type RouteScene,
 } from './edgeRouting'
 import type { ConnectionEdgeType } from './ConnectionEdge'
+import { LinkLabel } from './LinkLabel'
 
 /** Only used if an edge reaches the canvas without lanes (not produced by uildFlow). */
 const FALLBACK_LANE: Lane = {
@@ -32,6 +33,7 @@ function readScene(s: ReactFlowState): RouteScene {
   const headers: Rect[] = []
   for (const n of s.nodeLookup.values()) {
     if (n.type !== 'card' && n.type !== 'sectionHeader') continue
+    if ((n.data as { inBand?: boolean }).inBand) continue
     const pos = n.internals.positionAbsolute
     const box = {
       x: Math.round(pos.x),
@@ -70,6 +72,8 @@ export function RoutedEdge({
   sourceY,
   targetX,
   targetY,
+  sourcePosition,
+  targetPosition,
   data,
   selected,
   markerEnd,
@@ -92,19 +96,31 @@ export function RoutedEdge({
   const faded = tinted && selectedNodeId != null && !touches
   const drawn = tinted ? 2 : width
 
+  const mid = points[Math.floor(points.length / 2)] ?? { x: sourceX, y: sourceY }
+
   return (
-    <BaseEdge
-      id={id}
-      path={roundedPath(points)}
-      markerEnd={markerEnd}
-      markerStart={markerStart}
-      style={{
-        stroke: color,
-        strokeWidth: selected || (tinted && touches) ? drawn + 1 : drawn,
-        strokeDasharray: dashArray,
-        strokeLinecap: lineCap,
-        opacity: faded ? 0.15 : 1,
-      }}
-    />
+    <>
+      <BaseEdge
+        id={id}
+        path={roundedPath(points)}
+        markerEnd={markerEnd}
+        markerStart={markerStart}
+        style={{
+          stroke: color,
+          strokeWidth: selected || (tinted && touches) ? drawn + 1 : drawn,
+          strokeDasharray: dashArray,
+          strokeLinecap: lineCap,
+          opacity: faded ? 0.15 : 1,
+        }}
+      />
+      {data?.labelBundle ? (
+        <LinkLabel
+          bundle={data.labelBundle}
+          source={{ x: sourceX, y: sourceY, position: sourcePosition }}
+          target={{ x: targetX, y: targetY, position: targetPosition }}
+          mid={mid}
+        />
+      ) : null}
+    </>
   )
 }

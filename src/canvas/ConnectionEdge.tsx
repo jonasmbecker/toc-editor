@@ -2,6 +2,8 @@ import { BaseEdge, getBezierPath, type Edge, type EdgeProps } from '@xyflow/reac
 import { CANVAS_COLORS, edgeAppearance, type ConnectionProvenance } from './config'
 import type { ConnectionRef } from '../state/connections'
 import type { Lane } from './edgeRouting'
+import type { LabelBundle } from './linkLabels'
+import { LinkLabel } from './LinkLabel'
 
 export interface ConnectionEdgeData extends Record<string, unknown> {
   confidence?: number
@@ -11,6 +13,8 @@ export interface ConnectionEdgeData extends Record<string, unknown> {
   lane?: Lane
   /** Colour of a column-skipping link, so it can be told apart from the lines beside it. */
   tint?: string
+  /** Set on the one edge of a bundle that draws the bundle's label pill (see `linkLabels`). */
+  labelBundle?: LabelBundle
   /** Where this edge lives in the document, so a click can open it in the details panel. The
    * same `ConnectionRef` the store and the panel use. */
   ref: ConnectionRef
@@ -35,7 +39,7 @@ export function ConnectionEdge({
   markerEnd,
   markerStart,
 }: EdgeProps<ConnectionEdgeType>) {
-  const [path] = getBezierPath({
+  const [path, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
     sourcePosition,
@@ -47,16 +51,26 @@ export function ConnectionEdge({
   const color = selected ? CANVAS_COLORS.select : stroke
 
   return (
-    <BaseEdge
-      path={path}
-      markerEnd={markerEnd}
-      markerStart={markerStart}
-      style={{
-        stroke: color,
-        strokeWidth: selected ? width + 1 : width,
-        strokeDasharray: dashArray,
-        strokeLinecap: lineCap,
-      }}
-    />
+    <>
+      <BaseEdge
+        path={path}
+        markerEnd={markerEnd}
+        markerStart={markerStart}
+        style={{
+          stroke: color,
+          strokeWidth: selected ? width + 1 : width,
+          strokeDasharray: dashArray,
+          strokeLinecap: lineCap,
+        }}
+      />
+      {data?.labelBundle ? (
+        <LinkLabel
+          bundle={data.labelBundle}
+          source={{ x: sourceX, y: sourceY, position: sourcePosition }}
+          target={{ x: targetX, y: targetY, position: targetPosition }}
+          mid={{ x: labelX, y: labelY }}
+        />
+      ) : null}
+    </>
   )
 }

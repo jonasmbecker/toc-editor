@@ -16,7 +16,9 @@ import {
 } from './CardNode'
 import type { SectionHeaderData, SectionHeaderNodeType } from './SectionHeaderNode'
 import type { GroupNodeType } from './GroupNode'
-import { buildGroupNodes, groupBox, type Box } from './groupFlow'
+import { BAND_BOTTOM_PAD, buildGroupNodes, groupBox, type Box } from './groupFlow'
+import type { BandNodeData, BandNodeType } from './BandNode'
+import { bundleLabels, type LabelledLink } from './linkLabels'
 import { isGroupNode } from '../state/groups'
 import { computeNeedMixes, type NeedMixResult } from './needMix'
 import { needSegments } from './needLook'
@@ -30,7 +32,7 @@ export interface DroppedConnection {
 }
 
 export interface FlowGraph {
-  nodes: (CardNodeType | SectionHeaderNodeType | GroupNodeType)[]
+  nodes: (CardNodeType | SectionHeaderNodeType | GroupNodeType | BandNodeType)[]
   edges: ConnectionEdgeType[]
   /** Connections whose `targetId` doesn't resolve to any node in the document. Surfaced rather
    * than silently skipped, so an imported file that lost an edge somewhere says so instead of
@@ -61,6 +63,7 @@ function buildCardNodes(
   allNodes: DocumentNode[],
   positionByNodeId: Map<string, { x: number; y: number; width: number }>,
   needs: NeedMixResult,
+  inBand: Set<string>,
 ): CardNodeType[] {
   return allNodes.map((node) => {
     const pos = positionByNodeId.get(node.id)
@@ -76,6 +79,7 @@ function buildCardNodes(
         color: node.color,
         provenance: node.provenance,
         needMix: needSegments(needs, node.id),
+        ...(inBand.has(node.id) ? { inBand: true } : {}),
       } satisfies CardNodeData,
     }
   })
@@ -87,7 +91,14 @@ const SKIP_PALETTE = ['#B45309', '#0F766E', '#7C3AED', '#BE185D', '#15803D', '#0
 
 type PositionById =Map<string, { x: number; y: number; width: number }>
 
-type Route = 'flow' | 'stack-down' | 'stack-up' | 'routed' | 'near-loop'
+type Route =
+  | 'flow'
+  | 'stack-down'
+  | 'stack-up'
+  | 'routed'
+  | 'near-loop'
+  | 'band-up'
+  | 'band-down'
 
 /** Routing follows the columns, not the direction label. Same column runs vertically between the
  * stacked cards. A link that skips a column, or a loop that skips one going back, is routed around
@@ -99,7 +110,16 @@ function routeFor(
   sourceId: string,
   positions: PositionById,
   columns: Map<string, number>,
+  inBand: Set<string>,
 ): Route {
+  // A link that touches a band card runs as a plain curve between the band card's top edge and
+  // the column card's usual anchor; band cards are not in the columns, so column routing does
+  // not apply. Between two band cards it is the ordinary left-to-right curve.
+  const fromBand = inBand.has(sourceId)
+  const toBand = inBand.has(targetId)
+  if (fromBand && toBand) return 'flow'
+  if (fromBand) return 'band-up'
+  if (toBand) return 'band-down'
   const source = positions.get(sourceId)
   const target = positions.get(targetId)
   const span = (columns.get(targetId) ?? 0) - (columns.get(sourceId) ?? 0)
@@ -116,6 +136,8 @@ const HANDLES: Record<Route, { sourceHandle: string; targetHandle: string }> = {
   'stack-up': { sourceHandle: STACK_UP_OUT_HANDLE, targetHandle: STACK_UP_IN_HANDLE },
   routed: { sourceHandle: FLOW_OUT_HANDLE, targetHandle: FLOW_IN_HANDLE },
   'near-loop': { sourceHandle: LOOP_OUT_HANDLE, targetHandle: LOOP_IN_HANDLE },
+  'band-up': { sourceHandle: STACK_UP_OUT_HANDLE, targetHandle: FLOW_IN_HANDLE },
+  'band-down': { sourceHandle: FLOW_OUT_HANDLE, targetHandle: STACK_DOWN_IN_HANDLE },
 }
 
 function markerFor(color: string, start: boolean) {
@@ -127,9 +149,11 @@ function buildEdges(
   positions: PositionById,
   columns: Map<string, number>,
   headers: Rect[],
+  inBand: Set<string>,
 ): { edges: ConnectionEdgeType[]; dropped: DroppedConnection[] } {
   const edges: ConnectionEdgeType[] = []
   const dropped: DroppedConnection[] = []
+  const labelled: LabelledLink[] = []
   let skipCount = 0
   for (const node of allNodes) {
     node.connections.forEach((connection, index) => {
@@ -137,12 +161,20 @@ function buildEdges(
         dropped.push({ sourceId: node.id, targetId: connection.targetId })
         return
       }
-      const route = routeFor(connection.targetId, node.id, positions, columns)
+      const route = routeFor(connection.targetId, node.id, positions, columns, inBand)
+      const edgeId = `${node.id}->${connection.targetId}#${connection.id ?? index}`
+      labelled.push({
+        edgeId,
+        source: node.id,
+        target: connection.targetId,
+        ref: { sourceId: node.id, index },
+        label: connection.label,
+      })
       const skip = route === 'routed' && !connection.isFeedbackLoop
       const tint = skip ? SKIP_PALETTE[skipCount++ % SKIP_PALETTE.length] : undefined
       const appearance = { ...edgeAppearance(connection), ...(tint ? { stroke: tint, width: 2 } : {}) }
       edges.push({
-        id: `${node.id}->${connection.targetId}#${connection.id ?? index}`,
+        id: edgeId,
         source: node.id,
         target: connection.targetId,
         type: route === 'routed' || route === 'near-loop' ? 'routed' : 'connection',
@@ -160,6 +192,11 @@ function buildEdges(
     })
   }
   assignRouteLanes(edges, allNodes, positions, columns, headers)
+  const bundles = bundleLabels(labelled)
+  for (const e of edges) {
+    const bundle = bundles.get(e.id)
+    if (bundle) e.data = { ...e.data!, labelBundle: bundle }
+  }
   return { edges, dropped }
 }
 
@@ -195,8 +232,36 @@ function assignRouteLanes(
 
 /** Global left-to-right column index of every document node (distinct layout x, sorted). */
 function columnIndexById(layout: DocumentLayout): Map<string, number> {
-  const xs = [...new Set(layout.nodes.map((n) => Math.round(n.x)))].sort((a, b) => a - b)
-  return new Map(layout.nodes.map((n) => [n.nodeId, xs.indexOf(Math.round(n.x))]))
+  const inColumns = layout.nodes.filter((n) => !n.inBand)
+  const xs = [...new Set(inColumns.map((n) => Math.round(n.x)))].sort((a, b) => a - b)
+  return new Map(inColumns.map((n) => [n.nodeId, xs.indexOf(Math.round(n.x))]))
+}
+
+/** Height of an empty band's strip; a band with cards is fitted to them on the canvas. */
+const EMPTY_BAND_HEIGHT = SECTION_HEADER_HEIGHT + 64
+
+/** One strip per band section, behind its cards. Its height starts as an estimate and is fitted
+ * to the measured cards by `fitGroupHeights`. */
+function buildBandNodes(doc: ToCDocument, layout: DocumentLayout): BandNodeType[] {
+  return layout.bands.map((band) => {
+    const memberIds = doc.sections[band.sectionIndex].columns.flatMap((c) =>
+      c.nodes.filter((n) => !isGroupNode(n)).map((n) => n.id),
+    )
+    const lowest = layout.nodes
+      .filter((n) => memberIds.includes(n.nodeId))
+      .reduce((bottom, n) => Math.max(bottom, n.y + 96 + BAND_BOTTOM_PAD), -Infinity)
+    return {
+      id: `band-${band.sectionIndex}`,
+      type: 'band',
+      position: { x: band.x, y: band.y },
+      width: band.width,
+      height: Number.isFinite(lowest) ? lowest - band.y : EMPTY_BAND_HEIGHT,
+      draggable: false,
+      selectable: false,
+      zIndex: -2,
+      data: { title: band.title, count: memberIds.length, memberIds } satisfies BandNodeData,
+    }
+  })
 }
 
 /** Converts a parsed document into React Flow's node/edge shape. Positions come entirely from
@@ -213,11 +278,13 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
   const groups = buildGroupNodes(doc, positionByNodeId)
   for (const group of groups) positionByNodeId.set(group.id, groupBox(group))
   const cards = allNodes.filter((node) => !isGroupNode(node))
+  const inBand = new Set(layout.nodes.filter((n) => n.inBand).map((n) => n.nodeId))
 
   const nodes = [
+    ...buildBandNodes(doc, layout),
     ...buildHeaderNodes(doc, layout),
     ...groups,
-    ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc)),
+    ...buildCardNodes(cards, positionByNodeId, computeNeedMixes(doc), inBand),
   ]
   const headerBoxes = layout.sectionHeaders.map((h) => ({
     x: h.x,
@@ -230,6 +297,7 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
     positionByNodeId,
     columnIndexById(layout),
     headerBoxes,
+    inBand,
   )
 
   return { nodes, edges, droppedConnections: dropped }
