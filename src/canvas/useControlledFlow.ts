@@ -5,9 +5,9 @@ import {
   type OnNodeDrag,
   type OnSelectionChangeFunc,
 } from '@xyflow/react'
-import type { ToCDocument } from '../model/schema'
+import { isFreeLayout, type ToCDocument } from '../model/schema'
 import { useToCStore } from '../state/store'
-import { moveNodeToColumn, moveNodeVertically } from '../state/nodes'
+import { moveNodeFreely, moveNodeToColumn, moveNodeVertically } from '../state/nodes'
 import { findNodeLocation } from '../state/tree'
 import { moveGroup } from '../state/groups'
 import { useStraightSnap } from './useStraightSnap'
@@ -106,6 +106,31 @@ export function useControlledFlow(doc: ToCDocument, graph: FlowGraph) {
 
   const onNodeDragStop: OnNodeDrag<FlowNode> = useCallback(
     (_event, node) => {
+      if (isFreeLayout(doc)) {
+        // Free canvas: a card keeps exactly where it was dropped (or the straight-link snap's
+        // height); a group carries its cards by the distance its frame moved.
+        const home = graph.nodes.find((n) => n.id === node.id)
+        if (node.type === 'group') {
+          const dx = home ? node.position.x - home.position.x : 0
+          const dy = home ? node.position.y - home.position.y : 0
+          const members = graph.nodes.filter((n) =>
+            (node.data as GroupNodeData).memberIds.includes(n.id),
+          )
+          transform(`move ${node.id}`, (document) =>
+            members.reduce(
+              (moved, m) => moveNodeFreely(moved, m.id, m.position.x + dx, m.position.y + dy),
+              document,
+            ),
+          )
+        } else if (node.type === 'card') {
+          const kept = snap.finish(node.id)
+          transform(`move ${node.id}`, (document) =>
+            moveNodeFreely(document, node.id, node.position.x, kept ?? node.position.y),
+          )
+        }
+        if (useToCStore.getState().document === doc) resync()
+        return
+      }
       if (node.type === 'group') {
         const home = graph.nodes.find((n) => n.id === node.id)
         const target = resolveDropTarget(

@@ -1,4 +1,4 @@
-import { isBandSection, type ToCDocument } from '../model/schema'
+import { isBandSection, isFreeLayout, type ToCDocument } from '../model/schema'
 
 /**
  * theoryofchangebuilder.com's model has no x coordinate: a node's horizontal position is
@@ -92,6 +92,7 @@ function columnWidth(nodeWidths: number[]): number {
  * section bar.
  */
 export function layoutDocument(doc: ToCDocument): DocumentLayout {
+  if (isFreeLayout(doc)) return layoutFree(doc)
   const columnPadding = doc.columnPadding ?? 0
   const sectionPadding = doc.sectionPadding ?? 0
 
@@ -137,6 +138,49 @@ export function layoutDocument(doc: ToCDocument): DocumentLayout {
   const bands = layoutBands(doc, nodes, cursorX)
   const bandRight = Math.max(cursorX, ...bands.map((b) => b.x + b.width))
   return { nodes, sectionHeaders, bands, totalWidth: bandRight }
+}
+
+/** Space between cards that a free map has not placed yet, parked in a row under the rest. */
+export const FREE_PARK_GAP = 40
+
+/**
+ * A free-canvas map (`layoutMode: "free"`): every card sits where its own `xPosition` and
+ * `yPosition` put it. No columns, headers or bands. A card with no x yet (a card added by a
+ * tool that only knows ToCB, or a suggestion that predates the move) is parked in a row under
+ * the lowest placed card, and takes a real x the first time it is dragged.
+ */
+function layoutFree(doc: ToCDocument): DocumentLayout {
+  const nodes: NodeLayout[] = []
+  const unplaced: NodeLayout[] = []
+  doc.sections.forEach((section, sectionIndex) => {
+    section.columns.forEach((column, columnIndex) => {
+      for (const node of column.nodes) {
+        const placed = node.xPosition !== undefined
+        const layout = {
+          nodeId: node.id,
+          sectionIndex,
+          columnIndex,
+          x: node.xPosition ?? 0,
+          y: node.yPosition,
+          width: node.width,
+        }
+        nodes.push(layout)
+        if (!placed) unplaced.push(layout)
+      }
+    })
+  })
+  const placed = nodes.filter((n) => !unplaced.includes(n))
+  let parkY = 0
+  for (const n of placed) parkY = Math.max(parkY, n.y + ESTIMATED_CARD_HEIGHT + FREE_PARK_GAP)
+  let parkX = placed.length > 0 ? Math.min(...placed.map((n) => n.x)) : CANVAS_MARGIN
+  for (const n of unplaced) {
+    n.x = parkX
+    n.y = parkY
+    parkX += n.width + FREE_PARK_GAP
+  }
+  let right = CANVAS_MARGIN
+  for (const n of nodes) right = Math.max(right, n.x + n.width)
+  return { nodes, sectionHeaders: [], bands: [], totalWidth: right }
 }
 
 /** How a band's cards sit side by side: each card (a group with its cards counts as one) takes
@@ -214,7 +258,9 @@ function layoutBands(doc: ToCDocument, nodes: NodeLayout[], columnsRight: number
     // in its first row), the same distance as a column header above `yPosition: 0`. A band whose
     // cards were never tidied would land on top of the columns; it is moved, cards and all, to
     // the next free place, as an empty band is.
-    const grouped = new Set(section.columns.flatMap((c) => c.nodes.filter((n) => n.groupId).map((n) => n.id)))
+    const grouped = new Set(
+      section.columns.flatMap((c) => c.nodes.filter((n) => n.groupId).map((n) => n.id)),
+    )
     const tops = cards.map((n) => n.y - (grouped.has(n.nodeId) ? GROUP_HEAD : 0))
     const wanted = tops.length > 0 ? Math.min(...tops) - HEADER_CLEARANCE : -Infinity
     const y = wanted >= lowestTop ? wanted : floor + BAND_GAP

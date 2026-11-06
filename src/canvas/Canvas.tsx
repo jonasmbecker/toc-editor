@@ -10,6 +10,7 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useToCStore } from '../state/store'
+import { isFreeLayout } from '../model/schema'
 import { connectionRefKey, type ConnectionRef } from '../state/connections'
 import { buildFlow } from './buildFlow'
 import { useControlledFlow } from './useControlledFlow'
@@ -153,7 +154,8 @@ export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
         droppedCount={graph.droppedConnections.length}
         onHome={onHome}
         onSwitchTheory={onSwitchTheory}
-        onTidy={() => tidyLayout(flow.nodes)}
+        // A free canvas keeps every card where its author put it: nothing to tidy.
+        onTidy={isFreeLayout(doc) ? undefined : () => tidyLayout(flow.nodes)}
       />
       <StageBar />
       <TheoryNoteBar />

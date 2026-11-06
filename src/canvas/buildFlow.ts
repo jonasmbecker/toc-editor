@@ -1,5 +1,5 @@
 import { MarkerType } from '@xyflow/react'
-import type { DocumentNode, ToCDocument } from '../model/schema'
+import { isFreeLayout, type DocumentNode, type ToCDocument } from '../model/schema'
 import { layoutDocument, SECTION_HEADER_HEIGHT, type DocumentLayout } from '../layout/columns'
 import { edgeAppearance } from './config'
 import {
@@ -89,10 +89,11 @@ function buildCardNodes(
  * selection blue is left out). Feedback loops keep their rust accent. */
 const SKIP_PALETTE = ['#B45309', '#0F766E', '#7C3AED', '#BE185D', '#15803D', '#0369A1']
 
-type PositionById =Map<string, { x: number; y: number; width: number }>
+type PositionById = Map<string, { x: number; y: number; width: number }>
 
-type Route =
+export type Route =
   | 'flow'
+  | 'free-left'
   | 'stack-down'
   | 'stack-up'
   | 'routed'
@@ -138,6 +139,24 @@ const HANDLES: Record<Route, { sourceHandle: string; targetHandle: string }> = {
   'near-loop': { sourceHandle: LOOP_OUT_HANDLE, targetHandle: LOOP_IN_HANDLE },
   'band-up': { sourceHandle: STACK_UP_OUT_HANDLE, targetHandle: FLOW_IN_HANDLE },
   'band-down': { sourceHandle: FLOW_OUT_HANDLE, targetHandle: STACK_DOWN_IN_HANDLE },
+  'free-left': { sourceHandle: LOOP_OUT_HANDLE, targetHandle: LOOP_IN_HANDLE },
+}
+
+/** Card height assumed for picking a free link's sides; the measured height only moves the
+ * centre a little, and picking sides must not wait for a measurement. */
+const FREE_CARD_HEIGHT = 96
+
+/** A free-canvas link leaves the side of its source that faces the target and enters the facing
+ * side of the target, so a loop reads as a loop whichever way it turns. The wider of the two
+ * gaps between the cards decides: a horizontal gap uses the left and right sides, a vertical one
+ * the top and bottom. */
+export function freeRoute(source: Box, target: Box): Route {
+  const dx = target.x + target.width / 2 - (source.x + source.width / 2)
+  const dy = target.y - source.y
+  const gapX = Math.abs(dx) - (source.width + target.width) / 2
+  const gapY = Math.abs(dy) - FREE_CARD_HEIGHT
+  if (gapX >= gapY) return dx >= 0 ? 'flow' : 'free-left'
+  return dy >= 0 ? 'stack-down' : 'stack-up'
 }
 
 function markerFor(color: string, start: boolean) {
@@ -150,6 +169,7 @@ function buildEdges(
   columns: Map<string, number>,
   headers: Rect[],
   inBand: Set<string>,
+  free: boolean,
 ): { edges: ConnectionEdgeType[]; dropped: DroppedConnection[] } {
   const edges: ConnectionEdgeType[] = []
   const dropped: DroppedConnection[] = []
@@ -161,7 +181,9 @@ function buildEdges(
         dropped.push({ sourceId: node.id, targetId: connection.targetId })
         return
       }
-      const route = routeFor(connection.targetId, node.id, positions, columns, inBand)
+      const route = free
+        ? freeRoute(positions.get(node.id)!, positions.get(connection.targetId)!)
+        : routeFor(connection.targetId, node.id, positions, columns, inBand)
       const edgeId = `${node.id}->${connection.targetId}#${connection.id ?? index}`
       labelled.push({
         edgeId,
@@ -173,7 +195,10 @@ function buildEdges(
       })
       const skip = route === 'routed' && !connection.isFeedbackLoop
       const tint = skip ? SKIP_PALETTE[skipCount++ % SKIP_PALETTE.length] : undefined
-      const appearance = { ...edgeAppearance(connection), ...(tint ? { stroke: tint, width: 2 } : {}) }
+      const appearance = {
+        ...edgeAppearance(connection),
+        ...(tint ? { stroke: tint, width: 2 } : {}),
+      }
       edges.push({
         id: edgeId,
         source: node.id,
@@ -192,7 +217,7 @@ function buildEdges(
       })
     })
   }
-  assignRouteLanes(edges, allNodes, positions, columns, headers)
+  if (!free) assignRouteLanes(edges, allNodes, positions, columns, headers)
   const bundles = bundleLabels(labelled)
   for (const e of edges) {
     const bundle = bundles.get(e.id)
@@ -299,6 +324,7 @@ export function buildFlow(doc: ToCDocument): FlowGraph {
     columnIndexById(layout),
     headerBoxes,
     inBand,
+    isFreeLayout(doc),
   )
 
   return { nodes, edges, droppedConnections: dropped }

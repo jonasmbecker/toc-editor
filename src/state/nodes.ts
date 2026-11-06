@@ -45,7 +45,7 @@ export function makeNodeId(title: string, existingIds: Set<string>): string {
  * `DocumentNode` a `[x: string]: unknown` index signature, which a plain patch object literal
  * (no index signature of its own) can't satisfy. `Pick` drops the index signature along with
  * every field this module doesn't touch. */
-type NodePatch = Partial<Pick<DocumentNode, 'title' | 'text' | 'color' | 'yPosition'>>
+type NodePatch = Partial<Pick<DocumentNode, 'title' | 'text' | 'color' | 'yPosition' | 'xPosition'>>
 
 function patchChangesNothing(node: DocumentNode, patch: NodePatch): boolean {
   return (Object.keys(patch) as (keyof NodePatch)[]).every((key) => patch[key] === node[key])
@@ -80,6 +80,20 @@ export function moveNodeVertically(
   yPosition: number,
 ): ToCDocument {
   return patchNode(doc, nodeId, { yPosition })
+}
+
+/** A free-canvas move: the card's own x and y, rounded to whole pixels so a drag is a short,
+ * readable diff in layout.json. */
+export function moveNodeFreely(
+  doc: ToCDocument,
+  nodeId: string,
+  xPosition: number,
+  yPosition: number,
+): ToCDocument {
+  return patchNode(doc, nodeId, {
+    xPosition: Math.round(xPosition),
+    yPosition: Math.round(yPosition),
+  })
 }
 
 function withoutNodeAt(doc: ToCDocument, location: NodeLocation): ToCDocument {
