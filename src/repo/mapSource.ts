@@ -1,25 +1,28 @@
 import { importFromJson } from '../files/import'
 import { mergeDocument, type MapContent, type MapLayout } from '../files/split'
 import type { ToCDocument } from '../model/schema'
+import { BUNDLED_INDEX, findTheory, parseTheoryIndex, type TheoryIndex } from './theoryIndex'
 
 /**
- * The theory lives in the public theory-of-metacrisis repo as two files (see `files/split.ts`).
- * This reads them from GitHub's raw host, which needs no login and no token, and rebuilds a
- * document through the same `importFromJson` door files and templates use. Every failure
- * throws a `RepoFetchError`; the callers decide what the person sees (the default map falls
- * back to the bundled copy without a word, a suggestion preview explains itself).
+ * Each theory lives in the public theory-of-metacrisis repo as two files (see `files/split.ts`)
+ * in its own folder, `theories/<slug>/`, listed in `theories/index.json` (`theoryIndex.ts`);
+ * before the index existed the one theory lived in `map/`. This reads them from GitHub's raw
+ * host, which needs no login and no token, and rebuilds a document through the same
+ * `importFromJson` door files and templates use. Every failure throws a `RepoFetchError`; the
+ * callers decide what the person sees (the default map falls back to the bundled copy without a
+ * word, a suggestion preview explains itself).
  */
 
 export const THEORY_REPO = 'jonasmbecker/theory-of-metacrisis'
 export const RAW_HOST = 'https://raw.githubusercontent.com'
 export const API_HOST = 'https://api.github.com'
 
-/** A slow or hanging GitHub must not hold the home screen: past this the bundled map opens. */
+/** A slow or hanging GitHub must not hold the opening map: past this the bundled map opens. */
 export const FETCH_TIMEOUT_MS = 5000
 /** The real files are about 50 KB and 5 KB; anything near this is not a map. */
 const MAX_FILE_CHARS = 2_000_000
 
-export const CACHE_KEY = 'toc-theory-map:main'
+const MAP_CACHE_PREFIX = 'toc-theory-map:main'
 /** Raw GitHub caches a file for 5 minutes itself, so a merged proposal shows up within that. */
 export const CACHE_TTL_MS = 5 * 60 * 1000
 
@@ -66,14 +69,28 @@ export interface MapFiles {
   layout: unknown
 }
 
-export function rawUrl(repo: string, ref: string, file: 'content' | 'layout'): string {
-  return `${RAW_HOST}/${repo}/${ref}/map/${file}.json`
+/** Where Jonas's theory lived before the repo held several. Read when `theories/index.json` does
+ * not exist yet at the commit being read, and for suggestions opened against that layout. */
+export const LEGACY_DIR = 'map'
+export const INDEX_PATH = 'theories/index.json'
+
+/** The folder a theory's two files live in. */
+export function theoryDir(slug: string): string {
+  return `theories/${slug}`
 }
 
-export async function fetchMapFiles(repo: string, ref: string): Promise<MapFiles> {
+export function rawUrl(repo: string, ref: string, dir: string, file: 'content' | 'layout'): string {
+  return `${RAW_HOST}/${repo}/${ref}/${dir}/${file}.json`
+}
+
+export function indexUrl(repo: string, ref: string): string {
+  return `${RAW_HOST}/${repo}/${ref}/${INDEX_PATH}`
+}
+
+export async function fetchMapFiles(repo: string, ref: string, dir: string): Promise<MapFiles> {
   const [content, layout] = await Promise.all([
-    fetchJson(rawUrl(repo, ref, 'content')),
-    fetchJson(rawUrl(repo, ref, 'layout')),
+    fetchJson(rawUrl(repo, ref, dir, 'content')),
+    fetchJson(rawUrl(repo, ref, dir, 'layout')),
   ])
   return { content, layout }
 }
@@ -100,30 +117,27 @@ export function documentFromFiles({ content, layout }: MapFiles): ToCDocument {
   return result.document
 }
 
-interface CachedFiles extends MapFiles {
-  fetchedAt: number
-  /** The commit the files were read at; null when GitHub would not say. */
-  sha?: string | null
-}
-
 const SHA_PATTERN = /^[0-9a-f]{40}$/
 
-function readCache(now: number): (MapFiles & { sha: string | null }) | null {
+function readEntry<T extends object>(
+  key: string,
+  now: number,
+): (T & { sha: string | null }) | null {
   try {
-    const raw = sessionStorage.getItem(CACHE_KEY)
+    const raw = sessionStorage.getItem(key)
     if (!raw) return null
-    const cached = JSON.parse(raw) as CachedFiles
+    const cached = JSON.parse(raw) as T & { fetchedAt?: unknown; sha?: unknown }
     if (typeof cached.fetchedAt !== 'number' || now - cached.fetchedAt > CACHE_TTL_MS) return null
     const sha = typeof cached.sha === 'string' && SHA_PATTERN.test(cached.sha) ? cached.sha : null
-    return { content: cached.content, layout: cached.layout, sha }
+    return { ...cached, sha }
   } catch {
     return null
   }
 }
 
-function writeCache(files: MapFiles, sha: string | null, now: number): void {
+function writeEntry(key: string, value: object, now: number): void {
   try {
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ...files, sha, fetchedAt: now }))
+    sessionStorage.setItem(key, JSON.stringify({ ...value, fetchedAt: now }))
   } catch {
     // Storage full or blocked: the next open simply fetches again.
   }
@@ -144,31 +158,79 @@ async function fetchMainSha(): Promise<string | null> {
   }
 }
 
-interface Fetched extends MapFiles {
+/** What `main` offers at one commit: its theory index, and whether that commit still keeps the
+ * single map in `map/` (no index yet, so the bundled index stands in). */
+export interface TheorySnapshot {
   sha: string | null
+  index: TheoryIndex
+  legacy: boolean
+}
+
+export const INDEX_CACHE_KEY = 'toc-theory-index:main'
+
+/** The sessionStorage key a theory's files are kept under. */
+export function cacheKey(slug: string): string {
+  return `${MAP_CACHE_PREFIX}:${slug}`
 }
 
 /** One request at a time: a click that lands while the fetch-ahead is still running joins it. */
-let pendingFetch: Promise<Fetched> | null = null
+let pendingIndex: Promise<TheorySnapshot> | null = null
+const pendingMaps = new Map<string, Promise<MapFiles>>()
 
-/** Reads the files at the commit `main` points at, so the sha a suggestion is branched from is
- * exactly the one the person edited. Without a sha it reads `main` and the sha stays null. */
-function fetchMain(): Promise<Fetched> {
-  pendingFetch ??= (async () => {
+/** Reads the index at the commit `main` points at, so every theory opened from it, and the sha
+ * a suggestion is branched from, belong to one version. Without a sha it reads `main`. */
+function fetchSnapshot(): Promise<TheorySnapshot> {
+  pendingIndex ??= (async () => {
     const sha = await fetchMainSha()
-    const files = await fetchMapFiles(THEORY_REPO, sha ?? 'main')
-    return { ...files, sha }
+    try {
+      const index = parseTheoryIndex(await fetchJson(indexUrl(THEORY_REPO, sha ?? 'main')))
+      if (!index) throw new RepoFetchError('unreadable', 0, 'The theory index has the wrong shape')
+      return { sha, index, legacy: false }
+    } catch (error) {
+      if (error instanceof RepoFetchError && error.status === 404) {
+        return { sha, index: BUNDLED_INDEX, legacy: true }
+      }
+      throw error
+    }
   })().finally(() => {
-    pendingFetch = null
+    pendingIndex = null
   })
-  return pendingFetch
+  return pendingIndex
 }
 
-/** Where the map the person is editing came from: the commit and the document as loaded, which
- * a suggestion is compared against. Set by every `loadTheoryMap`; `App` claims it only when the
- * document it opens is this very object (so a draft, a share link or a template never claims). */
+/**
+ * The theories `main` offers. Served from sessionStorage for 5 minutes, like the maps (raw GitHub
+ * caches a file that long itself). Throws `RepoFetchError`; callers fall back to `BUNDLED_INDEX`.
+ */
+export async function loadTheoryIndex(now: () => number = Date.now): Promise<TheorySnapshot> {
+  const cached = readEntry<{ index?: unknown; legacy?: unknown }>(INDEX_CACHE_KEY, now())
+  const index = cached ? parseTheoryIndex(cached.index) : null
+  if (cached && index) return { sha: cached.sha, index, legacy: cached.legacy === true }
+  const snapshot = await fetchSnapshot()
+  writeEntry(INDEX_CACHE_KEY, snapshot, now())
+  return snapshot
+}
+
+function fetchTheoryFiles(snapshot: TheorySnapshot, slug: string): Promise<MapFiles> {
+  const dir = snapshot.legacy ? LEGACY_DIR : theoryDir(slug)
+  const key = `${snapshot.sha ?? 'main'}/${dir}`
+  let pending = pendingMaps.get(key)
+  if (!pending) {
+    pending = fetchMapFiles(THEORY_REPO, snapshot.sha ?? 'main', dir).finally(() => {
+      pendingMaps.delete(key)
+    })
+    pendingMaps.set(key, pending)
+  }
+  return pending
+}
+
+/** Where the map the person is editing came from: the commit, the theory and the document as
+ * loaded, which a suggestion is compared against. Set by every `loadTheoryMap`; `App` claims it
+ * only when the document it opens is this very object (so a draft, a share link or a template
+ * never claims). */
 export interface TheoryOrigin {
   sha: string
+  slug: string
   document: ToCDocument
 }
 
@@ -179,29 +241,37 @@ export function theoryOriginOf(document: ToCDocument): TheoryOrigin | null {
 }
 
 /**
- * The theory's `main` branch as a document. Served from sessionStorage for 5 minutes (so a
- * home screen that fetched ahead opens instantly, and a reload does not hit GitHub again);
- * only files that merged and validated are ever cached. Throws `RepoFetchError`.
+ * One theory from `main` as a document: `slug`, or the index's default when null. The files are
+ * read at the same commit as the index and kept in sessionStorage for 5 minutes; only files that
+ * merged and validated are ever kept. Throws `RepoFetchError` (status 404 for a slug the index
+ * does not list). A caller that already holds the snapshot passes it, so a GitHub that hangs
+ * costs one timeout, not one per call.
  */
-export async function loadTheoryMap(now: () => number = Date.now): Promise<ToCDocument> {
-  const cached = readCache(now())
-  if (cached) {
+export async function loadTheoryMap(
+  slug: string | null = null,
+  now: () => number = Date.now,
+  known?: TheorySnapshot,
+): Promise<ToCDocument> {
+  const snapshot = known ?? (await loadTheoryIndex(now))
+  const target = slug ?? snapshot.index.default
+  if (!findTheory(snapshot.index, target)) {
+    throw new RepoFetchError('http', 404, `No theory called "${target}"`)
+  }
+  const claim = (document: ToCDocument) => {
+    lastOrigin = snapshot.sha ? { sha: snapshot.sha, slug: target, document } : null
+    return document
+  }
+  const cached = readEntry<MapFiles>(cacheKey(target), now())
+  // A kept map counts only if it was read at the commit the index was.
+  if (cached && cached.sha === snapshot.sha) {
     try {
-      const document = documentFromFiles(cached)
-      lastOrigin = cached.sha ? { sha: cached.sha, document } : null
-      return document
+      return claim(documentFromFiles(cached))
     } catch {
       // A stale or damaged entry: fall through to a fresh fetch.
     }
   }
-  const files = await fetchMain()
+  const files = await fetchTheoryFiles(snapshot, target)
   const document = documentFromFiles(files)
-  writeCache(files, files.sha, now())
-  lastOrigin = files.sha ? { sha: files.sha, document } : null
-  return document
-}
-
-/** Fetches ahead so a click on the featured card opens at once. Never throws. */
-export function warmTheoryMap(): void {
-  void loadTheoryMap().catch(() => undefined)
+  writeEntry(cacheKey(target), { ...files, sha: snapshot.sha }, now())
+  return claim(document)
 }

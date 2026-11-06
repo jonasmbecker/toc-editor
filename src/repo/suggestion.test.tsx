@@ -15,6 +15,8 @@ import { rawUrl } from './mapSource'
 const { content, layout } = splitDocument(statusQuoJson as unknown as ToCDocument)
 const SHA = 'a'.repeat(40)
 const PULL_URL = 'https://api.github.com/repos/jonasmbecker/theory-of-metacrisis/pulls/12'
+const FILES_URL = `${PULL_URL}/files?per_page=100`
+const changedFiles = (...names: string[]) => JSON.stringify(names.map((filename) => ({ filename })))
 
 function pull(overrides: Record<string, unknown> = {}) {
   return {
@@ -32,19 +34,24 @@ function serve({
   pullStatus = 200,
   proposed = { ...content, title: 'The map as proposed' },
   filesStatus = 200,
+  changed = ['map/content.json'],
 }: {
   pullBody?: unknown
   pullStatus?: number
   proposed?: unknown
   filesStatus?: number
+  /** The paths the pull request changes, which say which theory it is about. */
+  changed?: string[]
 } = {}) {
+  const dir = changed.map((name) => /^theories\/[^/]+/.exec(name)?.[0]).find(Boolean) ?? 'map'
   const fetchMock = vi.fn((url: string) => {
     const reply = (body: string, status: number) => Promise.resolve(new Response(body, { status }))
     if (url === PULL_URL) return reply(JSON.stringify(pullBody), pullStatus)
-    if (url === rawUrl('jonasmbecker/theory-of-metacrisis', SHA, 'content')) {
+    if (url === FILES_URL) return reply(changedFiles(...changed), 200)
+    if (url === rawUrl('jonasmbecker/theory-of-metacrisis', SHA, dir, 'content')) {
       return reply(serializeMapFile(proposed), filesStatus)
     }
-    if (url === rawUrl('jonasmbecker/theory-of-metacrisis', SHA, 'layout')) {
+    if (url === rawUrl('jonasmbecker/theory-of-metacrisis', SHA, dir, 'layout')) {
       return reply(serializeMapFile(layout), filesStatus)
     }
     // Everything else, such as the default map's own files, is simply not there.
@@ -77,6 +84,7 @@ describe('loadSuggestion', () => {
       number: 12,
       title: 'Added link: Intergenerational war trauma to Collective freeze',
       url: 'https://github.com/jonasmbecker/theory-of-metacrisis/pull/12',
+      theory: null,
     })
     expect(document.title).toBe('The map as proposed')
     expect(fetchMock.mock.calls.map(([url]) => url)).toContain(
@@ -88,12 +96,22 @@ describe('loadSuggestion', () => {
     }
   })
 
+  it('reads the theory folder the pull request changes, and names that theory', async () => {
+    const fetchMock = serve({ changed: ['README.md', 'theories/schmachtenberger/layout.json'] })
+    const { info } = await loadSuggestion('12')
+    expect(info.theory).toBe('schmachtenberger')
+    expect(fetchMock.mock.calls.map(([url]) => url)).toContain(
+      `https://raw.githubusercontent.com/jonasmbecker/theory-of-metacrisis/${SHA}/theories/schmachtenberger/content.json`,
+    )
+  })
+
   it('reads a pull request from a fork at the fork', async () => {
     const fork = pull({ head: { sha: SHA, repo: { full_name: 'someone/their-fork' } } })
     const fetchMock = vi.fn((url: string) => {
       const reply = (body: string) => Promise.resolve(new Response(body, { status: 200 }))
       if (url === PULL_URL) return reply(JSON.stringify(fork))
-      if (url === rawUrl('someone/their-fork', SHA, 'content'))
+      if (url === FILES_URL) return reply(changedFiles('map/content.json'))
+      if (url === rawUrl('someone/their-fork', SHA, 'map', 'content'))
         return reply(serializeMapFile(content))
       return reply(serializeMapFile(layout))
     })
@@ -109,6 +127,7 @@ describe('loadSuggestion', () => {
     ['a rate-limited API', { pullStatus: 403 }, 'unreachable'],
     ['an unexpected API answer', { pullBody: { hello: 'world' } }, 'unreachable'],
     ['a branch without the map files', { filesStatus: 404 }, 'no-map'],
+    ['a pull request that changes no map', { changed: ['README.md'] }, 'no-map'],
     ['a map that fails the schema', { proposed: { ...content, sections: 'x' } }, 'no-map'],
   ])('refuses %s', async (_name, options, reason) => {
     serve(options)

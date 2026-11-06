@@ -58,6 +58,24 @@ describe('a valid suggestion', () => {
     expect(spec.files[0].text).not.toBe(serializeMapFile(baseFiles.content))
   })
 
+  it('writes into the folder of the theory the contributor edited', async () => {
+    ;({ repo, opened } = fakeRepo({
+      mapDir: vi.fn(async (_sha: string, slug: string) => `theories/${slug}`),
+    }))
+    deps = freshDeps(repo)
+    await post(suggestion(addLink, { theory: 'schmachtenberger' }))
+    expect(repo.mapDir).toHaveBeenCalledWith(BASE_SHA, 'schmachtenberger')
+    expect(repo.readMap).toHaveBeenCalledWith(BASE_SHA, 'theories/schmachtenberger')
+    expect(opened[0].files.map((file) => file.path)).toEqual([
+      'theories/schmachtenberger/content.json',
+    ])
+  })
+
+  it('treats a request without a theory, from an older editor, as the default theory', async () => {
+    await post(suggestion(addLink))
+    expect(repo.mapDir).toHaveBeenCalledWith(BASE_SHA, 'jonas')
+  })
+
   it('commits layout.json only when only positions changed', async () => {
     await post(suggestion((doc) => (card(doc, TRAUMA).yPosition += 50)))
     expect(opened[0].files.map((file) => file.path)).toEqual(['map/layout.json'])
@@ -122,6 +140,24 @@ describe('a suggestion that is refused', () => {
     expect(response.status).toBe(400)
     expect(((await response.json()) as { error: string }).error).toContain('out of date')
     expect(repo.readMap).not.toHaveBeenCalled()
+    untouched()
+  })
+
+  it('refuses a theory the index does not list, and opens nothing', async () => {
+    const response = await post(suggestion(addLink, { theory: 'nobody' }))
+    expect(response.status).toBe(400)
+    expect(((await response.json()) as { error: string }).error).toContain('That theory')
+    expect(repo.readMap).not.toHaveBeenCalled()
+    untouched()
+  })
+
+  it.each([
+    ['a path', '../map'],
+    ['a number', 7],
+    ['capitals and spaces', 'Some Theory'],
+  ])('refuses a theory name that is not a slug (%s) before calling GitHub', async (_l, theory) => {
+    expect((await post(suggestion(addLink, { theory }))).status).toBe(400)
+    expect(repo.isOnMain).not.toHaveBeenCalled()
     untouched()
   })
 

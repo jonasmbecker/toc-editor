@@ -14,7 +14,7 @@ const PR = 'https://github.com/jonasmbecker/theory-of-metacrisis/pull/12'
 function openMap({ readOnly = false } = {}) {
   const base = statusQuoMetacrisis()
   useToCStore.getState().load(base, { readOnly })
-  useOriginStore.getState().setOrigin({ sha: SHA, document: base })
+  useOriginStore.getState().setOrigin({ sha: SHA, slug: 'jonas', document: base })
 }
 
 function editTitle() {
@@ -93,7 +93,13 @@ describe('the Suggest a change dialog', () => {
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit]
     expect(url).toBe('/.netlify/functions/suggest-change')
     const body = JSON.parse(init.body as string)
-    expect(body).toMatchObject({ name: 'Dana', reason: 'Because', baseSha: SHA, website: '' })
+    expect(body).toMatchObject({
+      name: 'Dana',
+      reason: 'Because',
+      baseSha: SHA,
+      theory: 'jonas',
+      website: '',
+    })
     expect(body.content).toEqual(
       JSON.parse(JSON.stringify(splitDocument(useToCStore.getState().document).content)),
     )
@@ -168,7 +174,7 @@ describe('sendSuggestion', () => {
     const down = vi.fn(() => Promise.reject(new TypeError('Failed to fetch')))
     const result = await sendSuggestion(
       statusQuoMetacrisis(),
-      SHA,
+      { sha: SHA, slug: 'jonas' },
       { name: 'a', reason: 'b' },
       down as unknown as typeof fetch,
     )
@@ -179,7 +185,7 @@ describe('sendSuggestion', () => {
     const odd = reply(201, { url: 'javascript:alert(1)' })
     const result = await sendSuggestion(
       statusQuoMetacrisis(),
-      SHA,
+      { sha: SHA, slug: 'jonas' },
       { name: 'a', reason: 'b' },
       odd as unknown as typeof fetch,
     )

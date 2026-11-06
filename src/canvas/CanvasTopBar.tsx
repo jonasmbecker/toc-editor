@@ -2,8 +2,10 @@ import { diagramTypeSchema, type DiagramType } from '../model/schema'
 import { DEFAULT_DIAGRAM_TYPE, labelsFor } from '../model/labels'
 import { useToCStore } from '../state/store'
 import { setDiagramType } from '../state/document'
+import { useTheoryStore } from '../repo/theoryStore'
 import { TopBarActions } from './TopBarActions'
 import { TidyButton } from './TidyButton'
+import { TheorySwitcher } from './TheorySwitcher'
 
 export interface CanvasTopBarProps {
   title: string
@@ -12,6 +14,8 @@ export interface CanvasTopBarProps {
   connectionCount: number
   droppedCount: number
   onHome: () => void
+  /** Opens another theory from the switcher, shown in place of the title on a theory. */
+  onSwitchTheory: (slug: string) => void
   /** Shown as a "Tidy layout" button when given and the diagram is editable. */
   onTidy?: () => void
 }
@@ -25,8 +29,10 @@ export function CanvasTopBar({
   connectionCount,
   droppedCount,
   onHome,
+  onSwitchTheory,
   onTidy,
 }: CanvasTopBarProps) {
+  const isTheory = useTheoryStore((state) => state.current !== null)
   const transform = useToCStore((state) => state.transform)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
   function onDiagramTypeChange(type: DiagramType) {
@@ -35,9 +41,16 @@ export function CanvasTopBar({
 
   return (
     <header className="toc-topbar">
-      <span className="toc-topbar__brand">ToC editor</span>
-      <span className="toc-topbar__divider" />
-      <span className="toc-topbar__title">{title}</span>
+      {/* On a theory the site is the theory: its switcher takes the brand's place. */}
+      {isTheory ? (
+        <TheorySwitcher onSwitch={onSwitchTheory} onStart={onHome} />
+      ) : (
+        <>
+          <span className="toc-topbar__brand">ToC editor</span>
+          <span className="toc-topbar__divider" />
+          <span className="toc-topbar__title">{title}</span>
+        </>
+      )}
       {/* The diagram-type setting: a pill that is really a select. It only changes wording
           (Mechanism vs Assumptions, the footnote); no JSON key changes with it. A view link
           shows the same pill without the select. */}

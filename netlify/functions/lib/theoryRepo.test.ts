@@ -211,10 +211,56 @@ describe('readMap', () => {
         (call) => new Response(call.path.endsWith('/content.json') ? 'C-TEXT' : 'L-TEXT'),
       ],
     ])
-    const map = await createTheoryRepo(config, fetchFn).readMap(BASE)
+    const map = await createTheoryRepo(config, fetchFn).readMap(BASE, 'map')
     expect(map).toEqual({ content: 'C-TEXT', layout: 'L-TEXT' })
     const reads = calls.filter((call) => call.path.includes('/contents/'))
     expect(reads.map((call) => call.query)).toEqual([`?ref=${BASE}`, `?ref=${BASE}`])
     expect(reads[0].headers.accept).toBe('application/vnd.github.raw+json')
+  })
+
+  it("reads a theory's own folder", async () => {
+    const { fetchFn, calls } = fakeGithub([
+      ['GET', /\/contents\/theories\/jonas\/(content|layout)\.json$/, () => new Response('T')],
+    ])
+    await createTheoryRepo(config, fetchFn).readMap(BASE, 'theories/jonas')
+    expect(calls.filter((call) => call.path.includes('/contents/'))).toHaveLength(2)
+  })
+})
+
+describe('mapDir', () => {
+  const index = {
+    default: 'jonas',
+    theories: [
+      { slug: 'jonas', title: 'J', status: 'author', layout: 'stages' },
+      { slug: 'schmachtenberger', title: 'S', status: 'reconstructed', layout: 'free' },
+    ],
+  }
+  const withIndex = (body: unknown, status = 200) =>
+    fakeGithub([['GET', /\/contents\/theories\/index\.json$/, reply(body, status)]]).fetchFn
+
+  it('gives the folder of a theory the index lists at that commit', async () => {
+    const repo = createTheoryRepo(config, withIndex(index))
+    expect(await repo.mapDir(BASE, 'schmachtenberger')).toBe('theories/schmachtenberger')
+    expect(await repo.mapDir(BASE, 'jonas')).toBe('theories/jonas')
+  })
+
+  it('refuses a theory the index does not list', async () => {
+    const repo = createTheoryRepo(config, withIndex(index))
+    expect(await repo.mapDir(BASE, 'nobody')).toBeNull()
+  })
+
+  it('keeps map/ for the default theory at a commit from before the index', async () => {
+    const repo = createTheoryRepo(config, withIndex({ message: 'Not Found' }, 404))
+    expect(await repo.mapDir(BASE, 'jonas')).toBe('map')
+    expect(await repo.mapDir(BASE, 'schmachtenberger')).toBeNull()
+  })
+
+  it('throws on a broken index or a GitHub error rather than guessing', async () => {
+    await expect(
+      createTheoryRepo(config, withIndex({ default: 'x', theories: [] })).mapDir(BASE, 'jonas'),
+    ).rejects.toThrow(GithubError)
+    await expect(
+      createTheoryRepo(config, withIndex({ message: 'boom' }, 500)).mapDir(BASE, 'jonas'),
+    ).rejects.toThrow(GithubError)
   })
 })

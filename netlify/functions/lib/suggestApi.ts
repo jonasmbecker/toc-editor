@@ -7,6 +7,7 @@ import {
   type MapLayout,
 } from '../../../src/files/split'
 import { parseDocument, type ToCDocument } from '../../../src/model/schema'
+import { DEFAULT_SLUG, SLUG } from '../../../src/repo/theoryIndex'
 import { GithubError } from './githubApp'
 import { failure, json, readJsonBody, type BodyLimit } from './http'
 import type { Kv } from './kv'
@@ -24,11 +25,13 @@ import { THEORY_REPO, type TheoryRepo } from './theoryRepo'
  * The suggestion API, free of anything Netlify-specific so it can be tested against an in-memory
  * store and a fake repo. `suggest-change.ts` adapts it to a Netlify Function.
  *
- *   POST { content, layout, name, reason, baseSha, website }
+ *   POST { content, layout, name, reason, baseSha, theory, website }
  *     -> 201 { url, number, previewUrl }
  *
  * `content` and `layout` are the two map files as the editor would write them, `baseSha` the
- * commit of the theory repo the contributor's edit started from, and `website` the honeypot: a
+ * commit of the theory repo the contributor's edit started from, `theory` the slug of the theory
+ * they edited (absent from editors older than several theories, meaning the default one; it
+ * must be listed in `theories/index.json` at `baseSha`), and `website` the honeypot: a
  * field no person sees, so anything in it is a bot, which is answered with a success that opens
  * nothing.
  *
@@ -61,11 +64,14 @@ const bad = (message: string, status = 400): { ok: false; response: Response } =
 })
 
 const SHA = /^[0-9a-f]{40}$/
+const UNKNOWN_THEORY =
+  'That theory does not take suggestions here. Reload the editor and try again.'
 
 interface Fields {
   name: string
   reason: string
   baseSha: string
+  theory: string
   content: unknown
   layout: unknown
 }
@@ -79,8 +85,13 @@ function readFields(body: Record<string, unknown>): Checked<Fields> {
   if (!SHA.test(baseSha)) {
     return bad('The editor did not say which version of the map you started from.')
   }
+  const theory = body.theory === undefined ? DEFAULT_SLUG : body.theory
+  if (typeof theory !== 'string' || !SLUG.test(theory)) return bad(UNKNOWN_THEORY)
   const { content, layout } = body
-  return { ok: true, value: { name: name.text, reason: reason.text, baseSha, content, layout } }
+  return {
+    ok: true,
+    value: { name: name.text, reason: reason.text, baseSha, theory, content, layout },
+  }
 }
 
 /** Anything in the field a person cannot see: text, a number, `true`. Blank text counts as empty,
@@ -133,6 +144,8 @@ function parseJson(value: string): unknown {
 interface Proposed {
   after: ToCDocument
   summary: ReturnType<typeof summarizeChanges>
+  /** The theory's folder at the base commit, which the pull request writes into. */
+  dir: string
 }
 
 /** Everything that can be checked before a rate-limit slot is spent. The contributor's map is
@@ -143,7 +156,9 @@ async function checkChange(repo: TheoryRepo, fields: Fields): Promise<Checked<Pr
   if (!(await repo.isOnMain(fields.baseSha))) {
     return bad('Your copy of the map is out of date. Reload the editor and make the change again.')
   }
-  const texts = await repo.readMap(fields.baseSha)
+  const dir = await repo.mapDir(fields.baseSha, fields.theory)
+  if (!dir) return bad(UNKNOWN_THEORY)
+  const texts = await repo.readMap(fields.baseSha, dir)
   const before = documentFrom(parseJson(texts.content), parseJson(texts.layout))
   if (!before.ok) return bad('The current map could not be read, try again later.', 502)
   const summary = summarizeChanges(before.value, after.value)
@@ -153,18 +168,18 @@ async function checkChange(repo: TheoryRepo, fields: Fields): Promise<Checked<Pr
     )
   }
   if (!hasChanges(summary)) return bad('Nothing has changed compared to the map you started from.')
-  return { ok: true, value: { after: after.value, summary } }
+  return { ok: true, value: { after: after.value, summary, dir } }
 }
 
-async function openPull(repo: TheoryRepo, fields: Fields, { after, summary }: Proposed) {
+async function openPull(repo: TheoryRepo, fields: Fields, { after, summary, dir }: Proposed) {
   const next = splitDocument(after)
   const files = []
   // A file nobody changed is left out, so the pull request only touches what the person did.
   if (summary.lines.length > 0) {
-    files.push({ path: 'map/content.json', text: serializeMapFile(next.content) })
+    files.push({ path: `${dir}/content.json`, text: serializeMapFile(next.content) })
   }
   if (summary.layoutChanged) {
-    files.push({ path: 'map/layout.json', text: serializeMapFile(next.layout) })
+    files.push({ path: `${dir}/layout.json`, text: serializeMapFile(next.layout) })
   }
   const title = summaryTitle(summary)
   const pull = await repo.openPullRequest({
@@ -174,7 +189,7 @@ async function openPull(repo: TheoryRepo, fields: Fields, { after, summary }: Pr
     baseSha: fields.baseSha,
     files,
     body: (number) =>
-      pullRequestBody({ name: fields.name, reason: fields.reason, summary }, number),
+      pullRequestBody({ name: fields.name, reason: fields.reason, summary, dir }, number),
   })
   return json(201, { url: pull.url, number: pull.number, previewUrl: previewUrl(pull.number) })
 }
