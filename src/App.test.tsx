@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import App, { LEAVE_UNSAVED_PROMPT } from './App'
 import { useToCStore } from './state/store'
-import { clearDraft, loadDraft } from './files/draft'
+import { clearDraft, loadDraft, saveDraft } from './files/draft'
 import { renameSection } from './state/sections'
 import { statusQuoMetacrisis } from './templates'
 import { splitDocument } from './files/split'
@@ -17,11 +18,14 @@ vi.mock('./canvas/Canvas', () => ({
   Canvas: ({
     onHome,
     onSwitchTheory,
+    banner,
   }: {
     onHome: () => void
     onSwitchTheory: (slug: string) => void
+    banner?: ReactNode
   }) => (
     <>
+      {banner}
       <button type="button" onClick={onHome}>
         Home
       </button>
@@ -226,6 +230,40 @@ describe('App: the site opens in a theory', () => {
     expect(openedTitle()).toBe('Map of jonas')
     expect(useToCStore.getState().notice).toMatch(/no theory called "nobody"/)
     expect(where()).toBe('/')
+  })
+
+  it('keeps ?theory= in the address when GitHub fails, so a reload can still reach it', async () => {
+    window.history.replaceState(null, '', '/?theory=schmachtenberger')
+    vi.stubGlobal('fetch', () => Promise.reject(new TypeError('offline')))
+    render(<App />)
+    await screen.findByRole('button', { name: 'Home' })
+    expect(openedTitle()).toBe(statusQuoMetacrisis().title)
+    expect(useToCStore.getState().notice).toMatch(/could not be loaded right now/)
+    expect(where()).toBe('/?theory=schmachtenberger')
+  })
+
+  it('shows a draft kept in this browser on the theory, and restores it', async () => {
+    window.history.replaceState(null, '', '/')
+    saveDraft({ ...statusQuoMetacrisis(), title: 'My earlier edits' })
+    serveTheories()
+    render(<App />)
+    expect(await screen.findByText(/Unsaved local draft: My earlier edits/)).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: 'Restore draft' }))
+    expect(openedTitle()).toBe('My earlier edits')
+    expect(screen.queryByText(/Unsaved local draft/)).toBeNull()
+  })
+
+  it('keeps an edited map as a draft when switching theory, and says so there', async () => {
+    window.history.replaceState(null, '', '/')
+    serveTheories()
+    render(<App />)
+    await screen.findByRole('button', { name: 'Home' })
+    rename('My change')
+    fireEvent.click(screen.getByRole('button', { name: 'Switch' }))
+    await waitFor(() => expect(openedTitle()).toBe('Map of schmachtenberger'))
+    expect(screen.getByText(/Unsaved local draft: Map of jonas/)).toBeVisible()
+    fireEvent.click(screen.getByRole('button', { name: 'Discard' }))
+    expect(loadDraft()).toBeNull()
   })
 
   it('opens the bundled map when GitHub cannot be reached at all', async () => {

@@ -5,6 +5,7 @@ import { Canvas } from './canvas/Canvas'
 import { useEditorShortcuts } from './panels/useEditorShortcuts'
 import { NoticeToast } from './panels/NoticeToast'
 import { Home } from './home/Home'
+import { DraftBar } from './files/DraftBar'
 import { clearDraft, loadDraft, saveDraft, type Draft } from './files/draft'
 import { useAutosave } from './files/useAutosave'
 import { useBlockWindowDrop } from './files/useBlockWindowDrop'
@@ -25,8 +26,8 @@ import { useShareStore } from './share/shareStore'
 type View = 'home' | 'opening' | 'editor'
 
 /** Back and forward move between links (a view link and the copy made from it, two theories,
- * or a link and the start page). Each address opens its own document, so the simplest correct answer is to
- * load the address again. */
+ * or a link and the start page). Each address opens its own document, so the simplest correct
+ * answer is to load the address again. */
 function useReloadOnHistoryMove(): void {
   useEffect(() => {
     const reload = () => window.location.reload()
@@ -153,7 +154,12 @@ function useMoves({ view, setView, draft, setDraft, setAddress }: Navigation) {
     setView('opening')
   }
 
-  return { open, goHome, showTheory }
+  function discardDraft() {
+    clearDraft()
+    setDraft(null)
+  }
+
+  return { open, goHome, showTheory, discardDraft }
 }
 
 function App() {
@@ -163,7 +169,9 @@ function App() {
   const isEditing = view === 'editor'
   const isShared = useShareStore((state) => state.role !== null)
   const onOpened = useCallback(() => setView('editor'), [])
-  const { open, goHome, showTheory } = useMoves({ view, setView, draft, setDraft, setAddress })
+  const moves = useMoves({ view, setView, draft, setDraft, setAddress })
+  const { open, goHome, showTheory } = moves
+  const isTheory = useTheoryStore((state) => state.current !== null)
 
   useBlockWindowDrop()
   useEditorShortcuts(isEditing)
@@ -182,17 +190,26 @@ function App() {
         onOpen={open}
         onOpenTheory={showTheory}
         onRestoreDraft={() => draft && open(draft.document)}
-        onDiscardDraft={() => {
-          clearDraft()
-          setDraft(null)
-        }}
+        onDiscardDraft={moves.discardDraft}
       />
     )
   }
 
   return (
     <>
-      <Canvas onHome={goHome} onSwitchTheory={showTheory} />
+      <Canvas
+        onHome={goHome}
+        onSwitchTheory={showTheory}
+        banner={
+          draft && isTheory ? (
+            <DraftBar
+              draft={draft}
+              onRestore={() => open(draft.document)}
+              onDiscard={moves.discardDraft}
+            />
+          ) : null
+        }
+      />
       <NoticeToast />
     </>
   )

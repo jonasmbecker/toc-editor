@@ -22,7 +22,7 @@ export const FETCH_TIMEOUT_MS = 5000
 /** The real files are about 50 KB and 5 KB; anything near this is not a map. */
 const MAX_FILE_CHARS = 2_000_000
 
-export const CACHE_KEY = 'toc-theory-map:main'
+const MAP_CACHE_PREFIX = 'toc-theory-map:main'
 /** Raw GitHub caches a file for 5 minutes itself, so a merged proposal shows up within that. */
 export const CACHE_TTL_MS = 5 * 60 * 1000
 
@@ -170,7 +170,7 @@ export const INDEX_CACHE_KEY = 'toc-theory-index:main'
 
 /** The sessionStorage key a theory's files are kept under. */
 export function cacheKey(slug: string): string {
-  return `${CACHE_KEY}:${slug}`
+  return `${MAP_CACHE_PREFIX}:${slug}`
 }
 
 /** One request at a time: a click that lands while the fetch-ahead is still running joins it. */
@@ -244,13 +244,15 @@ export function theoryOriginOf(document: ToCDocument): TheoryOrigin | null {
  * One theory from `main` as a document: `slug`, or the index's default when null. The files are
  * read at the same commit as the index and kept in sessionStorage for 5 minutes; only files that
  * merged and validated are ever kept. Throws `RepoFetchError` (status 404 for a slug the index
- * does not list).
+ * does not list). A caller that already holds the snapshot passes it, so a GitHub that hangs
+ * costs one timeout, not one per call.
  */
 export async function loadTheoryMap(
   slug: string | null = null,
   now: () => number = Date.now,
+  known?: TheorySnapshot,
 ): Promise<ToCDocument> {
-  const snapshot = await loadTheoryIndex(now)
+  const snapshot = known ?? (await loadTheoryIndex(now))
   const target = slug ?? snapshot.index.default
   if (!findTheory(snapshot.index, target)) {
     throw new RepoFetchError('http', 404, `No theory called "${target}"`)
@@ -272,9 +274,4 @@ export async function loadTheoryMap(
   const document = documentFromFiles(files)
   writeEntry(cacheKey(target), { ...files, sha: snapshot.sha }, now())
   return claim(document)
-}
-
-/** Fetches ahead so opening the default theory is instant. Never throws. */
-export function warmTheoryMap(): void {
-  void loadTheoryMap().catch(() => undefined)
 }

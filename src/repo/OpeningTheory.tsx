@@ -23,16 +23,15 @@ export interface OpeningTheoryProps {
 export function OpeningTheory({ raw, onOpened }: OpeningTheoryProps) {
   useEffect(() => {
     let isCancelled = false
-    void openTheory(raw).then(({ document, slug, notice }) => {
+    void openTheory(raw).then(({ document, slug, notice, isUnknown }) => {
       if (isCancelled) return
       useToCStore.getState().load(document)
       useOriginStore.getState().setOrigin(theoryOriginOf(document))
       useTheoryStore.getState().setCurrent(slug)
-      if (notice) {
-        // The address would ask for the same missing theory on every reload.
-        setPath(theoryPath(useTheoryStore.getState().index, slug), { replace: true })
-        announce(notice, NOTICE_MS)
-      }
+      // An address naming a theory that does not exist would fail the same way on every reload;
+      // one that GitHub could not serve just now is kept, so a reload can still reach it.
+      if (isUnknown) setPath(theoryPath(useTheoryStore.getState().index, slug), { replace: true })
+      if (notice) announce(notice, NOTICE_MS)
       onOpened()
     })
     return () => {

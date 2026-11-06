@@ -7,7 +7,8 @@ import { z } from 'zod'
  * default is not one of its entries is refused.
  */
 
-export const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/
+/** Lower-case words joined by single hyphens, at most 64 characters: safe in a path and a URL. */
+export const SLUG = /^(?=.{1,64}$)[a-z0-9]+(-[a-z0-9]+)*$/
 
 /** `author`: the theory as its author holds it. `reconstructed`: drawn by others from someone's
  * public material, not endorsed by them. Anything else shows no badge, so a status added to the
@@ -79,6 +80,17 @@ export function parseTheoryIndex(raw: unknown): TheoryIndex | null {
   }
   if (!seen.has(fallback)) return null
   return { default: fallback, theories: entries }
+}
+
+const STATUS_LABELS: Record<TheoryStatus, string | null> = {
+  author: "Author's own",
+  reconstructed: 'Reconstructed · not endorsed',
+  other: null,
+}
+
+/** The words a theory's status badge says, or null for a status this editor does not know. */
+export function statusLabel(theory: TheoryEntry): string | null {
+  return STATUS_LABELS[theory.status]
 }
 
 export function findTheory(index: TheoryIndex, slug: string): TheoryEntry | null {

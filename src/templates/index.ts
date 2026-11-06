@@ -1,7 +1,6 @@
 import statusQuoJson from './status-quo-metacrisis.json'
 import type { ToCDocument } from '../model/schema'
 import { importFromJson } from '../files/import'
-import { loadTheoryMap } from '../repo/mapSource'
 
 /** Every call returns a fresh document, so opening a template never shares state with the last. */
 
@@ -47,17 +46,6 @@ export function statusQuoMetacrisis(): ToCDocument {
     throw new Error(`Bundled status-quo template failed to parse: ${result.errors.join('; ')}`)
   }
   return result.document
-}
-
-/** The default map: the theory repo's `main`, or the bundled copy when GitHub cannot give a
- * map the editor can open (offline, blocked, rate-limited, a 404, a file that fails the
- * schema). Never rejects and never says why: opening the map must not depend on GitHub. */
-export async function loadDefaultMap(): Promise<ToCDocument> {
-  try {
-    return await loadTheoryMap()
-  } catch {
-    return statusQuoMetacrisis()
-  }
 }
 
 export interface TemplateInfo {

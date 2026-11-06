@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import statusQuoJson from '../templates/status-quo-metacrisis.json'
-import { loadDefaultMap, statusQuoMetacrisis } from '../templates'
+import { statusQuoMetacrisis } from '../templates'
 import { serializeMapFile, splitDocument } from '../files/split'
 import type { ToCDocument } from '../model/schema'
 import {
@@ -17,6 +17,10 @@ import {
   THEORY_REPO,
 } from './mapSource'
 import { BUNDLED_INDEX, parseTheoryIndex } from './theoryIndex'
+import { openTheory } from './openTheory'
+
+/** What the bare address opens: the default theory, or the bundled copy. */
+const loadDefaultMap = async () => (await openTheory(null)).document
 
 const { content, layout } = splitDocument(statusQuoJson as unknown as ToCDocument)
 

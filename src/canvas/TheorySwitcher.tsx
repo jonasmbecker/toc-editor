@@ -1,7 +1,16 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type RefObject } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type KeyboardEvent,
+  type RefObject,
+} from 'react'
 import { useSuggestionStore } from '../repo/suggestionStore'
 import { useTheoryStore } from '../repo/theoryStore'
-import { findTheory, type TheoryEntry } from '../repo/theoryIndex'
+import { findTheory, statusLabel, type TheoryEntry } from '../repo/theoryIndex'
+import { StatusBadge } from './StatusBadge'
 import './theory-switcher.css'
 
 /**
@@ -10,19 +19,6 @@ import './theory-switcher.css'
  * with its status badge and note. Choosing one opens it at its own address. While a suggestion
  * preview is open the switcher is locked, since switching would leave the suggestion.
  */
-
-export function StatusBadge({ theory }: { theory: TheoryEntry }) {
-  if (theory.status === 'other') return null
-  const isReconstructed = theory.status === 'reconstructed'
-  return (
-    <span
-      className={`toc-topbar__pill toc-theory-badge${isReconstructed ? ' toc-theory-badge--reconstructed' : ''}`}
-      title={theory.statusNote}
-    >
-      {isReconstructed ? 'Reconstructed · not endorsed' : "Author's own"}
-    </span>
-  )
-}
 
 export interface TheorySwitcherProps {
   onSwitch: (slug: string) => void
@@ -37,26 +33,60 @@ interface PopoverProps {
   onClose: () => void
 }
 
-function optionKey(event: KeyboardEvent, choose: () => void) {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault()
-    choose()
-  }
+/** Where a key moves focus in a list of `count` theories from `at` (-1: from nowhere), or null
+ * for a key that does not move it. From nowhere, Down starts at the first and Up at the last. */
+function nextOption(key: string, at: number, count: number): number | null {
+  if (key === 'Home') return 0
+  if (key === 'End') return count - 1
+  if (key === 'ArrowDown') return (at + 1) % count
+  if (key === 'ArrowUp') return at <= 0 ? count - 1 : at - 1
+  return null
 }
 
-/** Arrow keys move between the theories, Escape closes the list. */
-function moveFocus(event: KeyboardEvent, list: HTMLUListElement | null, onClose: () => void) {
-  const found = list?.querySelectorAll<HTMLElement>('[role="option"]')
-  const options = found ? Array.from(found) : []
-  const at = options.indexOf(document.activeElement as HTMLElement)
+/** Arrow keys, Home and End move between the theories; Escape closes the list. */
+function onListKey(event: KeyboardEvent, list: HTMLUListElement | null, onClose: () => void) {
   if (event.key === 'Escape') {
     event.stopPropagation()
     onClose()
-  } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-    event.preventDefault()
-    const step = event.key === 'ArrowDown' ? 1 : -1
-    options[(at + step + options.length) % options.length]?.focus()
+    return
   }
+  const options = Array.from(list?.querySelectorAll<HTMLElement>('[role="option"]') ?? [])
+  const at = options.indexOf(document.activeElement as HTMLElement)
+  const next = nextOption(event.key, at, options.length)
+  if (next === null) return
+  event.preventDefault()
+  options[next]?.focus()
+}
+
+function TheoryOption({
+  theory,
+  isCurrent,
+  onChoose,
+}: {
+  theory: TheoryEntry
+  isCurrent: boolean
+  onChoose: (slug: string) => void
+}) {
+  return (
+    <li
+      role="option"
+      tabIndex={-1}
+      aria-selected={isCurrent}
+      className="toc-theory__option"
+      onClick={() => onChoose(theory.slug)}
+      onKeyDown={(event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return
+        event.preventDefault()
+        onChoose(theory.slug)
+      }}
+    >
+      <span className="toc-theory__option-head">
+        <span className="toc-theory__option-name">{theory.title}</span>
+        <StatusBadge theory={theory} />
+      </span>
+      {theory.statusNote ? <span className="toc-theory__note">{theory.statusNote}</span> : null}
+    </li>
+  )
 }
 
 function TheoryPopover({ current, onChoose, onStart, onClose }: PopoverProps) {
@@ -76,24 +106,15 @@ function TheoryPopover({ current, onChoose, onStart, onClose }: PopoverProps) {
         className="toc-theory__list"
         role="listbox"
         aria-label="Theories"
-        onKeyDown={(event) => moveFocus(event, list.current, onClose)}
+        onKeyDown={(event) => onListKey(event, list.current, onClose)}
       >
-        {index.theories.map((entry) => (
-          <li
-            key={entry.slug}
-            role="option"
-            tabIndex={-1}
-            aria-selected={entry.slug === current}
-            className="toc-theory__option"
-            onClick={() => onChoose(entry.slug)}
-            onKeyDown={(event) => optionKey(event, () => onChoose(entry.slug))}
-          >
-            <span className="toc-theory__option-head">
-              <span className="toc-theory__option-name">{entry.title}</span>
-              <StatusBadge theory={entry} />
-            </span>
-            {entry.statusNote ? <span className="toc-theory__note">{entry.statusNote}</span> : null}
-          </li>
+        {index.theories.map((theory) => (
+          <TheoryOption
+            key={theory.slug}
+            theory={theory}
+            isCurrent={theory.slug === current}
+            onChoose={onChoose}
+          />
         ))}
       </ul>
       {isFallback ? (
@@ -102,7 +123,11 @@ function TheoryPopover({ current, onChoose, onStart, onClose }: PopoverProps) {
       <button
         type="button"
         className="toc-theory__start"
-        onKeyDown={(event) => event.key === 'Escape' && onClose()}
+        onKeyDown={(event) => {
+          if (event.key !== 'Escape') return
+          event.stopPropagation()
+          onClose()
+        }}
         onClick={onStart}
       >
         Start your own or open a file →
@@ -111,47 +136,56 @@ function TheoryPopover({ current, onChoose, onStart, onClose }: PopoverProps) {
   )
 }
 
-/** A press anywhere outside `root` closes the list, as a native select would. */
-function useCloseOnOutsideClick(
-  root: RefObject<HTMLDivElement | null>,
-  isOpen: boolean,
-  close: () => void,
-) {
+/** Open and closed: a press outside `root` or a tab away closes the list quietly, as leaving a
+ * native select does; choosing or Escape closes it and gives focus back to the switcher. */
+function useListOpen(root: RefObject<HTMLDivElement | null>) {
+  const [isOpen, setIsOpen] = useState(false)
+  const button = useRef<HTMLButtonElement>(null)
+  const closeQuietly = useCallback(() => setIsOpen(false), [])
+  const closeToButton = useCallback(() => {
+    setIsOpen(false)
+    button.current?.focus()
+  }, [])
+
   useEffect(() => {
     if (!isOpen) return
     const onDown = (event: MouseEvent) => {
-      if (!root.current?.contains(event.target as Node)) close()
+      if (!root.current?.contains(event.target as Node)) closeQuietly()
     }
     window.addEventListener('mousedown', onDown)
     return () => window.removeEventListener('mousedown', onDown)
-  }, [root, isOpen, close])
+  }, [root, isOpen, closeQuietly])
+
+  const onBlur = (event: FocusEvent) => {
+    if (!root.current?.contains(event.relatedTarget as Node | null)) closeQuietly()
+  }
+  return { isOpen, setIsOpen, button, closeToButton, onBlur }
 }
 
 export function TheorySwitcher({ onSwitch, onStart }: TheorySwitcherProps) {
   const index = useTheoryStore((state) => state.index)
   const current = useTheoryStore((state) => state.current)
   const isLocked = useSuggestionStore((state) => state.suggestion !== null)
-  const [isOpen, setIsOpen] = useState(false)
-  const button = useRef<HTMLButtonElement>(null)
   const root = useRef<HTMLDivElement>(null)
-  useCloseOnOutsideClick(root, isOpen, () => setIsOpen(false))
+  const { isOpen, setIsOpen, button, closeToButton, onBlur } = useListOpen(root)
 
   if (!current) return null
   const theory = findTheory(index, current)
   const name = theory?.title ?? current
+  const status = theory ? statusLabel(theory) : null
 
   return (
-    <div className="toc-theory" ref={root}>
+    <div className="toc-theory" ref={root} onBlur={onBlur}>
       <button
         ref={button}
         type="button"
         className="toc-theory__button"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        aria-label={`Theory: ${name}. Switch theory`}
-        disabled={isLocked}
+        aria-label={`Theory: ${name}${status ? ` (${status})` : ''}. Switch theory`}
+        aria-disabled={isLocked}
         title={isLocked ? 'Close the suggestion to switch theories' : undefined}
-        onClick={() => setIsOpen((open) => !open)}
+        onClick={() => !isLocked && setIsOpen((open) => !open)}
       >
         <span className="toc-theory__name">{name}</span>
       </button>
@@ -160,17 +194,14 @@ export function TheorySwitcher({ onSwitch, onStart }: TheorySwitcherProps) {
         <TheoryPopover
           current={current}
           onChoose={(slug) => {
-            setIsOpen(false)
+            closeToButton()
             if (slug !== current) onSwitch(slug)
           }}
           onStart={() => {
             setIsOpen(false)
             onStart()
           }}
-          onClose={() => {
-            setIsOpen(false)
-            button.current?.focus()
-          }}
+          onClose={closeToButton}
         />
       ) : null}
     </div>

@@ -36,7 +36,7 @@
     no-repeat right 7px center;
 }
 
-.toc-theory__button:hover:not(:disabled) {
+.toc-theory__button:hover:not([aria-disabled='true']) {
   background-color: #f1eee7;
 }
 
@@ -45,7 +45,7 @@
   outline-offset: 1px;
 }
 
-.toc-theory__button:disabled {
+.toc-theory__button[aria-disabled='true'] {
   cursor: default;
   background-image: none;
   padding-right: 6px;
@@ -55,13 +55,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* A reconstruction must never pass for the author's own: amber, text #8a5a00 on #fdf3dc
-   (contrast about 5.6:1). */
-.toc-theory-badge--reconstructed {
-  background-color: #fdf3dc;
-  color: #8a5a00;
 }
 
 .toc-theory__popover {
@@ -196,22 +189,8 @@
   outline-offset: 1px;
 }
 
-/* Narrow windows: the badge becomes a dot, its words stay for screen readers. */
 @media (max-width: 900px) {
   .toc-theory {
     flex: 0 1 auto;
-  }
-
-  .toc-topbar .toc-theory-badge {
-    width: 10px;
-    height: 10px;
-    padding: 0;
-    font-size: 0;
-    flex: none;
-    background-color: #b8b2a7;
-  }
-
-  .toc-topbar .toc-theory-badge--reconstructed {
-    background-color: #d99a1e;
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   useStore,
   Background,
@@ -117,9 +117,11 @@ function SelectionPanels() {
 export interface CanvasProps {
   onHome: () => void
   onSwitchTheory: (slug: string) => void
+  /** A strip the app adds under the top bar (the draft bar on a theory). */
+  banner?: ReactNode
 }
 
-export function Canvas({ onHome, onSwitchTheory }: CanvasProps) {
+export function Canvas({ onHome, onSwitchTheory, banner }: CanvasProps) {
   const doc = useToCStore((state) => state.document)
   const isReadOnly = useToCStore((state) => state.isReadOnly)
   const graph = useMemo(() => buildFlow(doc), [doc])
@@ -142,6 +144,7 @@ export function Canvas({ onHome, onSwitchTheory }: CanvasProps) {
       />
       <StageBar />
       <TheoryNoteBar />
+      {banner}
       <div className={stageClassName(connect.isConnecting, isReadOnly)}>
         <ReactFlow
           nodes={flow.nodes}
